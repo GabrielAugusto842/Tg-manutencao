@@ -5,8 +5,11 @@ import backgroundImage from "../../wallpaper-azul-papel-de-parede-azul-fundo-4.j
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [, setUsername] = useState("");
-  const [, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+
+
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -52,7 +55,8 @@ const Login = () => {
                   <input
                     type="email"
                     placeholder="E-mail"
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <FaUser className="icon" />
@@ -62,6 +66,7 @@ const Login = () => {
                   <input
                     type="password"
                     placeholder="Senha"
+                    value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
@@ -73,6 +78,7 @@ const Login = () => {
                 </div>
 
                 <button type="submit">Entrar</button>
+                {errorMessage && <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">{errorMessage}</p>} {/* Display error message if exists */}
               </form>
             </div>
           </div>

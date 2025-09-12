@@ -16,7 +16,7 @@ function Sidebar(onHomeClick) {
       <div className="menu">
         <div className='menu-item' onClick={onHomeClick}>
           <FaHome className="icon" />
-          <span>Home</span>
+          <span translate="no"> Home </span>
         </div>
 
         <div 
