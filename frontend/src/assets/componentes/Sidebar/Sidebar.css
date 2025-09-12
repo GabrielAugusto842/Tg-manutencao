@@ -1,0 +1,103 @@
+.sidebar {
+    width: 300px;
+    height: 100vh;
+    background-image: url('../../assets/wallpaper-azul-papel-de-parede-azul-fundo-4.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logo {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    margin-top:0.5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+  }
+  
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .menu-item.active:hover {
+    background-color: rgba(25, 236, 236, 0.4); /* hover do botão ativo */
+  }
+  
+  .icon {
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .menu-item span {
+    flex-grow: 1;
+  }
+  
+  .menu-item.active {
+    background-color: rgba(32, 207, 255, 0.3); /* cor de destaque */
+    color: #00ffff; /* muda a cor do texto */
+    font-weight: 700; /* deixa o texto mais forte */
+    border-left: 4px solid #00ffff; /* opcional: barra de destaque à esquerda */
+  }
+  
+  .menu-item:not(:last-child) {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .submenu {
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
+    animation: expand 0.3s ease-out;
+  }
+  
+  .submenu button {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 10px 0;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .submenu button:hover {
+    color: #00ffff;
+  }
+  
+  .logo img{
+    width: 120px;
+    height: auto;
+  }
+  
+  .logo {
+    margin-top: auto; 
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start; 
+  }
+  
+  @keyframes expand {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
