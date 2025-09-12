@@ -1,7 +1,7 @@
 import { FaUser, FaLock } from "react-icons/fa";
 import { useState } from "react";
 import "./Login.css";
-import backgroundImage from "../../assets/wallpaper-azul-papel-de-parede-azul-fundo-4.jpg"; // Caminho correto
+import backgroundImage from "../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg"; // Caminho correto
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -19,7 +19,12 @@ const Login = () => {
     <div className="login-wrapper">
       <div
         className="App"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        style={{ backgroundImage: `url(${backgroundImage})`,
+        height: "100vh",
+        width: "100vw",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat", }}
       >
         <div className="coluna-esquerda">
           <div className="company">

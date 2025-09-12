@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./componentes/Login/Login";
-import Home from "./componentes/Home/Home";
+import Login from "./assets/telas/Login/Login";
+import Home from "./assets/telas/Home/Home";
 
 function App() {
   return (

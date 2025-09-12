@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Sidebar from "../Sidebar/Sidebar.jsx";
-import Navbar from "../Navbar/Navbar.jsx"
-import "../Navbar/Navbar.css"; 
-import "../Sidebar/Sidebar.css";
+import Sidebar from "../../componentes/Sidebar/Sidebar.jsx";
+import Navbar from "../../componentes/Navbar/Navbar.jsx"
+import "../../componentes/Navbar/Navbar.css"; 
+import "../../componentes/Sidebar/Sidebar.css";
 import "./Home.css";
 
 function Home() {
