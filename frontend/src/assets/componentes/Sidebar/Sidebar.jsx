@@ -2,9 +2,11 @@ import React from 'react';
 import './Sidebar.css';
 import { FaHome, FaClipboardList, FaUsers, FaTools, FaFileAlt, FaAngleDown, FaAngleUp, FaChartLine} from "react-icons/fa";
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
-function Sidebar(onHomeClick) {
+function Sidebar() {
   const [openMenu, setOpenMenu] = useState(null);
+  const navigate = useNavigate();
 
   const toggleMenu = (menuName) => {
     setOpenMenu(openMenu === menuName ? null : menuName);
@@ -14,9 +16,9 @@ function Sidebar(onHomeClick) {
     <div className="sidebar">
 
       <div className="menu">
-        <div className='menu-item' onClick={onHomeClick}>
-          <FaHome className="icon" />
-          <span translate="no"> Home </span>
+        <div className='menu-item' onClick={() => navigate("/home")}>
+        <FaHome className="icon" />
+        <span translate="no"> Home </span>
         </div>
 
         <div 
@@ -28,10 +30,9 @@ function Sidebar(onHomeClick) {
         </div>
         {openMenu === "Ordens de Serviço" && (
           <div className="submenu">
-  
-              <button>Cadastrar</button>
-              <button>Visualizar</button>
-              <button>Minhas Ordens de Serviço</button>
+              <button onClick={() => navigate("/ordens/cadastrar")}>Cadastrar</button>
+              <button onClick={() => navigate("/ordens/visualizar")}>Visualizar</button>
+              <button onClick={() => navigate("/ordens/minhasos")}>Minhas Ordens de Serviço</button>
             </div>
       )}
 
@@ -45,8 +46,8 @@ function Sidebar(onHomeClick) {
         </div>
         {openMenu === "usuario" && (
           <div className="submenu">
-            <button>Visualizar</button>
-            <button>Cadastrar</button>
+            <button onClick={() => navigate("/usuario/visualizar")}>Visualizar</button>
+            <button onClick={() => navigate("/usuario/cadastrar")}>Cadastrar</button>
           </div>
         )}
 
@@ -60,13 +61,13 @@ function Sidebar(onHomeClick) {
         </div>
         {openMenu === "equipamentos" && (
           <div className="submenu">
-            <button>Visualizar</button>
-            <button>Cadastrar</button>
+            <button onClick={() => navigate("/equipamentos/visualizar")}>Visualizar</button>
+            <button onClick={() => navigate("/equipamentos/cadastrar")}>Cadastrar</button>
           </div>
         )}
 
         {/* Relatórios */}
-        <div className="menu-item">
+        <div className="menu-item" onClick= {() => navigate("/relatorios")}>
           <FaFileAlt className="icon" />
           <span>Relatórios</span>
         </div>
