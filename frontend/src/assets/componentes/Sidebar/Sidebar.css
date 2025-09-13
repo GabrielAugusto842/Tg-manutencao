@@ -28,7 +28,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 25px;
-    margin-top:0.5px;
+    margin-top:0.10;
     cursor: pointer;
     font-weight: 600;
     font-size: 1.2rem;
@@ -62,11 +62,18 @@
   .menu-item:not(:last-child) {
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
   }
-  
+
+  .submenu button:focus,
+  .submenu button:active {
+  outline: none;
+  background-color: rgba(0, 255, 255, 0.1);
+  color: #00ffff;
+  border-radius: 6px;
+  }
+
   .submenu {
     display: flex;
     flex-direction: column;
-    padding-left: 30px;
     animation: expand 0.3s ease-out;
   }
   
@@ -74,10 +81,12 @@
     background: none;
     border: none;
     color: #fff;
-    padding: 10px 0;
+    padding: 10px 0px 10px 20;
     font-size: 1rem;
     text-align: left;
     cursor: pointer;
+    width: 100%;
+    display: block;
     transition: color 0.2s;
   }
   
