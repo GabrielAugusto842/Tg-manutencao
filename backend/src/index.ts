@@ -1,18 +1,24 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
+import express, { Application } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes";
 
 dotenv.config();
-const app = express();
-const port = process.env.PORT || 3001;
 
-app.use(cors());
+const app: Application = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send("Hello world!");
-});
 
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
-});
+//Conexão com o FRONTEND
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
+app.use("/api/auth", authRoutes);
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));

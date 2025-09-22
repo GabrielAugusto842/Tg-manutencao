@@ -1,33 +1,49 @@
 import { FaUser, FaLock } from "react-icons/fa";
 import { useState } from "react";
 import "./Login.css";
-import backgroundImage from "../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg"; // Caminho correto
-import { useNavigate } from "react-router-dom";
+import backgroundImage from "../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-
-  const navigate = useNavigate();
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate("/home");
-    //alert("Enviando os dados: " + username + " - " + password);
+    setErrorMessage("");
+
+    try {
+      const res = await axios.post("http://localhost:3001/api/auth/login", {
+        email,
+        password,
+      });
+      localStorage.setItem("token", res.data.token);
+      window.location.href = "/home";
+    } catch (error) {
+      console.error("Erro de login:", error);
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("E-mail ou senha inválidos.");
+      } else {
+        setErrorMessage(
+          "Erro ao conectar. Verifique sua conexão ou tente mais tarde."
+        );
+      }
+    }
   };
 
   return (
     <div className="login-wrapper">
       <div
         className="App"
-        style={{ backgroundImage: `url(${backgroundImage})`,
-        height: "100vh",
-        width: "100vw",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat", }}
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          height: "100vh",
+          width: "100vw",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         <div className="coluna-esquerda">
           <div className="company">
@@ -50,7 +66,6 @@ const Login = () => {
             <div className="container">
               <form onSubmit={handleSubmit}>
                 <h1>Acesse o sistema</h1>
-
                 <div className="input-field">
                   <input
                     type="email"
@@ -61,7 +76,6 @@ const Login = () => {
                   />
                   <FaUser className="icon" />
                 </div>
-
                 <div className="input-field">
                   <input
                     type="password"
@@ -72,13 +86,15 @@ const Login = () => {
                   />
                   <FaLock className="icon" />
                 </div>
-
                 <div className="recall-forget">
                   <a href="#">Esqueci minha senha</a>
                 </div>
-
                 <button type="submit">Entrar</button>
-                {errorMessage && <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">{errorMessage}</p>} {/* Display error message if exists */}
+                {errorMessage && (
+                  <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">
+                    {errorMessage}
+                  </p>
+                )}
               </form>
             </div>
           </div>
