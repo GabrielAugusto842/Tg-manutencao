@@ -1,38 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400:500:700&display=swap');
-
-*{
-  margin:0;
-  padding: 0;
-  box-sizing:border-box ;
-  font-family: "Poppins", sans-serif;
-}
-
-.header {
-  margin-left: 300px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 10px 10%;
-  background-color: rgba(255, 255, 255, 0);
-  backdrop-filter: bluer(8px);
-  border-bottom: 1px solid rgba(200, 200, 200, 0.5);
+.navbar {
+  height: 60px;
+  background-color: #f1f3f5;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  z-index: 100;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #ccc;
 }
 
-.nome {
-  font-size: 25px;
-  color: #000000;
-  font-weight: 500;
-  padding: 15px;
-}
-
-.navbar a {
-  position: relative;
+.navbar-title {
   font-size: 18px;
-  color: #fff;
-  font-weight: 600;
-  margin-left: 50px;
+  font-weight: bold;
+}
+
+.navbar-search {
+  display: flex;
+  flex: 1;
+  max-width: 500px;
+  margin: 0 20px;
+}
+
+.navbar-search input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.navbar-search button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #ddd;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.profile-icon {
+  font-size: 24px;
 }
