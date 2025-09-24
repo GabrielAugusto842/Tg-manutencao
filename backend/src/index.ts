@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
+import testRoute from "./routes/testRoute";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api", testRoute)
 
-const PORT = process.env.POzRT || 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));
