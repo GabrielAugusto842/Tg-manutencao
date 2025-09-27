@@ -5,7 +5,7 @@ export class UsuarioController {
     private repository: UserRepository;
 
     constructor() {
-        this.repository = new UserRepository;
+        this.repository = new UserRepository();
     }
 
     async getUsuario(req: Request, res: Response) {
