@@ -40,4 +40,10 @@ Server > Data Import <br>
 importar o banco que está na pasta /database do projeto <br>
 
 Para testar, rodar dentro da pasta backend: <br>
-npm run dev
+npm run dev <br>
+
+Antes de mexer no projeto: <br>
+git pull origin main <br>
+
+Após fazer alterações: <br>
+git push -u origin main

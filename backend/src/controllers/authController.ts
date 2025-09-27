@@ -1,7 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { db } from "../config/db";
 import { UserRepository } from "../repositories/userRepository";
 
 const userRepository = new UserRepository();

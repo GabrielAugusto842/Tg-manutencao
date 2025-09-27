@@ -10,7 +10,7 @@ export class UsuarioController {
 
     async getUsuario(req: Request, res: Response) {
         try {
-            const email = req.params.email;
+            const email = req.params.email as string;
             if (!email) {
                 throw new Error("Variável não existente");
             }
