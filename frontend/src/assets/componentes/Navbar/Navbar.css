@@ -1,54 +1,159 @@
 .navbar {
-  height: 60px;
+  height: 80px;
   background-color: #f1f3f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 40px;
   border-bottom: 1px solid #ccc;
 }
 
 .navbar-title {
-  font-size: 18px;
+  font-size: 30px;
   font-weight: bold;
+  color: #333;
 }
 
-.navbar-search {
-  display: flex;
-  flex: 1;
-  max-width: 500px;
-  margin: 0 20px;
-}
-
-.navbar-search input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-}
-
-.navbar-search button {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background-color: #ddd;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-}
-
-.navbar-actions {
+.navbar-actions-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
-.logout-btn {
-  background: none;
+.botao-sair {
+  background-color: #e74c3c;
+  color: #fff;
   border: none;
   font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.botao-sair:hover {
+  background-color: #e0e0e0;
+}
+
+.profile-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-icon-group {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-arrow-icon {
+  font-size: 18px;
+  color: #333;
+  margin-right: -10px; /* Sobrepõe o círculo para o efeito desejado */
+  z-index: 10;
+  transition: transform 0.2s;
 }
 
 .profile-icon {
-  font-size: 24px;
+  font-size: 38px;
+  color: #333;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 35px;
+  right: -30px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgbd(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.profile-menu::before {
+  content: "";
+  position: absolute;
+  top: -11px; /* Ajuste para posicionar o triângulo acima da borda */
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 11px solid #d4d4d4; /* Cor da borda do triângulo */
+}
+
+/* Triângulo interno (para preenchimento) */
+.profile-menu::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #fff; /* Cor de preenchimento do triângulo */
+  z-index: 101;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-avatar {
+  font-size: 36px;
+  color: #333;
+  margin-right: 10px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff; /* Cor azul para o nome */
+  margin-bottom: 2px;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #777;
+}
+
+.menu-option {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.option-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: #555;
+}
+
+.menu-option:hover {
+  background-color: #f1f3f5;
+}
+
+.menu-option.selected {
+  background-color: #e0e0e0; /* Fundo cinza suave */
+}
+
+.menu-option.selected:hover {
+  background-color: #d0d0d0; /* Fundo cinza mais escuro no hover */
 }
