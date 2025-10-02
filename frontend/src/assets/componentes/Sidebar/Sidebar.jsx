@@ -3,6 +3,8 @@ import './Sidebar.css';
 import { FaHome, FaClipboardList, FaUsers, FaTools, FaFileAlt, FaAngleDown, FaAngleUp, FaChartLine} from "react-icons/fa";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import logo from '../../logo-company1.png';
+  
 
 function Sidebar() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -73,7 +75,7 @@ function Sidebar() {
         </div>
       </div>
       <div className="logo">
-      <img src="src/assets/logo-company1.png" alt="Logo" />
+      <img src={logo} alt="Logo" />
     </div>
     </div>
     

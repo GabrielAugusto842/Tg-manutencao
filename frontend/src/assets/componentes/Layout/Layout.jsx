@@ -3,7 +3,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import Navbar from "../Navbar/Navbar";
 import "./Layout.css";
 
-const Layout = ({children}) => {
+const Layout = ({children, title}) => {
   return (
     <div className="layout">
       {/* Sidebar fixa */}
@@ -14,7 +14,7 @@ const Layout = ({children}) => {
       {/* Área principal (só Navbar) */}
       <div className="layout-main">
         <header className="layout-navbar">
-          <Navbar />
+          <Navbar title={title}/>
         </header>
 
     
