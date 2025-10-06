@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE `cargo` (
   `id_cargo` int NOT NULL AUTO_INCREMENT,
   `codigo` int NOT NULL,
-  `descricao` tinytext NOT NULL,
+  `descricao` text NOT NULL,
   PRIMARY KEY (`id_cargo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +38,7 @@ CREATE TABLE `cargo` (
 
 LOCK TABLES `cargo` WRITE;
 /*!40000 ALTER TABLE `cargo` DISABLE KEYS */;
-INSERT INTO `cargo` VALUES (1,1,'Operador'),(2,2,'Manutentor'),(3,3,'Administrador'),(4,4,'Gerente de Produção'),(6,5,'Gerente de Manutenção');
+INSERT INTO `cargo` VALUES (1,1,'Operador'),(2,2,'Manutentor'),(3,3,'Administrador'),(6,4,'Gerente de Manutenção');
 /*!40000 ALTER TABLE `cargo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS `estado`;
 CREATE TABLE `estado` (
   `id_estado` int NOT NULL AUTO_INCREMENT,
   `codigo` int NOT NULL,
-  `descricao` varchar(45) NOT NULL,
+  `status` varchar(50) NOT NULL,
   PRIMARY KEY (`id_estado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -68,6 +68,35 @@ INSERT INTO `estado` VALUES (1,1,'Aberto'),(2,2,'Em andamento'),(3,3,'Finalizado
 UNLOCK TABLES;
 
 --
+-- Table structure for table `log_sistema`
+--
+
+DROP TABLE IF EXISTS `log_sistema`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `log_sistema` (
+  `id_log` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int DEFAULT NULL,
+  `tabela_afetada` varchar(50) NOT NULL,
+  `acao` varchar(50) NOT NULL,
+  `descricao` text,
+  `data_hora` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_log`),
+  KEY `fk_log_usuario_idx` (`id_usuario`),
+  CONSTRAINT `fk_log_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_sistema`
+--
+
+LOCK TABLES `log_sistema` WRITE;
+/*!40000 ALTER TABLE `log_sistema` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_sistema` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `maquina`
 --
 
@@ -76,14 +105,17 @@ DROP TABLE IF EXISTS `maquina`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `maquina` (
   `id_maquina` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(45) NOT NULL,
   `marca` varchar(45) NOT NULL,
   `modelo` varchar(45) DEFAULT NULL,
-  `tag` varchar(45) NOT NULL,
+  `numero_serie` varchar(80) NOT NULL,
+  `tag` varchar(45) DEFAULT NULL,
   `producaoPorHora` int NOT NULL,
-  `descricao` mediumtext NOT NULL,
-  `id_setor` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_maquina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_setor` int NOT NULL,
+  PRIMARY KEY (`id_maquina`),
+  KEY `fk_maquina_setor_idx` (`id_setor`),
+  CONSTRAINT `fk_maquina_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id_setor`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,7 +124,37 @@ CREATE TABLE `maquina` (
 
 LOCK TABLES `maquina` WRITE;
 /*!40000 ALTER TABLE `maquina` DISABLE KEYS */;
+INSERT INTO `maquina` VALUES (1,'laptop','asus','X515J','N1U2M3E4R5O6','123a',500,1);
 /*!40000 ALTER TABLE `maquina` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `maquina_os`
+--
+
+DROP TABLE IF EXISTS `maquina_os`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `maquina_os` (
+  `id_maquina_os` int NOT NULL AUTO_INCREMENT,
+  `id_ord_serv` int NOT NULL,
+  `id_maquina` int NOT NULL,
+  PRIMARY KEY (`id_maquina_os`),
+  KEY `fk_maquina_os_idx` (`id_maquina`),
+  KEY `fk_os_maquina_idx` (`id_ord_serv`),
+  CONSTRAINT `fk_maquina_os` FOREIGN KEY (`id_maquina`) REFERENCES `maquina` (`id_maquina`),
+  CONSTRAINT `fk_os_maquina` FOREIGN KEY (`id_ord_serv`) REFERENCES `ordem_servico` (`id_ord_serv`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `maquina_os`
+--
+
+LOCK TABLES `maquina_os` WRITE;
+/*!40000 ALTER TABLE `maquina_os` DISABLE KEYS */;
+INSERT INTO `maquina_os` VALUES (1,1,1);
+/*!40000 ALTER TABLE `maquina_os` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -104,17 +166,17 @@ DROP TABLE IF EXISTS `ordem_servico`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ordem_servico` (
   `id_ord_serv` int NOT NULL AUTO_INCREMENT,
-  `descricao` longtext NOT NULL,
-  `data_inicio` date NOT NULL,
-  `data_termino` date DEFAULT NULL,
+  `descricao` text NOT NULL,
+  `data_inicio` datetime NOT NULL,
+  `data_termino` datetime DEFAULT NULL,
   `custo` decimal(5,2) DEFAULT NULL,
   `id_usuario` int NOT NULL,
   `id_estado` int NOT NULL,
   PRIMARY KEY (`id_ord_serv`),
   KEY `id_usuario_idx` (`id_usuario`),
   KEY `id_estado_idx` (`id_estado`),
-  CONSTRAINT `id_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`),
-  CONSTRAINT `id_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
+  CONSTRAINT `fk_os_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`),
+  CONSTRAINT `fk_os_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -124,7 +186,7 @@ CREATE TABLE `ordem_servico` (
 
 LOCK TABLES `ordem_servico` WRITE;
 /*!40000 ALTER TABLE `ordem_servico` DISABLE KEYS */;
-INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou','2025-09-20',NULL,NULL,1,1);
+INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou','2025-09-20 00:00:00',NULL,NULL,1,1);
 /*!40000 ALTER TABLE `ordem_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,9 +200,9 @@ DROP TABLE IF EXISTS `setor`;
 CREATE TABLE `setor` (
   `id_setor` int NOT NULL AUTO_INCREMENT,
   `setor` varchar(45) NOT NULL,
-  `descricao` mediumtext NOT NULL,
+  `descricao` text NOT NULL,
   PRIMARY KEY (`id_setor`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,6 +211,7 @@ CREATE TABLE `setor` (
 
 LOCK TABLES `setor` WRITE;
 /*!40000 ALTER TABLE `setor` DISABLE KEYS */;
+INSERT INTO `setor` VALUES (1,'Produção','Criar novos produtos');
 /*!40000 ALTER TABLE `setor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,13 +224,16 @@ DROP TABLE IF EXISTS `usuario`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
   `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(45) NOT NULL,
+  `nome` varchar(60) NOT NULL,
   `email` varchar(45) NOT NULL,
-  `senha` varchar(45) NOT NULL,
+  `senha` varchar(65) NOT NULL,
   `id_cargo` int NOT NULL,
+  `id_setor` int NOT NULL,
   PRIMARY KEY (`id_usuario`),
   KEY `id_cargo_idx` (`id_cargo`),
-  CONSTRAINT `id_cargo` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id_cargo`)
+  KEY `id_setor_idx` (`id_setor`),
+  CONSTRAINT `fk_usuario_cargo` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id_cargo`),
+  CONSTRAINT `fk_usuario_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id_setor`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -177,7 +243,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Gabriel','gabriel@email','123',1);
+INSERT INTO `usuario` VALUES (1,'Usuario','usuario@email.com','$2b$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',1,1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -190,4 +256,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-24 20:21:17
+-- Dump completed on 2025-10-06 16:31:40
