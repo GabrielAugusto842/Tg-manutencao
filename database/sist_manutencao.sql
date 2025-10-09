@@ -27,7 +27,8 @@ DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE `cargo` (
   `id_cargo` int NOT NULL AUTO_INCREMENT,
   `codigo` int NOT NULL,
-  `descricao` text NOT NULL,
+  `cargo` varchar(45) NOT NULL,
+  `descricao` text,
   PRIMARY KEY (`id_cargo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +39,7 @@ CREATE TABLE `cargo` (
 
 LOCK TABLES `cargo` WRITE;
 /*!40000 ALTER TABLE `cargo` DISABLE KEYS */;
-INSERT INTO `cargo` VALUES (1,1,'Operador'),(2,2,'Manutentor'),(3,3,'Administrador'),(6,4,'Gerente de Manutenção');
+INSERT INTO `cargo` VALUES (1,1,'Operador','Opera as máquinas'),(2,2,'Manutentor','Executa e finaliza as ordens de serviço'),(3,3,'Administrador','Cadastra usuários, máquinas e setores'),(6,4,'Gerente de Manutenção','Gerencia as ordens de serviço');
 /*!40000 ALTER TABLE `cargo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,35 +130,6 @@ INSERT INTO `maquina` VALUES (1,'laptop','asus','X515J','N1U2M3E4R5O6','123a',50
 UNLOCK TABLES;
 
 --
--- Table structure for table `maquina_os`
---
-
-DROP TABLE IF EXISTS `maquina_os`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `maquina_os` (
-  `id_maquina_os` int NOT NULL AUTO_INCREMENT,
-  `id_ord_serv` int NOT NULL,
-  `id_maquina` int NOT NULL,
-  PRIMARY KEY (`id_maquina_os`),
-  KEY `fk_maquina_os_idx` (`id_maquina`),
-  KEY `fk_os_maquina_idx` (`id_ord_serv`),
-  CONSTRAINT `fk_maquina_os` FOREIGN KEY (`id_maquina`) REFERENCES `maquina` (`id_maquina`),
-  CONSTRAINT `fk_os_maquina` FOREIGN KEY (`id_ord_serv`) REFERENCES `ordem_servico` (`id_ord_serv`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `maquina_os`
---
-
-LOCK TABLES `maquina_os` WRITE;
-/*!40000 ALTER TABLE `maquina_os` DISABLE KEYS */;
-INSERT INTO `maquina_os` VALUES (1,1,1);
-/*!40000 ALTER TABLE `maquina_os` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ordem_servico`
 --
 
@@ -172,10 +144,13 @@ CREATE TABLE `ordem_servico` (
   `custo` decimal(5,2) DEFAULT NULL,
   `id_usuario` int NOT NULL,
   `id_estado` int NOT NULL,
+  `id_maquina` int NOT NULL,
   PRIMARY KEY (`id_ord_serv`),
   KEY `id_usuario_idx` (`id_usuario`),
   KEY `id_estado_idx` (`id_estado`),
+  KEY `id_os_maquina_idx` (`id_maquina`),
   CONSTRAINT `fk_os_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`),
+  CONSTRAINT `fk_os_maquina` FOREIGN KEY (`id_maquina`) REFERENCES `maquina` (`id_maquina`),
   CONSTRAINT `fk_os_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -186,7 +161,7 @@ CREATE TABLE `ordem_servico` (
 
 LOCK TABLES `ordem_servico` WRITE;
 /*!40000 ALTER TABLE `ordem_servico` DISABLE KEYS */;
-INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou','2025-09-20 00:00:00',NULL,NULL,1,1);
+INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou','2025-09-20 00:00:00',NULL,NULL,1,1,1);
 /*!40000 ALTER TABLE `ordem_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -256,4 +231,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-06 16:31:40
+-- Dump completed on 2025-10-09 14:01:38
