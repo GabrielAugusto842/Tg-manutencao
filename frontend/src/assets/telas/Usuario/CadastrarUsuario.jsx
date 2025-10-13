@@ -7,18 +7,25 @@ function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [setor, setSetor] = useState(""); // Novo estado para o setor
+  const [cargo, setCargo] = useState(""); // Novo estado para o setor
+  const [setor, setSetor] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [nome, setNome] = useState("");
 
   // 2. Opções para o campo de seleção
-  const opcoesSetor = ["Operador", "Técnico", "Gerente", "Manutentor"];
+  const opcoesCargo = ["Operador", "Técnico", "Gerente", "Manutentor"];
+  const opcoesSetor = ["Manutenção", "Produção", "Qualidade", "Logística"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // *Verificação básica: garantir que um setor foi selecionado*
-    if (!setor) {
+    if (!cargo) {
+      setMensagem("Por favor, selecione um cargo.");
+      return;
+    }
+
+     if (!setor) {
       setMensagem("Por favor, selecione um setor.");
       return;
     }
@@ -46,6 +53,7 @@ function CadastrarUsuario() {
       setPassword("");
       setSetor("");
       setNome("");
+      setCargo("");
 
     } catch (error) {
       console.error(
@@ -87,6 +95,27 @@ function CadastrarUsuario() {
 
             {/* Campo Cargo/Setor (Grupo) */}
             <div className="form-group half-width"> 
+              <label htmlFor="cargo">Cargo:<span className="required">*</span></label>
+              <select
+                id="cargo"
+                value={cargo}
+                onChange={(e) => setCargo(e.target.value)}
+                required
+              >
+                <option value="" disabled>
+                  Selecione um cargo...
+                </option>
+                
+                {opcoesCargo.map((opcao) => (
+                  <option key={opcao} value={opcao}>
+                    {opcao}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="form-group half-width"> 
               <label htmlFor="setor">Setor:<span className="required">*</span></label>
               <select
                 id="setor"
@@ -105,7 +134,6 @@ function CadastrarUsuario() {
                 ))}
               </select>
             </div>
-          </div>
           
           {/* LINHA 2: E-mail (Uma Coluna de Largura Total) */}
           <div className="form-group full-width"> 
