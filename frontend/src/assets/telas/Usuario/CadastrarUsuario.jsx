@@ -35,7 +35,8 @@ function CadastrarUsuario() {
       email,
       password,
       nome,
-      setor, // Adicionar o setor
+      setor,
+      cargo, // Adicionar o setor
     };
 
     try {
