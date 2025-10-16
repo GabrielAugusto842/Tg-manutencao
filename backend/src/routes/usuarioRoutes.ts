@@ -8,7 +8,7 @@ const usuarioController = new UsuarioController();
 
 // Rota base para teste
 router.get("/", (req, res) => {
-  res.json({ message: "Rota base /api/user funcionando" });
+  usuarioController.getUsuarios(req, res);
 });
 
 router.get("/:email", (req, res) => {

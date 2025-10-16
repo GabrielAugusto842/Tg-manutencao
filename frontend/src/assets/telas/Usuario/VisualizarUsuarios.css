@@ -1,0 +1,78 @@
+/* VisualizarUsuario.css */
+
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 120px); /* ocupa quase toda a altura, ajustável */
+  margin: 10px 0;
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.lista-usuarios {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  margin: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-usuario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.dados-usuario {
+  flex-grow: 1;
+}
+
+.acoes-usuario {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acoes-usuario button.btn-inativar {
+  background: linear-gradient(90deg, #ffce00, #ffc107) !important;
+  color: #333 !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.acoes-usuario button.btn-deletar {
+  background: linear-gradient(90deg, #ff3b3b, #dc3545) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.acoes-usuario button.btn-inativar:hover {
+  background: linear-gradient(90deg, #e0a800, #d39e00) !important;
+  transform: scale(1.05);
+}
+
+.acoes-usuario button.btn-deletar:hover {
+  background: linear-gradient(90deg, #c82333, #a71d2a) !important;
+  transform: scale(1.05);
+}

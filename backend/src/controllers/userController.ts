@@ -13,7 +13,7 @@ if ((existeUsuario as any[]).length > 0) {
 
 const hashSenha = await bcrypt.hash(password, 10);
 
-await db.execute('INSERT INTO usuario (nome, email, senha) VALUES (?, ?)', [
+await db.execute('INSERT INTO usuario (nome, email, senha) VALUES (?, ?, ?)', [
     nome,
     email,
     hashSenha,

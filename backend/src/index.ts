@@ -2,7 +2,8 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
-import testRoute from "./routes/testRoute";
+import usuarioRoutes from "./routes/usuarioRoutes";
+import { Usuario } from "./models/Usuario";
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", testRoute)
+app.use("/api/user", usuarioRoutes);
 
 
 
