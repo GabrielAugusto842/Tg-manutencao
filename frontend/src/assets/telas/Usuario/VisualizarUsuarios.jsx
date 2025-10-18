@@ -26,7 +26,6 @@ function VisualizarUsuariosContent() {
             }
 
             const dados = await resposta.json();
-            // Assumindo que a resposta é um array de usuários
             setUsuarios(dados); 
         } catch (e) {
             setErro("Não foi possível carregar os usuários. Verifique sua conexão ou a API.");
@@ -36,53 +35,22 @@ function VisualizarUsuariosContent() {
         }
     };
 
-    // Efeito para carregar os usuários ao montar o componente
+    
     useEffect(() => {
         buscarUsuarios();
     }, []); 
 
-
-    // FUNÇÃO DE INATIVAÇÃO
-    const handleInativar = async (id) => {
-        const usuarioAlvo = usuarios.find(u => u.idUsuario === id);
+    const handleEditar = (id) => {
+        const usuarioAlvo = usuarios.find(u => u.id === id);
+        // Implementar a lógica de navegação para a tela de edição aqui, por exemplo:
+        // history.push(`/usuarios/editar/${id}`);
         
-        // Exemplo: Altera o estado 'ativo' para o oposto
-        const novoStatus = usuarioAlvo && usuarioAlvo.ativo !== undefined ? !usuarioAlvo.ativo : false; 
-        const acao = novoStatus ? 'ativar' : 'inativar';
-
-        if (!window.confirm(`Tem certeza que deseja ${acao} o usuário: ${usuarioAlvo.nome}?`)) {
-            return;
-        }
-
-        try {
-            setCarregando(true);
-            setErro(null);
-            setMensagemSucesso(null);
-
-            const resposta = await fetch(`${API_URL}/${id}`, {
-                method: 'PATCH', // Ou 'PUT', dependendo da sua API
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Adicione aqui outros headers, como Authorization, se necessário
-                },
-                body: JSON.stringify({ ativo: novoStatus }) // Envia o novo status
-            });
-
-            if (!resposta.ok) {
-                throw new Error(`Erro ao ${acao} usuário: ${resposta.statusText}`);
-            }
-            
-            // Se a operação for bem-sucedida, recarrega a lista para refletir a mudança
-            await buscarUsuarios(); 
-            setMensagemSucesso(`Usuário ID: ${usuarioAlvo.nome} ${acao}do com sucesso!`);
-            
-        } catch (e) {
-            setErro(`Falha ao ${acao} usuário: ${e.message}`);
-            console.error(`Erro na operação de ${acao}:`, e);
-        } finally {
-            setCarregando(false);
-        }
+        console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
+        alert(`Abrindo tela de edição para ${usuarioAlvo.nome}...`);
+        
+        // Se você não for usar a navegação do React Router, substitua o alert pela sua lógica.
     };
+
 
     // FUNÇÃO DE DELEÇÃO
     const handleDeletar = async (id) => {
@@ -143,38 +111,39 @@ function VisualizarUsuariosContent() {
                 <table className="tabela-usuarios">
                     <thead>
                         <tr>
-                            
                             <th>Nome</th>
                             <th>Email</th>
-                            <th>Status</th> {/* Coluna para o status (ativo/inativo) */}
+                            <th>cargo</th>
+                            <th>setor</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {usuarios.map(usuario => {
-                            // Assumindo que a propriedade de status é 'ativo' (booleana)
-                            const isAtivo = usuario.ativo !== undefined ? usuario.ativo : true; // Fallback para true
-                            const statusTexto = isAtivo ? 'Ativo' : 'Inativo';
+                           
 
                             return (
-                                <tr key={usuario.idUsuario} className={!isAtivo ? 'inativo' : ''}>
+                                <tr key={usuario.id_usuario}>
                                     <td>{usuario.nome}</td>
                                     <td>{usuario.email}</td>
+                                    <td>{usuario.cargo}</td>
+                                    <td>{usuario.setor}</td>
                                     
-                                    <td style={{ color: isAtivo ? 'green' : 'orange' }}>{statusTexto}</td>
                                     <td className="acoes-coluna-icones">
 
-                                        <div 
-                                            className={`toggle-switch ${isAtivo ? 'ativo' : 'inativo'}`}
-                                            onClick={() => handleInativar(usuario.idUsuario)}
-                                            title={isAtivo ? 'Inativar Usuário' : 'Ativar Usuário'}
+                                        <button 
+                                            className="btn-editar"
+                                            onClick={() => handleEditar(usuario.id_usuario)}
+                                            title="Editar Usuário"
+                                            style={{ marginRight: '10px' }} // Adiciona um pequeno espaço
                                         >
-                                            <div className="switch-ball"></div>
-                                        </div>
+                                            Editar
+                                        </button>
                                         
+                                        {/* BOTÃO DE DELETAR MANTIDO */}
                                         <button 
                                             className="btn-deletar"
-                                            onClick={() => handleDeletar(usuario.idUsuario)}
+                                            onClick={() => handleDeletar(usuario.id_usuario)}
                                             title="Deletar Usuário"
                                         >
                                             Deletar
@@ -189,7 +158,6 @@ function VisualizarUsuariosContent() {
         </div>
     );
 }
-
 
 
 export default function VisualizarUsuarios() {

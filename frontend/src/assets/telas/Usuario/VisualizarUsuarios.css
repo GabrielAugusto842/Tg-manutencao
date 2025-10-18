@@ -22,59 +22,15 @@
     border-color: rgb(255, 255, 255);
 }
 
-.btn-deletar-icone {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: 'Font Awesome 5 Free', 'Font Awesome', sans-serif;
-  font-weight: 900;
-  font-size: 1.2em;
-  color: #d83636;
-  padding: 0;
-  line-height: 1;
-  transition: color 0.3s;
-}
-
-.btn-deletar-icone:hover {
-  color: #931818;
-}
-
 .btn-deletar {
-    background-color: #be1e2e;
+    background-color: #f34254;
     color: white;
 }
 
-.toggle-switch {
-    width: 38px;
-    height: 20px;
-    border-radius: 10px;
-    background-color: #ccc;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    flex-shrink: 0;
+.btn-deletar:hover {
+    background-color: #ff0015;
 }
 
-.toggle-switch.ativo {
-    background-color: #003cff; 
-}
-
-.switch-ball {
-    width: 16px;
-    height: 16px;
-    background-color: white;
-    border-radius: 50%;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    transition: left 0.3s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-.toggle-switch.ativo .switch-ball {
-    /* Move a bolinha para a direita: (Largura do switch - Largura da bolinha - 2px de left) */
-    left: calc(100% - 18px); 
-}
 
 .tabela-usuarios td {
     border: 1px solid rgb(255, 255, 255); 
@@ -107,4 +63,17 @@
 .tabela-usuarios .inativo {
     background-color: #fff8e1; 
     opacity: 0.9;
+}
+
+.btn-editar {
+    background-color: #fbab34; /* Azul */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn-editar:hover {
+    background-color: #ff7300;
 }
