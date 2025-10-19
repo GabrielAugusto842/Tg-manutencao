@@ -30,19 +30,18 @@ function CadastrarUsuario() {
       return;
     }
 
-    // 3. Objeto com os dados a serem enviados (incluindo 'setor')
     const dadosUsuario = {
       email,
       password,
       nome,
       setor,
-      cargo, // Adicionar o setor
+      cargo, 
     };
 
     try {
       // Substitua '/api/cadastro' pela URL real do seu backend
       const response = await axios.post(
-        "http://localhost:5000/api/cadastroUsuario",
+        "http://localhost:3001/api/user",
         dadosUsuario
       );
 

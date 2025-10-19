@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Usuario/VisualizarUsuarios.css"
 
-// URL base da API
 const API_URL = "http://localhost:3001/api/user";
 
 function VisualizarUsuariosContent() {
@@ -54,7 +53,7 @@ function VisualizarUsuariosContent() {
 
     // FUNÇÃO DE DELEÇÃO
     const handleDeletar = async (id) => {
-        const usuarioAlvo = usuarios.find(u => u.idUsuario === id);
+        const usuarioAlvo = usuarios.find(u => u.id_usuario === id);
 
         if (!window.confirm(`Tem certeza que deseja DELETAR PERMANENTEMENTE o usuário: ${usuarioAlvo.nome}?`)) {
             return;
@@ -108,6 +107,7 @@ function VisualizarUsuariosContent() {
             {usuarios.length === 0 ? (
                 <p>Nenhum usuário cadastrado.</p>
             ) : (
+                <div className="tabela-wrapper">
                 <table className="tabela-usuarios">
                     <thead>
                         <tr>
@@ -154,6 +154,7 @@ function VisualizarUsuariosContent() {
                         })}
                     </tbody>
                 </table>
+            </div>
             )}
         </div>
     );

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserRepository } from "../repositories/userRepository";
 import { Usuario } from "../models/Usuario";
 import { db } from "../config/db";
+import bcrypt from 'bcryptjs';
 
 export class UsuarioController {
   private repository: UserRepository;

@@ -1,43 +1,68 @@
+/* ====================================================================
+   1. RESET E BASE GERAL
+   ==================================================================== */
+*, *::before, *::after {
+   box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------
+   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
+   -------------------------------------------------------------------- */
+body, #root, .app-container-principal {
+    height: 100vh;
+    width: 100vw;
+    display: flex; /* Define o layout como flexível */
+    overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+}
+
+/* ====================================================================
+   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
+   ==================================================================== */
 
 .visualizar-usuarios-page { 
     width: 100%; 
     box-sizing: border-box; 
+    padding: 20px;
 }
 
+.tabela-wrapper {
+    overflow-x: auto; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    border-radius: 8px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+/* ====================================================================
+   4. ESTILOS BASE DA TABELA
+   ==================================================================== */
+
 .tabela-usuarios {
+    table-layout: fixed;
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
-    margin-top: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
     background-color: rgb(206, 206, 206);
 }
 
-.tabela-usuarios td:last-child {
-    white-space: nowrap; 
-    display: flex;
-    gap: 4px;      
-    justify-content: center; 
-    align-items: center;
-    padding: 6px 6px;
-    border-color: rgb(255, 255, 255);
+.tabela-usuarios thead {
+    background-color: #84a8e5; 
+    /* IMPLEMENTAÇÃO DA LINHA FIXA */
+    position: sticky;
+    top: 0; /* Gruda no topo do container de rolagem */
+    z-index: 10; /* Garante que fique acima das linhas do corpo */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
 }
 
-.btn-deletar {
-    background-color: #f34254;
-    color: white;
-}
+/* --------------------------------------------------------------------
+   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
+   -------------------------------------------------------------------- */
 
-.btn-deletar:hover {
-    background-color: #ff0015;
-}
-
-
-.tabela-usuarios td {
-    border: 1px solid rgb(255, 255, 255); 
-    padding: 12px 10px;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 1.2em;
+.tabela-usuarios thead {
+    background-color: #84a8e5; 
 }
 
 .tabela-usuarios th {
@@ -46,13 +71,27 @@
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.9em;
+    padding: 12px 10px;
 }
 
-.tabela-usuarios td button {
-    width: 80px;
-    padding: 15px;
-    font-size: 0.8em;
-    font-weight: 500;
+.tabela-usuarios th:nth-child(1) { width: 20%; } /* Nome */
+.tabela-usuarios th:nth-child(2) { width: 30%; } /* Email */
+.tabela-usuarios th:nth-child(3) { width: 15%; } /* Cargo */
+.tabela-usuarios th:nth-child(4) { width: 15%; } /* Setor */
+.tabela-usuarios th:nth-child(5) { width: 20%; } /* Ações */
+
+
+/* --------------------------------------------------------------------
+   6. CÉLULAS E INTERAÇÃO
+   -------------------------------------------------------------------- */
+
+.tabela-usuarios td {
+    border: 1px solid rgb(255, 255, 255); 
+    padding: 12px 10px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1em; 
+    word-wrap: break-word;
 }
 
 .tabela-usuarios tr:hover {
@@ -60,20 +99,45 @@
     border-color: #fdfeff;
 }
 
-.tabela-usuarios .inativo {
-    background-color: #fff8e1; 
-    opacity: 0.9;
+/* --------------------------------------------------------------------
+   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
+   -------------------------------------------------------------------- */
+
+.tabela-usuarios td:last-child {
+    white-space: normal; 
+    display: flex;
+    gap: 8px; 
+    justify-content: center; 
+    align-items: center;
+    padding: 6px 6px;
+    border-color: rgb(255, 255, 255);
 }
 
-.btn-editar {
-    background-color: #fbab34; /* Azul */
-    color: white;
+.tabela-usuarios td button {
+    width: 80px;
+    padding: 15px;
+    font-size: 0.8em;
+    font-weight: 500;
     border: none;
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.3s;
 }
 
+.btn-editar {
+    background-color: #fbab34; 
+    color: white;
+}
+
 .btn-editar:hover {
     background-color: #ff7300;
+}
+
+.btn-deletar {
+    background-color: #f34254;
+    color: white;
+}
+
+.btn-deletar:hover {
+   background-color: #ff0015;
 }
