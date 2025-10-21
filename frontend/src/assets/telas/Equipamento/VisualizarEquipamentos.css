@@ -25,7 +25,7 @@ body,
    3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
    ==================================================================== */
 
-.visualizar-ordens-page {
+.visualizar-equipamentos-page {
   width: 100%;
   box-sizing: border-box;
   padding: 20px;
@@ -43,7 +43,7 @@ body,
    4. ESTILOS BASE DA TABELA
    ==================================================================== */
 
-.tabela-ordens {
+.tabela-equipamentos {
   table-layout: fixed;
   width: 100%;
   min-width: 1000px;
@@ -52,7 +52,7 @@ body,
   background-color: rgb(206, 206, 206);
 }
 
-.tabela-ordens thead {
+.tabela-equipamentos thead {
   background-color: #84a8e5;
   /* IMPLEMENTAÇÃO DA LINHA FIXA */
   position: sticky;
@@ -65,11 +65,11 @@ body,
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
    -------------------------------------------------------------------- */
 
-.tabela-ordens thead {
+.tabela-equipamentos thead {
   background-color: #84a8e5;
 }
 
-.tabela-ordens th {
+.tabela-equipamentos th {
   background-color: #84a8e5;
   color: #000000;
   font-weight: bold;
@@ -78,28 +78,28 @@ body,
   padding: 12px 10px;
 }
 
-.tabela-ordens th:nth-child(1) {
-  width: 22%;
+.tabela-equipamentos th:nth-child(1) {
+  width: 18%;
 } /* Nome */
-.tabela-ordens th:nth-child(2) {
+.tabela-equipamentos th:nth-child(2) {
   width: 20%;
 } /* Marca */
-.tabela-ordens th:nth-child(3) {
+.tabela-equipamentos th:nth-child(3) {
   width: 20%;
 } /* Modelo */
-.tabela-ordens th:nth-child(4) {
+.tabela-equipamentos th:nth-child(4) {
   width: 20%;
 } /* Número de Série */
-.tabela-ordens th:nth-child(5) {
-  width: 15%;
+.tabela-equipamentos th:nth-child(5) {
+  width: 20%;
 } /* Tag */
-.tabela-ordens th:nth-child(6) {
+.tabela-equipamentos th:nth-child(6) {
   width: 20%;
 } /* Prod. p/ Hora */
-.tabela-ordens th:nth-child(7) {
+.tabela-equipamentos th:nth-child(7) {
   width: 20%;
 } /* ID Setor */
-.tabela-ordens th:nth-child(8) {
+.tabela-equipamentos th:nth-child(8) {
   width: 22%;
 } /* Ações (Precisa de espaço para os dois botões) */
 
@@ -107,7 +107,7 @@ body,
    6. CÉLULAS E INTERAÇÃO
    -------------------------------------------------------------------- */
 
-.tabela-ordens td {
+.tabela-equipamentos td {
   border: 1px solid rgb(255, 255, 255);
   padding: 12px 10px;
   text-align: center;
@@ -116,7 +116,7 @@ body,
   word-wrap: break-word;
 }
 
-.tabela-ordens tr:hover {
+.tabela-equipamentos tr:hover {
   background-color: #93d4ff;
   border-color: #fdfeff;
 }
@@ -125,18 +125,18 @@ body,
    7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
    -------------------------------------------------------------------- */
 
-.tabela-ordens td:last-child {
+.tabela-equipamentos td:last-child {
   white-space: normal;
   display: flex;
   gap: 8px;
   justify-content: center;
   align-items: center;
-  padding: 22px 10px;
+  padding: 16px 10px;
   border-color: rgb(255, 255, 255);
 }
 
-.tabela-ordens td button {
-  width:90px;
+.tabela-equipamentos td button {
+  width: 80px;
   padding: 15px;
   font-size: 0.8em;
   font-weight: 500;
@@ -146,8 +146,8 @@ body,
   transition: background-color 0.3s;
 }
 
-.btn-aceitar {
-  background-color: #41ff01;
+.btn-editar {
+  background-color: #fbab34;
   color: white;
 }
 
@@ -155,4 +155,11 @@ body,
   background-color: #ff7300;
 }
 
+.btn-deletar {
+  background-color: #f34254;
+  color: white;
+}
 
+.btn-deletar:hover {
+  background-color: #ff0015;
+}

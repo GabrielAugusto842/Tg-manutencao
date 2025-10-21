@@ -1,6 +1,5 @@
-
 .form-row {
-  display: flex; 
+  display: flex;
   gap: 0px;
   flex-wrap: wrap;
   margin-bottom: 20px;
@@ -10,7 +9,7 @@
   margin-bottom: 1px;
   display: flex;
   align-items: flex-start;
-  padding:0;
+  padding: 0;
 }
 
 .form-group label {
@@ -24,8 +23,7 @@
 }
 
 .half-width {
-  width: calc(50% - 7.5px); 
-
+  width: calc(50% - 7.5px);
 }
 
 .form-group.half-width input,
@@ -36,7 +34,7 @@
 
 @media (min-width: 769px) {
   .form-row {
-    gap: 30px; 
+    gap: 30px;
   }
 }
 
