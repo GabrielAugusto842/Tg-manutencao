@@ -28,7 +28,7 @@ export const login = async (req: Request, res: Response) => {
       }
     );
 
-    res.json({ token });
+    res.json({ token, user: { id: user.id_usuario, nome: user.nome, email: user.email } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro no servidor" });

@@ -8,13 +8,37 @@ const Navbar = ({title}) => {
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef();
+  const [user, setUser] = useState({ name: "Usuário", email: "email@exemplo.com" });
 
-  const user = {
-    name: "Nick Jhony",
-    email: "Nick@jhony.com.br",
-  };
+useEffect(() => {
+  try {
+    const storedUser = localStorage.getItem("user");
+
+    // Garante que o valor é realmente uma string JSON válida
+    if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
+      const parsedUser = JSON.parse(storedUser);
+
+      // Confirma que o objeto realmente tem os campos esperados
+      if (parsedUser && parsedUser.name && parsedUser.email) {
+        setUser(parsedUser);
+      } else {
+        console.warn("Usuário inválido no localStorage:", parsedUser);
+      }
+    } else {
+      console.warn("Nenhum usuário válido encontrado no localStorage.");
+    }
+  } catch (error) {
+    console.error("Erro ao carregar usuário:", error);
+    // Se der erro, evita travar a aplicação e limpa o valor corrompido
+    localStorage.removeItem("user");
+  }
+}, []);
+
 
   const handleLogout = () => {
+    
+     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

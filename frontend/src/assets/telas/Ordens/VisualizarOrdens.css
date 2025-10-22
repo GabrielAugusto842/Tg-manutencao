@@ -79,29 +79,40 @@ body,
 }
 
 .tabela-ordens th:nth-child(1) {
-  width: 22%;
-} /* Nome */
+  width: 8%; /* 8% */
+} 
+/* 2. Descricao (A que mais precisa de espaço) */
 .tabela-ordens th:nth-child(2) {
-  width: 20%;
-} /* Marca */
+  width: 22%; /* 25% */
+} 
+/* 3. data_inicio */
 .tabela-ordens th:nth-child(3) {
-  width: 20%;
-} /* Modelo */
+  width: 12%; /* 12% */
+} 
+/* 4. data_termino */
 .tabela-ordens th:nth-child(4) {
-  width: 20%;
-} /* Número de Série */
+  width: 12%; /* 12% */
+} 
+/* 5. custo */
 .tabela-ordens th:nth-child(5) {
-  width: 15%;
-} /* Tag */
+  width: 8%; /* 8% */
+} 
+/* 6. id_usuario */
 .tabela-ordens th:nth-child(6) {
-  width: 20%;
-} /* Prod. p/ Hora */
+  width: 8%; /* 8% */
+} 
+/* 7. id_estado */
 .tabela-ordens th:nth-child(7) {
-  width: 20%;
-} /* ID Setor */
+  width: 8%; /* 8% */
+} 
+/* 8. id_maquina */
 .tabela-ordens th:nth-child(8) {
-  width: 22%;
-} /* Ações (Precisa de espaço para os dois botões) */
+  width: 8%; /* 8% */
+} 
+/* 9. acoes (Espaço para o botão 'ACEITAR') */
+.tabela-ordens th:nth-child(9) {
+  width: 11%; /* 11% (Total: 8+25+12+12+8+8+8+8+11 = 100%) */
+}
 
 /* --------------------------------------------------------------------
    6. CÉLULAS E INTERAÇÃO

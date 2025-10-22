@@ -96,11 +96,13 @@ function VisualizarOrdensContent() {
                 <th>id_usuario</th>
                 <th>id_estado</th>
                 <th>id_maquina</th>
+                <th>acoes</th>
               </tr>
             </thead>
             <tbody>
               {ordem.map((ordem) => (
                 <tr key={ordem.id_maquina}>
+                  <td>{ordem.id_ordem}</td>
                   <td>{ordem.descricao}</td>
                   <td>{ordem.data_inicio}</td>
                   <td>{ordem.data_termino}</td>

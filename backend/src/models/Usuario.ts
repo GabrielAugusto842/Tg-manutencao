@@ -1,4 +1,5 @@
 export class Usuario {
+  id_usuario: any;
   constructor(
     public id: number,
     public nome: string,
