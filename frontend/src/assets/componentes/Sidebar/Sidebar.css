@@ -7,6 +7,9 @@
     color: #fff;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--shadow-sidebar);
+    z-index: 10; /* Garante que ela esteja acima de tudo, exceto o dropdown do perfil */
+    flex-shrink: 0; 
   }
   
   .logo {

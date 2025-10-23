@@ -1,17 +1,21 @@
 .navbar {
   height: 80px;
-  background-color: #f1f3f5;
+ background-image: 
+    linear-gradient(rgba(231, 229, 229, 0.2), rgba(67, 145, 209, 0.804)),
+    url('../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg');
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 40px;
   border-bottom: 1px solid #ccc;
+  box-shadow: var(--shadow-navbar); 
+  flex-shrink: 0; /* Garante que a navbar não encolha */
 }
 
 .navbar-title {
-  font-size: 30px;
+  font-size: 50px;
   font-weight: bold;
-  color: #333;
+  color: #fff;
 }
 
 .navbar-actions-group {
@@ -41,7 +45,7 @@
 
 .dropdown-arrow-icon {
   font-size: 18px;
-  color: #333;
+  color: #ffffff;
   margin-right: 0px;
   z-index: 10;
   transition: transform 0.2s;
@@ -49,7 +53,7 @@
 
 .profile-icon {
   font-size: 38px;
-  color: #333;
+  color: #ffffff;
 }
 
 .profile-menu {
