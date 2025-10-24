@@ -1,7 +1,7 @@
 .navbar {
   height: 80px;
  background-image: 
-    linear-gradient(rgba(231, 229, 229, 0.2), rgba(67, 145, 209, 0.804)),
+    linear-gradient(rgba(83, 82, 82, 0.2), rgba(80, 163, 236, 0.804)),
     url('../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg');
   display: flex;
   align-items: center;
