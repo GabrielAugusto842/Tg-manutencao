@@ -39,7 +39,6 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-
 export const checkToken = (req: Request, res: Response) => {
   const authHeader = req.headers.authorization;
 
@@ -50,7 +49,7 @@ export const checkToken = (req: Request, res: Response) => {
   const parts = authHeader.split(" ");
   const token = parts[1];
 
-    if (!token) {
+  if (!token) {
     return res.status(401).json({ message: "Token malformado" });
   }
 
@@ -65,5 +64,3 @@ export const checkToken = (req: Request, res: Response) => {
     return res.status(401).json({ message: "❌ Token inválido ou expirado" });
   }
 };
-
-

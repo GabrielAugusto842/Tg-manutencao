@@ -10,8 +10,12 @@ import VisualizarUsuarios from "./assets/telas/Usuario/VisualizarUsuarios";
 import CadastrarEquipamentos from "./assets/telas/Equipamento/CadastrarEquipamentos";
 import VisualizarEquipamentos from "./assets/telas/Equipamento/VisualizarEquipamentos";
 import Relatorios from "./assets/telas/Relatórios/Relatorios"
+import { useTokenExpiration } from "./useTokenExpiration";
 
 function App() {
+
+  useTokenExpiration();
+
   return (
     <BrowserRouter>
       <Routes>

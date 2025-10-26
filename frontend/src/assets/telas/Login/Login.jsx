@@ -2,7 +2,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { useState } from "react";
 import "./Login.css";
 import backgroundImage from "../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg";
-import axios from "axios";
+import api from "../../Services/api.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,16 +13,21 @@ const Login = () => {
     event.preventDefault();
     setErrorMessage("");
 
-    try {
-      const res = await axios.post("http://localhost:3001/api/auth/login", {
-        email,
-        password,
-      });
+     try {
+      const res = await api.post("auth/login", { email, password });
 
-      
+      // Salva o token
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      
+
+      // Salva todos os dados do usuário que você espera usar no Navbar
+      const user = {
+        id_usuario: res.data.user.id,
+        nome: res.data.user.nome,
+        email: res.data.user.email,
+        cargo: res.data.user.cargo || "", // caso o backend não envie, deixa vazio
+        setor: res.data.user.setor || "",
+      };
+      localStorage.setItem("user", JSON.stringify(user));
 
       window.location.href = "/home";
     } catch (error) {

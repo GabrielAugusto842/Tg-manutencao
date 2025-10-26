@@ -18,7 +18,11 @@ function VisualizarUsuariosContent() {
             setErro(null);
             setMensagemSucesso(null);
 
-            const resposta = await fetch(API_URL);
+            const resposta = await fetch(API_URL, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
 
             if (!resposta.ok) {
                 throw new Error(`Erro ao buscar dados: ${resposta.statusText}`);

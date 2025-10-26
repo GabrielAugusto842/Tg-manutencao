@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import usuarioRoutes from "./routes/usuarioRoutes";
-import { Usuario } from "./models/Usuario";
+import { authMiddleware } from "./middleware/authMiddleware";
 
 dotenv.config();
 
@@ -20,9 +20,9 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", usuarioRoutes);
+app.use("/api/user", authMiddleware, usuarioRoutes);
 
+app.use("/api/auth", authRoutes);
 
 
 const PORT = process.env.PORT || 3001;

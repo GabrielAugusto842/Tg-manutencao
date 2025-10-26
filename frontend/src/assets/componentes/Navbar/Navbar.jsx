@@ -19,7 +19,7 @@ useEffect(() => {
       const parsedUser = JSON.parse(storedUser);
 
       // Confirma que o objeto realmente tem os campos esperados
-      if (parsedUser && parsedUser.name && parsedUser.email) {
+      if (parsedUser && parsedUser.nome && parsedUser.email) {
         setUser(parsedUser);
       } else {
         console.warn("Usuário inválido no localStorage:", parsedUser);
