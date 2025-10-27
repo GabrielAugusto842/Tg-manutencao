@@ -2,6 +2,10 @@ import { useEffect } from "react";
 
 export function useTokenExpiration() {
   useEffect(() => {
+
+    const CHECK_INTERVAL = 300000;
+
+
     const interval = setInterval(() => {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -26,7 +30,7 @@ export function useTokenExpiration() {
         localStorage.removeItem("user");
         window.location.href = "/login";
       }
-    }, 5000); // verifica a cada 5s
+    }, 300000); // verifica a cada 5s
 
     return () => clearInterval(interval);
   }, []);

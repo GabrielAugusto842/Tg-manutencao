@@ -46,6 +46,13 @@ useEffect(() => {
     setOpenProfile(!openProfile);
   };
 
+  const handleTrocarSenha = () => {
+    setOpenProfile(false);
+    navigate("/trocar-senha");
+  };
+
+  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -82,7 +89,7 @@ useEffect(() => {
 
           <button
             className="menu-option"
-            onClick={() => alert("Trocar senha clicando")}
+            onClick={handleTrocarSenha}
           >
             <IoRefreshCircleOutline className="option-icon" /> Trocar senha
           </button>

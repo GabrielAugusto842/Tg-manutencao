@@ -11,6 +11,8 @@ import CadastrarEquipamentos from "./assets/telas/Equipamento/CadastrarEquipamen
 import VisualizarEquipamentos from "./assets/telas/Equipamento/VisualizarEquipamentos";
 import Relatorios from "./assets/telas/Relatórios/Relatorios"
 import { useTokenExpiration } from "./useTokenExpiration";
+import Layout from "./assets/componentes/Layout/Layout";
+import TrocarSenhaPage from "./assets/telas/TrocarSenhaPage";
 
 function App() {
 
@@ -22,6 +24,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/trocar-senha" element={<TrocarSenhaPage/>} />
 
         {/* Ordens */}
         <Route path="/ordens/cadastrar" element={<CadastrarOrdens />} />

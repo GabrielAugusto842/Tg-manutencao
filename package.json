@@ -3,6 +3,7 @@
     "prisma": "^6.16.2"
   },
   "dependencies": {
+    "express-list-endpoints": "^7.1.1",
     "jwt-decode": "^4.0.0"
   }
 }

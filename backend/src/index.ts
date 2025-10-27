@@ -3,13 +3,18 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import usuarioRoutes from "./routes/usuarioRoutes";
-import { authMiddleware } from "./middleware/authMiddleware";
+import listEndpoints from "express-list-endpoints";
 
 dotenv.config();
 
 const app: Application = express();
 app.use(express.json());
 
+
+app.use((req, res, next) => {
+  console.log(`REQ: ${req.method} ${req.url}`);
+  next();
+});
 
 //Conexão com o FRONTEND
 app.use(
@@ -20,11 +25,13 @@ app.use(
   })
 );
 
-app.use("/api/user", authMiddleware, usuarioRoutes);
+app.use("/api/user", usuarioRoutes);
 
 app.use("/api/auth", authRoutes);
 
+console.table(listEndpoints(app));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));
+
 

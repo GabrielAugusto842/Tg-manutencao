@@ -1,0 +1,169 @@
+/* ====================================================================
+   1. RESET E BASE GERAL
+   ==================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------
+   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
+   -------------------------------------------------------------------- */
+body,
+#root,
+.app-container-principal {
+  height: 100vh;
+  width: 100vw;
+  display: flex; /* Define o layout como flexível */
+  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+}
+
+/* ====================================================================
+   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
+   ==================================================================== */
+
+.visualizar-ordens-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.tabela-wrapper {
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+/* ====================================================================
+   4. ESTILOS BASE DA TABELA
+   ==================================================================== */
+
+.tabela-ordens {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(206, 206, 206);
+}
+
+.tabela-ordens thead {
+  background-color: #84a8e5;
+  /* IMPLEMENTAÇÃO DA LINHA FIXA */
+  position: sticky;
+  top: 0; /* Gruda no topo do container de rolagem */
+  z-index: 10; /* Garante que fique acima das linhas do corpo */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+}
+
+/* --------------------------------------------------------------------
+   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
+   -------------------------------------------------------------------- */
+
+.tabela-ordens thead {
+  background-color: #84a8e5;
+}
+
+.tabela-ordens th {
+  background-color: #84a8e5;
+  color: #000000;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  padding: 12px 10px;
+}
+
+.tabela-ordens th:nth-child(1) {
+  width: 8%; /* 8% */
+} 
+/* 2. Descricao (A que mais precisa de espaço) */
+.tabela-ordens th:nth-child(2) {
+  width: 22%; /* 25% */
+} 
+/* 3. data_inicio */
+.tabela-ordens th:nth-child(3) {
+  width: 12%; /* 12% */
+} 
+/* 4. data_termino */
+.tabela-ordens th:nth-child(4) {
+  width: 12%; /* 12% */
+} 
+/* 5. custo */
+.tabela-ordens th:nth-child(5) {
+  width: 8%; /* 8% */
+} 
+/* 6. id_usuario */
+.tabela-ordens th:nth-child(6) {
+  width: 8%; /* 8% */
+} 
+/* 7. id_estado */
+.tabela-ordens th:nth-child(7) {
+  width: 8%; /* 8% */
+} 
+/* 8. id_maquina */
+.tabela-ordens th:nth-child(8) {
+  width: 8%; /* 8% */
+} 
+/* 9. acoes (Espaço para o botão 'ACEITAR') */
+.tabela-ordens th:nth-child(9) {
+  width: 11%; /* 11% (Total: 8+25+12+12+8+8+8+8+11 = 100%) */
+}
+
+/* --------------------------------------------------------------------
+   6. CÉLULAS E INTERAÇÃO
+   -------------------------------------------------------------------- */
+
+.tabela-ordens td {
+  border: 1px solid rgb(255, 255, 255);
+  padding: 12px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.tabela-ordens tr:hover {
+  background-color: #93d4ff;
+  border-color: #fdfeff;
+}
+
+/* --------------------------------------------------------------------
+   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
+   -------------------------------------------------------------------- */
+
+.tabela-ordens td:last-child {
+  white-space: normal;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 22px 10px;
+  border-color: rgb(255, 255, 255);
+}
+
+.tabela-ordens td button {
+  width:90px;
+  padding: 15px;
+  font-size: 0.8em;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.btn-aceitar {
+  background-color: #41ff01;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #ff7300;
+}
+
+
