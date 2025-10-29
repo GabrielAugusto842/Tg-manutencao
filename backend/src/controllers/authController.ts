@@ -13,12 +13,12 @@ export const login = async (req: Request, res: Response) => {
     const user = await userRepository.findByEmail(email);
 
     if (!user) {
-      return res.status(401).json({ message: "Usuário não encontrado" });
+      return res.status(401).json({ message: "E-mail ou senha inválidos" });
     }
 
     const senhaCorreta = await bcrypt.compare(password, user.senha);
     if (!senhaCorreta) {
-      return res.status(401).json({ message: "Senha incorreta" });
+      return res.status(401).json({ message: "E-mail ou senha inválidos" });
     }
 
     const token = jwt.sign(

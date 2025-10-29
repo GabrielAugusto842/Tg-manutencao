@@ -26,11 +26,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && [401, 403].includes(error.response.status)) {
-      alert("Sua sessão expirou. Faça login novamente.");
+    const originalRequest = error.config;
+
+    if (
+      error.response &&
+      [401, 403].includes(error.response.status) &&
+      !originalRequest.url.includes("/auth/login") &&
+      !originalRequest.url.includes("/auth/trocar-senha")
+    ) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/";
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

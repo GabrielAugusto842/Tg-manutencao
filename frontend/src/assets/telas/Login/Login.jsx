@@ -13,7 +13,7 @@ const Login = () => {
     event.preventDefault();
     setErrorMessage("");
 
-     try {
+    try {
       const res = await api.post("auth/login", { email, password });
 
       // Salva o token
@@ -30,16 +30,22 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       window.location.href = "/home";
+
     } catch (error) {
-      console.error("Erro de login:", error);
-      if (error.response && error.response.status === 401) {
-        setErrorMessage("E-mail ou senha inválidos.");
-      } else {
-        setErrorMessage(
-          "Erro ao conectar. Verifique sua conexão ou tente mais tarde."
-        );
-      }
+  const msg = error.response?.data?.message || "Ocorreu um erro";
+  setErrorMessage(msg); // mostra mensagem do backend
+
+
+  // Exibe a mensagem do backend diretamente
+  setErrorMessage(msg);
+
+  // Limpeza de token só se for 403 (sessão expirada)
+  if (status === 403) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
     }
+    
   };
 
   return (
@@ -83,6 +89,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    autoComplete="username"
                   />
                   <FaUser className="icon" />
                 </div>
@@ -93,6 +100,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="current-password"
                   />
                   <FaLock className="icon" />
                 </div>
