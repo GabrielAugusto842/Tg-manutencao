@@ -12,7 +12,7 @@ import VisualizarEquipamentos from "./assets/telas/Equipamento/VisualizarEquipam
 import Relatorios from "./assets/telas/Relatórios/Relatorios"
 import { useTokenExpiration } from "./useTokenExpiration";
 import Layout from "./assets/componentes/Layout/Layout";
-import TrocarSenhaPage from "./assets/telas/TrocarSenhaPage";
+import TrocarSenha from "./assets/telas/TrocarSenha";
 
 function App() {
 
@@ -24,7 +24,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/trocar-senha" element={<TrocarSenhaPage/>} />
+        <Route path="/trocar-senha" element={<TrocarSenha/>} />
 
         {/* Ordens */}
         <Route path="/ordens/cadastrar" element={<CadastrarOrdens />} />
