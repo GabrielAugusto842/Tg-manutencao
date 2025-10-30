@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
+import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
 const ordensFAKE = [
   {
@@ -28,7 +29,7 @@ function VisualizarOrdensContent() {
     // Simula o tempo de rede
 
     setTimeout(() => {
-      setOrdem([...ordensFAKE]); 
+      setOrdem([...ordensFAKE]);
       setCarregando(false);
     }, 500);
   };
@@ -37,19 +38,23 @@ function VisualizarOrdensContent() {
     buscarOrdensSimulada();
   }, []);
 
+  const handleAceitar = (id) => {
+    alert(`Aceitar ordem ${id}`);
+  };
+
   const handleEditar = (id) => {
     const ordemAlvo = ordem.find((e) => e.id_ordem === id) || {
       descricao: "Ordem",
       custo: "N/A",
     };
 
-    console.log(`Função de Edição chamada para a máquina ID: ${id}.`);
-    alert(
-      `Implementar navegação para edição da máquina: ${ordemAlvo.descricao} (${ordemAlvo.custo})...`
-    );
+    alert(`Editar: ${ordemAlvo.descricao} (${ordemAlvo.custo})`);
   };
 
-  
+  const handleExcluir = (id) => {
+    alert(`Excluir ordem ${id}`);
+  };
+
   if (carregando) {
     return (
       <div className="container">
@@ -80,8 +85,8 @@ function VisualizarOrdensContent() {
 
       {ordem.length === 0 ? (
         <p>
-          Nenhuma Ordem cadastrada. (A lista pode estar vazia devido à
-          simulação de exclusão.)
+          Nenhuma Ordem cadastrada. (A lista pode estar vazia devido à simulação
+          de exclusão.)
         </p>
       ) : (
         <div className="tabela-wrapper">
@@ -114,13 +119,45 @@ function VisualizarOrdensContent() {
                   <td className="acoes-coluna-icones">
                     <button
                       className="btn-aceitar"
-                      onClick={() => handleEditar(ordem.id_ordem)}
-                      title="Editar Máquina"
-                      style={{ marginRight: "10px" }}
+                      onClick={() => handleAceitar(ordem.id_ordem)}
+                      title="Aceitar"
+                      style={{
+                        color: "green",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
-                      ACEITAR
+                      <FaCheckCircle size={20} />
                     </button>
 
+                    <button
+                      className="btn-editar"
+                      onClick={() => handleEditar(ordem.id_ordem)}
+                      title="Editar"
+                      style={{
+                        color: "blue",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FaEdit size={20} />
+                    </button>
+
+                    <button
+                      className="btn-excluir"
+                      onClick={() => handleExcluir(ordem.id_ordem)}
+                      title="Excluir"
+                      style={{
+                        color: "red",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FaTrash size={20} />
+                    </button>
                   </td>
                 </tr>
               ))}
