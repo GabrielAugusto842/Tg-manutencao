@@ -15,7 +15,7 @@ const TrocarSenha = () => {
     setMensagem("");
 
     if (novaSenha !== confirmarSenha) {
-      setErro("As senhas não conferem.");
+      setErro("As senhas novas são diferentes.");
       return;
     }
 

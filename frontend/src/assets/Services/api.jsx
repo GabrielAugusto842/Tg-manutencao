@@ -28,15 +28,15 @@ api.interceptors.response.use(
   (error) => {
     const originalRequest = error.config;
 
-    if (
-      error.response &&
-      [401, 403].includes(error.response.status) &&
-      !originalRequest.url.includes("/auth/login") 
-    ) {
+    const isAuthError = [401, 403].includes(error.response?.status);
+    const isLoginRoute = originalRequest?.url?.includes("/auth/login");
+
+    if (isAuthError && !isLoginRoute) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );

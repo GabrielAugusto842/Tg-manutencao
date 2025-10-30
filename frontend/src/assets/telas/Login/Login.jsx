@@ -11,10 +11,10 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setErrorMessage("");
-
+    
     try {
-      const res = await api.post("auth/login", { email, password });
+      setErrorMessage("");
+      const res = await api.post("/auth/login", { email, password });
 
       // Salva o token
       localStorage.setItem("token", res.data.token);
@@ -30,22 +30,20 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       window.location.href = "/home";
-
     } catch (error) {
-  const msg = error.response?.data?.message || "Ocorreu um erro";
-  setErrorMessage(msg); // mostra mensagem do backend
+      const status = error.response?.status;
+      const msg = error.response?.data?.message || "Ocorreu um erro";
+      setErrorMessage(msg); // mostra mensagem do backend
 
+      // Exibe a mensagem do backend diretamente
+      setErrorMessage(msg);
 
-  // Exibe a mensagem do backend diretamente
-  setErrorMessage(msg);
-
-  // Limpeza de token só se for 403 (sessão expirada)
-  if (status === 403) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }
+      // Limpeza de token só se for 403 (sessão expirada)
+      if (status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
-    
   };
 
   return (
