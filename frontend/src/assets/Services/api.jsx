@@ -31,8 +31,7 @@ api.interceptors.response.use(
     if (
       error.response &&
       [401, 403].includes(error.response.status) &&
-      !originalRequest.url.includes("/auth/login") &&
-      !originalRequest.url.includes("/auth/trocar-senha")
+      !originalRequest.url.includes("/auth/login") 
     ) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");

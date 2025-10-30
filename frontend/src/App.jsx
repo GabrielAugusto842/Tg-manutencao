@@ -25,6 +25,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/trocar-senha" element={<TrocarSenha/>} />
+        
 
         {/* Ordens */}
         <Route path="/ordens/cadastrar" element={<CadastrarOrdens />} />

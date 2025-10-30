@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
+import api from "../Services/api.jsx";
+import "../telas/TrocarSenha.css";
 
 const TrocarSenha = () => {
-  const navigate = useNavigate();
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
-  const [confirmNovaSenha, setConfirmNovaSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
 
@@ -15,80 +14,74 @@ const TrocarSenha = () => {
     setErro("");
     setMensagem("");
 
-    // Validações simples
-    if (!senhaAtual || !novaSenha || !confirmNovaSenha) {
-      setErro("Todos os campos são obrigatórios.");
-      return;
-    }
-
-    if (novaSenha !== confirmNovaSenha) {
-      setErro("A nova senha e a confirmação não coincidem.");
+    if (novaSenha !== confirmarSenha) {
+      setErro("As senhas não conferem.");
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3002/trocar-senha", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          senhaAtual,
-          novaSenha,
-        }),
+      const res = await api.put("/auth/trocar-senha", {
+        senhaAtual,
+        novaSenha,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Erro ao trocar senha.");
-      }
+      setMensagem(res.data.message || "Senha alterada com sucesso!");
 
-      setMensagem("Senha alterada com sucesso!");
-      // Opcional: redirecionar para outra página
-      setTimeout(() => navigate("/"), 2000);
-    } catch (err) {
-      setErro(err.message);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmarSenha("");
+    } catch (error) {
+      const msg = error.response?.data?.message || "Erro ao trocar a senha.";
+      setErro(msg);
     }
   };
 
   return (
     <div className="trocar-senha-container">
       <h2>Trocar Senha</h2>
-      <form onSubmit={handleSubmit} className="trocar-senha-form">
-        <label>
-          Senha Atual:
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label>Senha Atual</label>
           <input
             type="password"
             value={senhaAtual}
             onChange={(e) => setSenhaAtual(e.target.value)}
+            required
           />
-        </label>
+        </div>
 
-        <label>
-          Nova Senha:
+        <div className="input-group">
+          <label>Nova Senha</label>
           <input
             type="password"
             value={novaSenha}
             onChange={(e) => setNovaSenha(e.target.value)}
+            required
           />
-        </label>
+        </div>
 
-        <label>
-          Confirmar Nova Senha:
+        <div className="input-group">
+          <label>Confirmar Nova Senha</label>
           <input
             type="password"
-            value={confirmNovaSenha}
-            onChange={(e) => setConfirmNovaSenha(e.target.value)}
+            value={confirmarSenha}
+            onChange={(e) => setConfirmarSenha(e.target.value)}
+            required
           />
-        </label>
+        </div>
 
-        <button type="submit">Trocar Senha</button>
+        <button type="submit">Salvar</button>
+
+        {mensagem && <p className="success">{mensagem}</p>}
+        {erro && <p className="error">{erro}</p>}
       </form>
-
-      {mensagem && <p className="mensagem-sucesso">{mensagem}</p>}
-      {erro && <p className="mensagem-erro">{erro}</p>}
     </div>
   );
 };
