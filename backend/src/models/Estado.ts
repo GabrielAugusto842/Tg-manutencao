@@ -3,10 +3,10 @@ export class Estado {
     private codigo: number;
     private status: string;
 
-    constructor(idEstado: number, codigo: number, status: string) {
-        this.idEstado = idEstado;
-        this.codigo = codigo;
-        this.status = status;
+    constructor(data: {id_estado: number, codigo: number, status: string}) {
+        this.idEstado = data.id_estado;
+        this.codigo = data.codigo;
+        this.status = data.status;
     }
 
     public get getIdEstado(): number {

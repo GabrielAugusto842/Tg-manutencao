@@ -4,11 +4,11 @@ export class Cargo {
     private cargo: string;
     private descricao: string | null;
 
-    constructor(idCargo: number, codigo: number, cargo: string, descricao: string | null) {
-        this.idCargo = idCargo;
-        this.codigo = codigo;
-        this.cargo = cargo;
-        this.descricao = descricao;
+    constructor(data: {id_cargo: number, codigo: number, cargo: string, descricao: string | null}) {
+        this.idCargo = data.id_cargo;
+        this.codigo = data.codigo;
+        this.cargo = data.cargo;
+        this.descricao = data.descricao;
     }
 
     public get getIdCargo(): number {
