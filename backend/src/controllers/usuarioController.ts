@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { UserRepository } from "../repositories/userRepository";
 import { Usuario } from "../models/Usuario";
 import { db } from "../config/db";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 export class UsuarioController {
   private repository: UserRepository;
@@ -43,4 +43,31 @@ export class UsuarioController {
     }
   }
 
+  public async cadastroUsuario(req: Request, res: Response): Promise<void> {
+    const { nome, email, password, id_cargo, id_setor } = req.body;
+
+    const saltRounds = 10;
+
+    if (!id_cargo || !id_setor) {
+      res.status(400).json({ message: "ID de Cargo ou Setor ausente." });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const novoUsuario: Partial<Usuario> = {
+      nome,
+      email,
+      senha: hashedPassword,
+      id_cargo,
+      id_setor,
+    };
+
+    await this.repository.createUsuario(novoUsuario);
+
+    res.status(201).json({
+      message: "Usuário cadastrado com sucesso!",
+      usuario: { nome, email, id_cargo, id_setor },
+    });
+  }
 }

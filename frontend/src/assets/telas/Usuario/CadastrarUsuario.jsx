@@ -7,35 +7,58 @@ function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [cargo, setCargo] = useState(""); // Novo estado para o setor
+  const [cargo, setCargo] = useState(""); 
   const [setor, setSetor] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [nome, setNome] = useState("");
+  const [idCargo, setIdCargo] = useState(null); 
+  const [idSetor, setIdSetor] = useState(null);
 
-  // 2. Opções para o campo de seleção
-  const opcoesCargo = ["Operador", "Técnico", "Gerente", "Manutentor"];
-  const opcoesSetor = ["Manutenção", "Produção", "Qualidade", "Logística"];
+const opcoesCargo = [
+    { id: 1, nome: "Operador" },
+    { id: 2, nome: "Manutentor" }, // Supondo ID 2
+    { id: 3, nome: "Administrador" }, // Supondo ID 3
+    { id: 4, nome: "Gerente de Manutenção" } // Supondo ID 6
+];
+
+const opcoesSetor = [
+    { id: 1, nome: "Produção" }, // Supondo ID 1
+
+];
+
+const handleCargoChange = (e) => {
+    const nomeSelecionado = e.target.value;
+    setCargo(nomeSelecionado); // Salva o nome para exibição no SELECT
+
+    // Busca o ID correspondente e o armazena
+    const cargoObj = opcoesCargo.find(op => op.nome === nomeSelecionado);
+    setIdCargo(cargoObj ? cargoObj.id : null);
+};
+
+const handleSetorChange = (e) => {
+    const nomeSelecionado = e.target.value;
+    setSetor(nomeSelecionado); // Salva o nome para exibição no SELECT
+    
+    // Busca o ID correspondente e o armazena
+    const setorObj = opcoesSetor.find(op => op.nome === nomeSelecionado);
+    setIdSetor(setorObj ? setorObj.id : null);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // *Verificação básica: garantir que um setor foi selecionado*
-    if (!cargo) {
-      setMensagem("Por favor, selecione um cargo.");
+    if (!idCargo || !idSetor) {
+      setMensagem("Por favor, selecione um cargo e um setor.");
       return;
     }
-
-     if (!setor) {
-      setMensagem("Por favor, selecione um setor.");
-      return;
-    }
+  
 
     const dadosUsuario = {
       email,
       password,
       nome,
-      setor,
-      cargo, 
+      id_setor: idSetor,
+      id_cargo: idCargo, 
     };
 
     try {
@@ -54,6 +77,8 @@ function CadastrarUsuario() {
       setSetor("");
       setNome("");
       setCargo("");
+      setIdSetor(null);
+      setIdCargo(null);
 
     } catch (error) {
       console.error(
@@ -99,7 +124,7 @@ function CadastrarUsuario() {
               <select
                 id="cargo"
                 value={cargo}
-                onChange={(e) => setCargo(e.target.value)}
+                onChange={handleCargoChange}
                 required
               >
                 <option value="" disabled>
@@ -107,8 +132,8 @@ function CadastrarUsuario() {
                 </option>
                 
                 {opcoesCargo.map((opcao) => (
-                  <option key={opcao} value={opcao}>
-                    {opcao}
+                  <option key={opcao.id} value={opcao.nome}>
+                    {opcao.nome}
                   </option>
                 ))}
               </select>
@@ -120,7 +145,7 @@ function CadastrarUsuario() {
               <select
                 id="setor"
                 value={setor}
-                onChange={(e) => setSetor(e.target.value)}
+                onChange={handleSetorChange}
                 required
               >
                 <option value="" disabled>
@@ -128,8 +153,8 @@ function CadastrarUsuario() {
                 </option>
                 
                 {opcoesSetor.map((opcao) => (
-                  <option key={opcao} value={opcao}>
-                    {opcao}
+                  <option key={opcao.id} value={opcao.nome}>
+                    {opcao.nome}
                   </option>
                 ))}
               </select>

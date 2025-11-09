@@ -22,4 +22,19 @@ export class UserRepository {
         return false;
     }
   }
+
+  async createUsuario(usuario: Partial<Usuario>): Promise<any> {
+    const { nome, email, senha, id_cargo, id_setor } = usuario;
+
+        const sql = `
+            INSERT INTO Usuario (nome, email, senha, id_cargo, id_setor)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const values = [nome, email, senha, id_cargo, id_setor];
+
+        // Executa a query
+        const [result] = await db.execute(sql, values);
+        return result; 
+    }
 }
+  

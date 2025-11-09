@@ -14,6 +14,7 @@ router.get("/:email", (req, res) => {
   usuarioController.getUsuario(req, res);
 });
 
+router.post("/", usuarioController.cadastroUsuario.bind(usuarioController));
 
 
 export default router;
