@@ -24,8 +24,20 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "E-mail ou senha inválidos" });
     }
 
+    const [infoAdicionalRows]: any = await db.execute(
+      `SELECT c.cargo, s.setor FROM usuario u
+       INNER JOIN cargo c ON u.id_cargo = c.id_cargo 
+       INNER JOIN setor s ON u.id_setor = s.id_setor 
+       WHERE u.email = ?`,
+      [user.email]
+    );
+
+    const infoAdicional = infoAdicionalRows[0] || {} ;
+    const cargoNome = infoAdicional.cargo || null;
+    const setorNome = infoAdicional.setor || null;
+
     const token = jwt.sign(
-      { email: user.email },
+      { email: user.email, cargo: cargoNome },
       process.env.JWT_SECRET as string,
       { expiresIn: "8h" }
     );
@@ -36,8 +48,12 @@ export const login = async (req: Request, res: Response) => {
         id: user.id_usuario,
         nome: user.nome,
         email: user.email,
+        cargo: cargoNome,
+        setor: setorNome,
       },
     });
+
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro no servidor" });

@@ -24,7 +24,7 @@ const Login = () => {
         id_usuario: res.data.user.id,
         nome: res.data.user.nome,
         email: res.data.user.email,
-        cargo: res.data.user.cargo || "", // caso o backend não envie, deixa vazio
+        cargo: res.data.user.cargo || "", 
         setor: res.data.user.setor || "",
       };
       localStorage.setItem("user", JSON.stringify(user));

@@ -24,9 +24,9 @@ app.use(
   })
 );
 
-//app.use("/api/user", usuarioRoutes);
+app.use("/api/user", usuarioRoutes);
 
-//app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use('/api/cargos', cargoRoutes);
 app.use('/api/estados', estadoRoutes);
