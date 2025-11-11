@@ -12,6 +12,7 @@ function CadastrarOrdemServico() {
   const [idMaquina, setIdMaquina] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [maquinas, setMaquinas] = useState([]);
+  const [estados, setEstados] = useState([]);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -19,6 +20,9 @@ function CadastrarOrdemServico() {
         // Busca de Máquinas
         const maquinasResponse = await api.get("/maquinas");
         setMaquinas(maquinasResponse.data);
+
+        const estadosOS = await api.get("/estados");
+        setEstados(estadosOS.data);
       } catch (error) {
         console.error("Erro ao carregar dados para o formulário:", error);
       }
@@ -35,15 +39,23 @@ function CadastrarOrdemServico() {
       return;
     }
 
-    const dataHoraSubmissao = new Date().toISOString();
-    const estadoInicial = "1"; // '1' representa "Aberta"
+    const estadoAberto = estados.find (
+      (estado) => estado.status && estado.status.toLowerCase() === 'aberta');
+
+    if (!estadoAberto){
+      setMensagem("Não foi possivel encontrar o estado aberto no sistema")
+      return;
+    }
+
+    const dataHoraSubmissao = new Date().toISOString;
+    const estadoInicialID = estadoAberto.idEstado;
 
     const dadosOrdemServico = {
       descricao,
       data_inicio: dataHoraSubmissao,
       id_usuario: idUsuario,
       id_maquina: idMaquina,
-      id_estado: estadoInicial,
+      id_estado: estadoInicialID,
     };
 
     try {
