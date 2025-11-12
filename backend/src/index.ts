@@ -30,7 +30,7 @@ app.use("/api/auth", authRoutes);
 
 app.use('/api/cargo', cargoRoutes);
 app.use('/api/estado', estadoRoutes);
-app.use('/api/setor', setorRoutes);
+app.use('/api/setores', setorRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));

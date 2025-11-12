@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
+import api from "../../Services/api.jsx";
 import "../../telas/Usuario/CadastrarUsuario.css"
 
 function CadastrarUsuario() {
@@ -21,10 +22,25 @@ const opcoesCargo = [
     { id: 4, nome: "Gerente de Manutenção" } // Supondo ID 6
 ];
 
-const opcoesSetor = [
-    { id: 1, nome: "Produção" }, // Supondo ID 1
+const [opcoesSetor, setOpcoesSetor] = useState([]);
 
-];
+useEffect(() => {
+  const carregarDados = async () => {
+
+    try {
+        const setoresResponse = await api.get("/setores");
+        const setoresFormatados = setoresResponse.data.map(setor => ({
+          id: setor.idSetor,      
+          nome: setor.nomeSetor,   
+        }));
+        
+        setOpcoesSetor(setoresFormatados);
+      } catch (error) {
+        console.error("Erro ao carregar Setores:", error);
+      }
+  };
+  carregarDados();
+}, []);
 
 const handleCargoChange = (e) => {
     const nomeSelecionado = e.target.value;
@@ -37,9 +53,8 @@ const handleCargoChange = (e) => {
 
 const handleSetorChange = (e) => {
     const nomeSelecionado = e.target.value;
-    setSetor(nomeSelecionado); // Salva o nome para exibição no SELECT
+    setSetor(nomeSelecionado); 
     
-    // Busca o ID correspondente e o armazena
     const setorObj = opcoesSetor.find(op => op.nome === nomeSelecionado);
     setIdSetor(setorObj ? setorObj.id : null);
 };

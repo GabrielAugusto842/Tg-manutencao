@@ -27,7 +27,7 @@ function CadastrarOrdemServico() {
         const maquinasResponse = await api.get("/maquinas");
         setMaquinas(maquinasResponse.data);
         setMaquinasFiltradas(maquinasResponse.data);
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         // Se a rota de máquinas falhar, o restante continua a carregar
         console.warn(
@@ -148,7 +148,7 @@ function CadastrarOrdemServico() {
                 <option value="">Todos os Setores</option>
                 {setores.map((setor) => (
                   <option key={setor.id_setor} value={setor.id_setor}>
-                    {setor.nome}
+                    {setor.nomeSetor}
                   </option>
                 ))}
               </select>

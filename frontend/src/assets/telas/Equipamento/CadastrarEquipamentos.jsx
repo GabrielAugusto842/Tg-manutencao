@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
+import api from "../../Services/api.jsx";
 import "../../telas/Equipamento/CadastrarEquipamentos.css";
-
-const opcoesSetor = ["Manutenção", "Produção", "Qualidade", "Logística"];
 
 function CadastrarEquipamentos() {
   const [nome, setNome] = useState("");
@@ -13,12 +12,42 @@ function CadastrarEquipamentos() {
   const [mensagem, setMensagem] = useState("");
   const [tag, setTag] = useState("");
   const [producaoPorHora, setProducaoPorHora] = useState("");
-  const [setor, setSetor] = useState("");
+
+  const [setorNome, setSetorNome] = useState("");
+  const [idSetor, setIdSetor] = useState(null);
+  const [opcoesSetor, setOpcoesSetor] = useState([]);
+
+  useEffect(() => {
+    const carregarSetores = async () => {
+      try {
+        const response = await api.get("/setores");
+
+        const setoresFormatados = response.data.map((setor) => ({
+          id: setor.idSetor,
+          nome: setor.nomeSetor,
+        }));
+
+        setOpcoesSetor(setoresFormatados);
+      } catch (error) {
+        console.error("erro ao carregar setores:", error);
+        setMensagem("Erro ao carregar lista de setores.");
+      }
+    };
+    carregarSetores();
+  }, []);
+
+  const handleSetorChange = (e) => {
+    const nomeSelecionado = e.target.value;
+    setSetorNome(nomeSelecionado); // Salva o nome para exibição no campo
+
+    const setorObj = opcoesSetor.find((op) => op.nome === nomeSelecionado);
+    setIdSetor(setorObj ? setorObj.id : null); // Salva o ID para o envio
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!setor) {
+    if (!idSetor) {
       setMensagem("Por favor, selecione um setor.");
       return;
     }
@@ -27,7 +56,7 @@ function CadastrarEquipamentos() {
       nome,
       marca,
       modelo,
-      setor,
+      id_setor: idSetor,
       numero_serie,
       tag,
       producaoPorHora,
@@ -44,7 +73,8 @@ function CadastrarEquipamentos() {
 
       setNome("");
       setMarca("");
-      setSetor("");
+      setSetorNome("");
+      setIdSetor(null);
       setModelo("");
       setTag("");
       setNumeroSerie("");
@@ -123,8 +153,8 @@ function CadastrarEquipamentos() {
               </label>
               <select
                 id="setor"
-                value={setor}
-                onChange={(e) => setSetor(e.target.value)}
+                value={setorNome}
+                onChange={handleSetorChange}
                 required
               >
                 <option value="" disabled>
@@ -133,8 +163,8 @@ function CadastrarEquipamentos() {
 
                 {/* Renderiza as opções do setor */}
                 {opcoesSetor.map((opcao) => (
-                  <option key={opcao} value={opcao}>
-                    {opcao}
+                  <option key={opcao.id} value={opcao.nome}>
+                    {opcao.nome}
                   </option>
                 ))}
               </select>
