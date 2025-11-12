@@ -6,6 +6,9 @@ const router = Router();
 const usuarioController = new UsuarioController();
 
 
+
+router.get("/manutentores", usuarioController.getManutentores.bind(usuarioController));
+
 router.get("/", (req, res) => {
   usuarioController.getUsuarios(req, res);
 });

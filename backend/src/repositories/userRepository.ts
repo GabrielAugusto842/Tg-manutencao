@@ -36,5 +36,12 @@ export class UserRepository {
         const [result] = await db.execute(sql, values);
         return result; 
     }
+
+  public async buscarManutentores (): Promise<Usuario[]> {
+    const [rows] = await db.execute(
+      "SELECT id_usuario, nome, email, id_cargo, id_setor FROM usuario WHERE id_cargo = 2"
+      );
+    return rows as Usuario[];
+  }
 }
   

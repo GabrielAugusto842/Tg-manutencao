@@ -15,52 +15,67 @@ function CadastrarOrdemServico() {
   const [maquinas, setMaquinas] = useState([]);
   const [estados, setEstados] = useState([]);
   const [idUsuarioDirecionado, setIdUsuarioDirecionado] = useState("");
-  const [usuarios] = useState([]);
-  const [setores , setSetores] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [setores, setSetores] = useState([]);
 
   const [maquinasFiltradas, setMaquinasFiltradas] = useState([]);
 
   useEffect(() => {
     const carregarDados = async () => {
+      // --- Carregamento de Máquinas (Tratamento de erro individual para 404) ---
       try {
-        // Busca de Máquinas
         const maquinasResponse = await api.get("/maquinas");
         setMaquinas(maquinasResponse.data);
-        setMaquinas(maquinasResponse.data);
         setMaquinasFiltradas(maquinasResponse.data);
+      // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        // Se a rota de máquinas falhar, o restante continua a carregar
+        console.warn(
+          "Aviso: Falha ao carregar Máquinas (404 esperado?). Continuando..."
+        );
+      } // --- Carregamento de Setores ---
 
+      try {
         const setoresReponse = await api.get("/setores");
         setSetores(setoresReponse.data);
+      } catch (error) {
+        console.error("Erro ao carregar Setores:", error);
+      } // --- Carregamento de Estados ---
 
+      try {
         const estadosOS = await api.get("/estados");
         setEstados(estadosOS.data);
-
       } catch (error) {
-        console.error("Erro ao carregar dados para o formulário:", error);
+        console.error("Erro ao carregar Estados:", error);
+      } // --- Carregamento de Manutentores (Rota Corrigida) ---
+
+      try {
+        const manutentoresReponse = await api.get("/user/manutentores");
+        setUsuarios(manutentoresReponse.data);
+      } catch (error) {
+        console.error("Erro ao carregar Manutentores:", error);
       }
     };
 
     carregarDados();
   }, []);
 
-
   useEffect(() => {
-    if(idSetor) {
+    if (idSetor) {
       const filtradas = maquinas.filter(
-        (maquina) => String(maquina.id_setor) === String (idSetor)
+        (maquina) => String(maquina.id_setor) === String(idSetor)
       );
       setMaquinasFiltradas(filtradas);
 
       // Se a máquina atual não estiver no novo filtro, limpa a seleção
-      if (!filtradas.find(m => String(m.id_maquina) === String(idMaquina))) {
-          setIdMaquina("");
+      if (!filtradas.find((m) => String(m.id_maquina) === String(idMaquina))) {
+        setIdMaquina("");
       }
     } else {
       // Se nenhum setor for selecionado, mostra todas as máquinas
       setMaquinasFiltradas(maquinas);
     }
   }, [idSetor, maquinas, idMaquina]);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,15 +85,16 @@ function CadastrarOrdemServico() {
       return;
     }
 
-    const estadoAberto = estados.find (
-      (estado) => estado.status && estado.status.toLowerCase() === 'aberta');
+    const estadoAberto = estados.find(
+      (estado) => estado.status && estado.status.toLowerCase() === "aberta"
+    );
 
-    if (!estadoAberto){
-      setMensagem("Não foi possivel encontrar o estado aberto no sistema")
+    if (!estadoAberto) {
+      setMensagem("Não foi possivel encontrar o estado aberto no sistema");
       return;
     }
 
-    const dataHoraSubmissao = new Date().toISOString;
+    const dataHoraSubmissao = new Date().toISOString();
     const estadoInicialID = estadoAberto.idEstado;
 
     const dadosOrdemServico = {
@@ -102,7 +118,6 @@ function CadastrarOrdemServico() {
       setIdSetor("");
       setDescricao("");
       setIdMaquina("");
-
     } catch (error) {
       console.error(
         "Erro no cadastro da OS:",
@@ -141,7 +156,9 @@ function CadastrarOrdemServico() {
 
             {/* Campo de Direcionamento (Opcional) */}
             <div className="form-group half-width">
-              <label htmlFor="idUsuarioDirecionado">Direcionar para (Opcional):</label>
+              <label htmlFor="idUsuarioDirecionado">
+                Direcionar para (Opcional):
+              </label>
               <select
                 id="idUsuarioDirecionado"
                 value={idUsuarioDirecionado}
@@ -156,7 +173,7 @@ function CadastrarOrdemServico() {
               </select>
             </div>
           </div>
-          
+
           {/* LINHA 2: Máquina */}
           <div className="form-row">
             <div className="form-group full-width">
@@ -170,7 +187,9 @@ function CadastrarOrdemServico() {
                 required
               >
                 <option value="" disabled>
-                  {idSetor ? `Selecione a Máquina... (${maquinasFiltradas.length} encontradas)` : "Selecione a ..."}
+                  {idSetor
+                    ? `Selecione a Máquina... (${maquinasFiltradas.length} encontradas)`
+                    : "Selecione a ..."}
                 </option>
                 {maquinasFiltradas.map((maquina) => (
                   <option key={maquina.id_maquina} value={maquina.id_maquina}>

@@ -70,4 +70,19 @@ export class UsuarioController {
       usuario: { nome, email, id_cargo, id_setor },
     });
   }
+
+  public async getManutentores(req: Request, res: Response): Promise<void> {
+        try {
+            const manutentores = await this.repository.buscarManutentores();
+
+            // Retorna a lista de manutentores com status 200 OK
+            res.status(200).json(manutentores);
+        } catch (error) {
+            console.error("Erro ao buscar manutentores:", error);
+
+            res.status(500).json({
+                message: "Erro interno do servidor ao listar manutentores.",
+            });
+        }
+    }
 }
