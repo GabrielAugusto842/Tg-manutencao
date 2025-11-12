@@ -157,14 +157,14 @@ function CadastrarOrdemServico() {
             {/* Campo de Direcionamento (Opcional) */}
             <div className="form-group half-width">
               <label htmlFor="idUsuarioDirecionado">
-                Direcionar para (Opcional):
+                Manutentor (Opcional):
               </label>
               <select
                 id="idUsuarioDirecionado"
                 value={idUsuarioDirecionado}
                 onChange={(e) => setIdUsuarioDirecionado(e.target.value)}
               >
-                <option value="">Não direcionar</option>
+                <option value="">Direcionar</option>
                 {usuarios.map((usuario) => (
                   <option key={usuario.id_usuario} value={usuario.id_usuario}>
                     {usuario.nome}
