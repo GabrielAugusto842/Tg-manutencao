@@ -11,8 +11,14 @@ function CadastrarOrdemServico() {
   const [idUsuario] = useState(USUARIO_LOGADO_ID);
   const [idMaquina, setIdMaquina] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [idSetor, setIdSetor] = useState("");
   const [maquinas, setMaquinas] = useState([]);
   const [estados, setEstados] = useState([]);
+  const [idUsuarioDirecionado, setIdUsuarioDirecionado] = useState("");
+  const [usuarios] = useState([]);
+  const [setores , setSetores] = useState([]);
+
+  const [maquinasFiltradas, setMaquinasFiltradas] = useState([]);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -20,9 +26,15 @@ function CadastrarOrdemServico() {
         // Busca de Máquinas
         const maquinasResponse = await api.get("/maquinas");
         setMaquinas(maquinasResponse.data);
+        setMaquinas(maquinasResponse.data);
+        setMaquinasFiltradas(maquinasResponse.data);
+
+        const setoresReponse = await api.get("/setores");
+        setSetores(setoresReponse.data);
 
         const estadosOS = await api.get("/estados");
         setEstados(estadosOS.data);
+
       } catch (error) {
         console.error("Erro ao carregar dados para o formulário:", error);
       }
@@ -30,6 +42,25 @@ function CadastrarOrdemServico() {
 
     carregarDados();
   }, []);
+
+
+  useEffect(() => {
+    if(idSetor) {
+      const filtradas = maquinas.filter(
+        (maquina) => String(maquina.id_setor) === String (idSetor)
+      );
+      setMaquinasFiltradas(filtradas);
+
+      // Se a máquina atual não estiver no novo filtro, limpa a seleção
+      if (!filtradas.find(m => String(m.id_maquina) === String(idMaquina))) {
+          setIdMaquina("");
+      }
+    } else {
+      // Se nenhum setor for selecionado, mostra todas as máquinas
+      setMaquinasFiltradas(maquinas);
+    }
+  }, [idSetor, maquinas, idMaquina]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +87,7 @@ function CadastrarOrdemServico() {
       id_usuario: idUsuario,
       id_maquina: idMaquina,
       id_estado: estadoInicialID,
+      id_usuario_direcionado: idUsuarioDirecionado || null,
     };
 
     try {
@@ -66,8 +98,11 @@ function CadastrarOrdemServico() {
         "Ordem de Serviço cadastrada com sucesso! Ela está aberta para manutenção."
       );
 
+      setIdUsuarioDirecionado("");
+      setIdSetor("");
       setDescricao("");
       setIdMaquina("");
+
     } catch (error) {
       console.error(
         "Erro no cadastro da OS:",
@@ -85,6 +120,44 @@ function CadastrarOrdemServico() {
     <Layout title="Cadastro de Ordem de Serviço">
       <div className="form-container" style={{ marginTop: "20px" }}>
         <form onSubmit={handleSubmit}>
+          {/* LINHA 1: Setor e Direcionamento */}
+          <div className="form-row">
+            {/* Campo de Seleção de Setor */}
+            <div className="form-group half-width">
+              <label htmlFor="idSetor">Setor:</label>
+              <select
+                id="idSetor"
+                value={idSetor}
+                onChange={(e) => setIdSetor(e.target.value)}
+              >
+                <option value="">Todos os Setores</option>
+                {setores.map((setor) => (
+                  <option key={setor.id_setor} value={setor.id_setor}>
+                    {setor.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Campo de Direcionamento (Opcional) */}
+            <div className="form-group half-width">
+              <label htmlFor="idUsuarioDirecionado">Direcionar para (Opcional):</label>
+              <select
+                id="idUsuarioDirecionado"
+                value={idUsuarioDirecionado}
+                onChange={(e) => setIdUsuarioDirecionado(e.target.value)}
+              >
+                <option value="">Não direcionar</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario.id_usuario} value={usuario.id_usuario}>
+                    {usuario.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          {/* LINHA 2: Máquina */}
           <div className="form-row">
             <div className="form-group full-width">
               <label htmlFor="idMaquina">
@@ -97,9 +170,9 @@ function CadastrarOrdemServico() {
                 required
               >
                 <option value="" disabled>
-                  Selecione a Máquina...
+                  {idSetor ? `Selecione a Máquina... (${maquinasFiltradas.length} encontradas)` : "Selecione a ..."}
                 </option>
-                {maquinas.map((maquina) => (
+                {maquinasFiltradas.map((maquina) => (
                   <option key={maquina.id_maquina} value={maquina.id_maquina}>
                     {maquina.nome}
                   </option>
@@ -110,7 +183,7 @@ function CadastrarOrdemServico() {
             {/* [REMOVIDO] Campo Custo (custo) - OPCIONAL */}
           </div>
 
-          {/* LINHA 2: Descrição */}
+          {/* LINHA 3: Descrição */}
           <div className="form-group full-width">
             <label htmlFor="descricao">
               Descrição do Problema:<span className="required">*</span>
