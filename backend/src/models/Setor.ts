@@ -3,10 +3,10 @@ export class Setor {
     private nomeSetor: string;
     private descricao: string;
 
-    constructor(idSetor: number, nomeSetor: string, descricao: string) {
-        this.idSetor = idSetor;
-        this.nomeSetor = nomeSetor;
-        this.descricao = descricao;
+    constructor(data: {id_setor: number, setor: string, descricao: string}) {
+        this.idSetor = data.id_setor;
+        this.nomeSetor = data.setor;
+        this.descricao = data.descricao;
     }
 
     public get getIdSetor(): number {

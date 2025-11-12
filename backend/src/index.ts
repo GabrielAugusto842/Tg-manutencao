@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes";
 import usuarioRoutes from "./routes/usuarioRoutes";
 import cargoRoutes from "./routes/cargoRoutes";
 import estadoRoutes from "./routes/estadoRoutes";
+import setorRoutes from "./routes/setorRoutes";
 
 const app: Application = express();
 app.use(express.json());
@@ -25,11 +26,11 @@ app.use(
 );
 
 app.use("/api/user", usuarioRoutes);
-
 app.use("/api/auth", authRoutes);
 
-app.use('/api/cargos', cargoRoutes);
-app.use('/api/estados', estadoRoutes);
+app.use('/api/cargo', cargoRoutes);
+app.use('/api/estado', estadoRoutes);
+app.use('/api/setor', setorRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));
