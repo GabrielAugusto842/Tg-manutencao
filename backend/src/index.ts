@@ -6,6 +6,7 @@ import usuarioRoutes from "./routes/usuarioRoutes";
 import cargoRoutes from "./routes/cargoRoutes";
 import estadoRoutes from "./routes/estadoRoutes";
 import setorRoutes from "./routes/setorRoutes";
+import maquinaRoutes from "./routes/maquinaRoutes";
 
 const app: Application = express();
 app.use(express.json());
@@ -30,7 +31,8 @@ app.use("/api/auth", authRoutes);
 
 app.use('/api/cargo', cargoRoutes);
 app.use('/api/estado', estadoRoutes);
-app.use('/api/setores', setorRoutes);
+app.use('/api/setor', setorRoutes);
+app.use('/api/maquina', maquinaRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));

@@ -20,7 +20,7 @@ function CadastrarEquipamentos() {
   useEffect(() => {
     const carregarSetores = async () => {
       try {
-        const response = await api.get("/setores");
+        const response = await api.get("/setor");
 
         const setoresFormatados = response.data.map((setor) => ({
           id: setor.idSetor,

@@ -8,17 +8,17 @@ export class Maquina {
     private producaoHora: number;
     private idSetor: number;
 
-    constructor(idMaquina: number, nome: string, marca: string, numeroSerie: string,
-        modelo: string | null, tag: string | null, producaoHora: number, idSetor: number
-    ) {
-        this.idMaquina = idMaquina;
-        this.nome = nome;
-        this.marca = marca;
-        this.numeroSerie = numeroSerie;
-        this.modelo = modelo;
-        this.tag = tag;
-        this.producaoHora = producaoHora;
-        this.idSetor = idSetor;
+    constructor(data: {id_maquina: number, nome: string, marca: string, numero_serie: string,
+        modelo: string | null, tag: string | null, producaoPorHora: number, id_setor: number
+    }) {
+        this.idMaquina = data.id_maquina;
+        this.nome = data.nome;
+        this.marca = data.marca;
+        this.numeroSerie = data.numero_serie;
+        this.modelo = data.modelo;
+        this.tag = data.tag;
+        this.producaoHora = data.producaoPorHora;
+        this.idSetor = data.id_setor;
     }
 
     public get getIdMaquina(): number {
