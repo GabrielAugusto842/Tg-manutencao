@@ -1,0 +1,152 @@
+/* --- Contêiner Principal --- */
+.form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    margin: 1px auto; /* Centraliza horizontalmente */
+    overflow: auto;
+}
+
+/* Garante que o conteúdo do Layout não tenha preenchimento superior conflitante */
+.layout-content-wrapper { 
+    padding-top: 0 !important;
+}
+
+/* --- Estrutura do Formulário --- */
+.form-container form {
+    display: block;
+    width: 100%;
+}
+
+/* Espaçamento entre grupos de campos */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left; 
+    /* Adiciona espaçamento inferior para separar os campos */
+    margin-bottom: 25px; 
+}
+
+/* Linha para campos lado a lado (mantido para flexibilidade, mas não usado na tela de Setor) */
+.form-row {
+    display: flex;
+    gap: 20px; /* Espaço entre campos na mesma linha */
+    margin-bottom: 25px; 
+}
+
+/* Campo de largura total (usado para Nome e Descrição do Setor) */
+.full-width {
+    width: 100%;
+}
+
+/* Campo de meia largura (não usado na tela de Setor, mas mantido para flexibilidade) */
+.half-width {
+    width: 50%;
+}
+
+/* Garante que o label ocupe toda a largura */
+.form-group.full-width label {
+    display: block;
+    width: 100%;
+    text-align: left !important;
+}
+
+
+/* --- Estilo dos Elementos de Entrada (Input, Select, Textarea) --- */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%; 
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select {
+    height: 44px; 
+}
+
+.form-group textarea {
+    resize: vertical; 
+    min-height: 120px; 
+}
+
+/* Estilo de foco (highlight) */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #0099ff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 153, 255, 0.2);
+    outline: none;
+}
+
+/* Indicador de campo obrigatório */
+.required {
+    color: #cc0000;
+    margin-left: 4px;
+}
+
+/* --- Botões --- */
+.form-button {
+    padding: 14px 25px; 
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.primary-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: #0056b3;
+}
+
+/* --- Mensagens de Feedback --- */
+.message-feedback {
+    padding: 12px 20px;
+    margin-top: 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.success {
+    background-color: #e6ffed;
+    color: #0a4c28; 
+    border: 1px solid #b3e6c3; 
+}
+
+.error {
+    background-color: #fff0f0; 
+    color: #8c0000; 
+    border: 1px solid #ffb3b3; 
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    .form-container {
+        margin: 15px; /* Mais margem nas laterais em telas pequenas */
+        padding: 20px;
+    }
+    /* Em telas menores, garante que campos .form-row se empilhem (se usados) */
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .half-width {
+        width: 100%; /* Meia largura vira largura total em mobile */
+    }
+}

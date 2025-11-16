@@ -26,6 +26,7 @@ function Sidebar({ user }) {
 
   const podeGerenciarUsuarios = cargoUsuario === "Administrador";
   const podeGerenciarEquipamentos = cargoUsuario === "Administrador";
+  const podeCadastrarSetor = cargoUsuario === "Administrador";
 
   const podeCadastrarOrdem = cargoUsuario === "Operador";
 
@@ -131,6 +132,30 @@ function Sidebar({ user }) {
                   Visualizar
                 </button>
                 <button onClick={() => navigate("/equipamentos/cadastrar")}>
+                  Cadastrar
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Setores */}
+        {podeCadastrarSetor && (
+          <>
+            <div
+              className={`menu-item ${openMenu == "setor" ? "active" : ""}`}
+              onClick={() => toggleMenu("setor")}
+            >
+              <FaTools className="icon" />
+              <span>Setor</span>
+              {openMenu === "setor" ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
+            {openMenu === "setor" && (
+              <div className="submenu">
+                <button onClick={() => navigate("/setores/visualizar")}>
+                  Visualizar
+                </button>
+                <button onClick={() => navigate("/setores/cadastrar")}>
                   Cadastrar
                 </button>
               </div>

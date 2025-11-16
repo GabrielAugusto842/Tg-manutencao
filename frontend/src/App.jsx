@@ -9,13 +9,14 @@ import CadastrarUsuario from "./assets/telas/Usuario/CadastrarUsuario";
 import VisualizarUsuarios from "./assets/telas/Usuario/VisualizarUsuarios";
 import CadastrarEquipamentos from "./assets/telas/Equipamento/CadastrarEquipamentos";
 import VisualizarEquipamentos from "./assets/telas/Equipamento/VisualizarEquipamentos";
-import Relatorios from "./assets/telas/Relatórios/Relatorios"
+import Relatorios from "./assets/telas/Relatórios/Relatorios";
 import { useTokenExpiration } from "./useTokenExpiration";
 import Layout from "./assets/componentes/Layout/Layout";
 import TrocarSenha from "./assets/telas/TrocarSenha";
+import CadastrarSetor from "./assets/telas/Setor/CadastrarSetor";
+import VisualizarSetores from "./assets/telas/Setor/VisualizarSetores";
 
 function App() {
-
   useTokenExpiration();
 
   return (
@@ -24,8 +25,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/trocar-senha" element={<TrocarSenha/>} />
-        
+        <Route path="/trocar-senha" element={<TrocarSenha />} />
 
         {/* Ordens */}
         <Route path="/ordens/cadastrar" element={<CadastrarOrdens />} />
@@ -37,12 +37,20 @@ function App() {
         <Route path="/usuario/visualizar" element={<VisualizarUsuarios />} />
 
         {/* Equipamentos */}
-        <Route path="/equipamentos/cadastrar" element={<CadastrarEquipamentos />} />
-        <Route path="/equipamentos/visualizar" element={<VisualizarEquipamentos />} />
+        <Route
+          path="/equipamentos/cadastrar"
+          element={<CadastrarEquipamentos />}
+        />
+        <Route
+          path="/equipamentos/visualizar"
+          element={<VisualizarEquipamentos />}
+        />
 
         {/* Relatórios */}
         <Route path="/relatorios" element={<Relatorios />} />
 
+        <Route path="/setores/cadastrar" element={<CadastrarSetor />} />
+        <Route path="/setores/visualizar" element={<VisualizarSetores />} />
       </Routes>
     </BrowserRouter>
   );

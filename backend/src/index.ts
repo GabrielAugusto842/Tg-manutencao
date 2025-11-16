@@ -1,4 +1,4 @@
-import './config/env';
+import "./config/env";
 import express, { Application } from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
@@ -10,7 +10,6 @@ import maquinaRoutes from "./routes/maquinaRoutes";
 
 const app: Application = express();
 app.use(express.json());
-
 
 app.use((req, res, next) => {
   console.log(`REQ: ${req.method} ${req.url}`);
@@ -29,12 +28,10 @@ app.use(
 app.use("/api/user", usuarioRoutes);
 app.use("/api/auth", authRoutes);
 
-app.use('/api/cargo', cargoRoutes);
-app.use('/api/estado', estadoRoutes);
-app.use('/api/setor', setorRoutes);
-app.use('/api/maquina', maquinaRoutes);
+app.use("/api/cargo", cargoRoutes);
+app.use("/api/estado", estadoRoutes);
+app.use("/api/setores", setorRoutes);
+app.use("/api/maquina", maquinaRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));
-
-

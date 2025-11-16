@@ -1,0 +1,185 @@
+/* ====================================================================
+   1. RESET E BASE GERAL
+   ==================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------
+   2. LAYOUT PRINCIPAL
+   -------------------------------------------------------------------- */
+body,
+#root,
+.app-container-principal {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  overflow: hidden; /* Impede rolagem na tela principal */
+}
+
+/* ====================================================================
+   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
+   ==================================================================== */
+
+.visualizar-setores-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.tabela-wrapper {
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-height: calc(
+    100vh - 140px
+  ); /* Altura máxima para permitir rolagem vertical */
+  overflow-y: auto;
+}
+
+/* ====================================================================
+   4. ESTILOS BASE DA TABELA
+   ==================================================================== */
+
+.tabela-setores {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 700px; /* Largura mínima para 4 colunas */
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(240, 240, 240);
+}
+
+.tabela-setores thead {
+  background-color: #84a8e5;
+  /* IMPLEMENTAÇÃO DA LINHA FIXA */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------
+   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS (4 COLUNAS)
+   -------------------------------------------------------------------- */
+
+.tabela-setores th {
+  background-color: #84a8e5;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  padding: 12px 10px;
+}
+
+.tabela-setores th:nth-child(1) {
+  width: 10%;
+} /* ID */
+.tabela-setores th:nth-child(2) {
+  width: 25%;
+} /* Nome do Setor */
+.tabela-setores th:nth-child(3) {
+  width: 45%;
+} /* Descrição (Maior espaço) */
+.tabela-setores th:nth-child(4) {
+  width: 20%;
+} /* Ações */
+
+/* --------------------------------------------------------------------
+   6. CÉLULAS E INTERAÇÃO
+   -------------------------------------------------------------------- */
+
+.tabela-setores td {
+  border: 1px solid #dcdcdc;
+  padding: 12px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.tabela-setores tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
+}
+
+.tabela-setores tr:hover {
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  border-color: #a0c9f8;
+}
+
+/* --------------------------------------------------------------------
+   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
+   -------------------------------------------------------------------- */
+
+.tabela-setores td:last-child {
+  white-space: normal;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 6px;
+  border-color: #dcdcdc;
+}
+
+.tabela-setores td button {
+  width: 80px;
+  padding: 8px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabela-setores td button:active {
+  transform: translateY(1px); /* Efeito de clique */
+}
+
+.btn-editar {
+  background-color: #fbab34;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #e59427;
+}
+
+.btn-deletar {
+  background-color: #f34254;
+  color: white;
+}
+
+.btn-deletar:hover {
+  background-color: #d82b3d;
+}
+
+/* ====================================================================
+   8. ESTILOS DE FEEDBACK (Mensagens de Sucesso/Erro)
+   ==================================================================== */
+.alerta-erro {
+  padding: 10px;
+  background-color: #ffe0e6;
+  color: #cc0033;
+  border: 1px solid #ffb3c0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.alerta-sucesso {
+  padding: 10px;
+  background-color: #e6ffe0;
+  color: #008000;
+  border: 1px solid #b3ffc0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
