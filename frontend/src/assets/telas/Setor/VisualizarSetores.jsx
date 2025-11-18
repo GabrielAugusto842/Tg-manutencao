@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Setor/VisualizarSetores.css";
+import { FaCheckCircle, FaEdit, FaTrash} from "react-icons/fa";
+
 
 const API_URL = "http://localhost:3001/api/setores";
 
@@ -160,9 +162,9 @@ function VisualizarSetoresContent() {
                         className="btn-editar"
                         onClick={() => handleEditar(setor.idSetor)}
                         title="Editar Setor"
-                        style={{ marginRight: "10px" }} // Adiciona um pequeno espaço
+                        style={{ color: "blue", background: "none", border: "none", cursor: "pointer" }}
                       >
-                        Editar
+                        <FaEdit size={20} />
                       </button>
 
                       {/* BOTÃO DE DELETAR MANTIDO */}
@@ -170,8 +172,9 @@ function VisualizarSetoresContent() {
                         className="btn-deletar"
                         onClick={() => handleDeletar(setor.idSetor)}
                         title="Deletar setor"
+                        style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}
                       >
-                        Deletar
+                        <FaTrash size={20} />
                       </button>
                     </td>
                   </tr>

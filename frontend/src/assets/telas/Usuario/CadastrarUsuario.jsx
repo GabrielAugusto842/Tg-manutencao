@@ -8,21 +8,33 @@ function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [cargo, setCargo] = useState(""); 
+  const [setCargo] = useState(""); 
   const [setor, setSetor] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [nome, setNome] = useState("");
   const [idCargo, setIdCargo] = useState(null); 
   const [idSetor, setIdSetor] = useState(null);
 
-const opcoesCargo = [
-    { id: 1, nome: "Operador" },
-    { id: 2, nome: "Manutentor" }, // Supondo ID 2
-    { id: 3, nome: "Administrador" }, // Supondo ID 3
-    { id: 4, nome: "Gerente de Manutenção" } // Supondo ID 6
-];
+const [opcoesCargo, setOpcoesCargo]  = useState([]);
 
 const [opcoesSetor, setOpcoesSetor] = useState([]);
+
+useEffect(() => {
+  const carregarCargos = async () => {
+    try {
+      const cargosResponse = await api.get("/cargo");
+      const cargosFormatados = cargosResponse.data.map(cargo => ({
+        id: cargo.idCargo,
+        nome: cargo.cargo
+      }));
+      setOpcoesCargo(cargosFormatados);
+    } catch (error) {
+      console.error("Erro ao carregar cargos:", error);
+    }
+  };
+
+  carregarCargos();
+}, []);
 
 useEffect(() => {
   const carregarDados = async () => {
@@ -43,12 +55,9 @@ useEffect(() => {
 }, []);
 
 const handleCargoChange = (e) => {
-    const nomeSelecionado = e.target.value;
-    setCargo(nomeSelecionado); // Salva o nome para exibição no SELECT
-
-    // Busca o ID correspondente e o armazena
-    const cargoObj = opcoesCargo.find(op => op.nome === nomeSelecionado);
-    setIdCargo(cargoObj ? cargoObj.id : null);
+    const idSelecionado = Number(e.target.value);
+    setIdCargo(idSelecionado);
+    setCargo(idSelecionado);
 };
 
 const handleSetorChange = (e) => {
@@ -138,7 +147,7 @@ const handleSetorChange = (e) => {
               <label htmlFor="cargo">Cargo:<span className="required">*</span></label>
               <select
                 id="cargo"
-                value={cargo}
+                value={idCargo || ""}
                 onChange={handleCargoChange}
                 required
               >
@@ -147,7 +156,7 @@ const handleSetorChange = (e) => {
                 </option>
                 
                 {opcoesCargo.map((opcao) => (
-                  <option key={opcao.id} value={opcao.nome}>
+                  <option key={opcao.id} value={opcao.id}>
                     {opcao.nome}
                   </option>
                 ))}

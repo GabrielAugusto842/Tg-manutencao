@@ -35,7 +35,9 @@ body,
   overflow-x: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  max-height: calc(100vh - 140px);
+  max-height: calc(
+    100vh - 140px
+  ); /* Altura máxima para permitir rolagem vertical */
   overflow-y: auto;
 }
 
@@ -49,7 +51,7 @@ body,
   min-width: 1000px;
   border-collapse: collapse;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(206, 206, 206);
+  background-color: rgb(240, 240, 240);
 }
 
 .tabela-ordens thead {
@@ -71,7 +73,7 @@ body,
 
 .tabela-ordens th {
   background-color: #84a8e5;
-  color: #000000;
+  color: #ffffff;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
@@ -119,7 +121,7 @@ body,
    -------------------------------------------------------------------- */
 
 .tabela-ordens td {
-  border: 1px solid rgb(255, 255, 255);
+  border: 1px solid #dcdcdc;
   padding: 12px 10px;
   text-align: center;
   vertical-align: middle;
@@ -127,43 +129,88 @@ body,
   word-wrap: break-word;
 }
 
-.tabela-ordens tr:hover {
-  background-color: #93d4ff;
-  border-color: #fdfeff;
+.tabela-ordens tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
 }
+
+.tabela-ordens tr:hover {
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  border-color: #a0c9f8;
+}
+
+
 
 /* --------------------------------------------------------------------
    7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
    -------------------------------------------------------------------- */
 
 .tabela-ordens td:last-child {
-  white-space: normal;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  padding: 22px 10px;
-  border-color: rgb(255, 255, 255);
+  padding: 17px;
+  border-color: #dcdcdc;
+  height: 100%;
 }
 
 .tabela-ordens td button {
-  width:90px;
-  padding: 15px;
-  font-size: 0.8em;
-  font-weight: 500;
+  width: 80px;
+  padding: 8px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+
 
 .btn-aceitar {
   background-color: #41ff01;
   color: white;
 }
 
+.btn-editar {
+  background-color: #fbab34;
+  color: white;
+}
+
 .btn-editar:hover {
-  background-color: #ff7300;
+  background-color: #e59427;
+}
+
+.btn-deletar {
+  background-color: #f34254;
+  color: white;
+}
+
+.btn-deletar:hover {
+  background-color: #d82b3d;
+}
+
+.alerta-erro {
+  padding: 10px;
+  background-color: #ffe0e6;
+  color: #cc0033;
+  border: 1px solid #ffb3c0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.alerta-sucesso {
+  padding: 10px;
+  background-color: #e6ffe0;
+  color: #008000;
+  border: 1px solid #b3ffc0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
 }
 
 

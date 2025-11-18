@@ -1,102 +1,113 @@
 /* ====================================================================
    1. RESET E BASE GERAL
    ==================================================================== */
-*, *::before, *::after {
-   box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* --------------------------------------------------------------------
    2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
    -------------------------------------------------------------------- */
-body, #root, .app-container-principal {
-    height: 100vh;
-    width: 100vw;
-    display: flex; /* Define o layout como flexível */
-    overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+body,
+#root,
+.app-container-principal {
+  height: 100vh;
+  width: 100vw;
+  display: flex; /* Define o layout como flexível */
+  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
 }
 
 /* ====================================================================
    3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
    ==================================================================== */
 
-.visualizar-usuarios-page { 
-    width: 100%; 
-    box-sizing: border-box; 
-    padding: 20px;
+.visualizar-usuarios-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
 }
 
 .tabela-wrapper {
-    overflow-x: auto; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-    border-radius: 8px;
-    max-height: calc(100vh - 140px);
-    overflow-y: auto;
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-height: calc(
+    100vh - 140px
+  ); /* Altura máxima para permitir rolagem vertical */
+  overflow-y: auto;
 }
 
-/* ====================================================================
-   4. ESTILOS BASE DA TABELA
-   ==================================================================== */
-
 .tabela-usuarios {
-    table-layout: fixed;
-    width: 100%;
-    min-width: 600px;
-    border-collapse: collapse;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-    background-color: rgb(206, 206, 206);
+  table-layout: fixed;
+  width: 100%;
+  min-width: 700px; /* Largura mínima para 4 colunas */
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(240, 240, 240);
 }
 
 .tabela-usuarios thead {
-    background-color: #84a8e5; 
-    /* IMPLEMENTAÇÃO DA LINHA FIXA */
-    position: sticky;
-    top: 0; /* Gruda no topo do container de rolagem */
-    z-index: 10; /* Garante que fique acima das linhas do corpo */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+  background-color: #84a8e5;
+  /* IMPLEMENTAÇÃO DA LINHA FIXA */
+  position: sticky;
+  top: 0; /* Gruda no topo do container de rolagem */
+  z-index: 10; /* Garante que fique acima das linhas do corpo */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
 }
 
 /* --------------------------------------------------------------------
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
    -------------------------------------------------------------------- */
+.tabela-usuarios th {
+  background-color: #84a8e5;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  padding: 12px 10px;
+}
 
 .tabela-usuarios thead {
-    background-color: #84a8e5; 
+  background-color: #84a8e5;
 }
 
-.tabela-usuarios th {
-    background-color: #84a8e5; 
-    color: #000000;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.9em;
-    padding: 12px 10px;
-}
-
-.tabela-usuarios th:nth-child(1) { width: 20%; } /* Nome */
-.tabela-usuarios th:nth-child(2) { width: 30%; } /* Email */
-.tabela-usuarios th:nth-child(3) { width: 15%; } /* Cargo */
-.tabela-usuarios th:nth-child(4) { width: 15%; } /* Setor */
-.tabela-usuarios th:nth-child(5) { width: 20%; } /* Ações */
-
+.tabela-usuarios th:nth-child(1) {
+  width: 10%;
+} /* ID */
+.tabela-usuarios th:nth-child(2) {
+  width: 25%;
+} /* Nome do Setor */
+.tabela-usuarios th:nth-child(3) {
+  width: 15%;
+} /* Descrição (Maior espaço) */
+.tabela-usuarios th:nth-child(4) {
+  width: 30%;
+} /* Ações */
 
 /* --------------------------------------------------------------------
    6. CÉLULAS E INTERAÇÃO
    -------------------------------------------------------------------- */
 
 .tabela-usuarios td {
-    border: 1px solid rgb(255, 255, 255); 
-    padding: 12px 10px;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 1em; 
-    word-wrap: break-word;
+  border: 1px solid #dcdcdc;
+  padding: 12px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.tabela-usuarios tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
 }
 
 .tabela-usuarios tr:hover {
-    background-color: #93d4ff;
-    border-color: #fdfeff;
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  border-color: #a0c9f8;
 }
 
 /* --------------------------------------------------------------------
@@ -104,40 +115,67 @@ body, #root, .app-container-principal {
    -------------------------------------------------------------------- */
 
 .tabela-usuarios td:last-child {
-    white-space: normal; 
-    display: flex;
-    gap: 8px; 
-    justify-content: center; 
-    align-items: center;
-    padding: 6px 6px;
-    border-color: rgb(255, 255, 255);
+  white-space: normal;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 6px;
+  border-color: #dcdcdc;
 }
 
 .tabela-usuarios td button {
-    width: 80px;
-    padding: 15px;
-    font-size: 0.8em;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+  width: 80px;
+  padding: 8px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabela-usuarios td button:active {
+  transform: translateY(1px); /* Efeito de clique */
 }
 
 .btn-editar {
-    background-color: #fbab34; 
-    color: white;
+  background-color: #fbab34;
+  color: white;
 }
 
 .btn-editar:hover {
-    background-color: #ff7300;
+  background-color: #e59427;
 }
 
 .btn-deletar {
-    background-color: #f34254;
-    color: white;
+  background-color: #f34254;
+  color: white;
 }
 
 .btn-deletar:hover {
-   background-color: #ff0015;
+  background-color: #d82b3d;
+}
+
+.alerta-erro {
+  padding: 10px;
+  background-color: #ffe0e6;
+  color: #cc0033;
+  border: 1px solid #ffb3c0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.alerta-sucesso {
+  padding: 10px;
+  background-color: #e6ffe0;
+  color: #008000;
+  border: 1px solid #b3ffc0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
 }
