@@ -102,10 +102,6 @@ body,
   word-wrap: break-word;
 }
 
-.tabela-setores tr:nth-child(even) {
-  background-color: #f7f7f7; /* Zebrado leve */
-}
-
 .tabela-setores tr:hover {
   background-color: #c9e2ff; /* Destaque ao passar o mouse */
   border-color: #a0c9f8;

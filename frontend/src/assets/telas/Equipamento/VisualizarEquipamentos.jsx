@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Equipamento/VisualizarEquipamentos.css";
+import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
 const equipamantosFAKE = [
   {
@@ -159,17 +160,28 @@ function VisualizarEquipamentosContent() {
                       className="btn-editar"
                       onClick={() => handleEditar(maquina.id_maquina)}
                       title="Editar Máquina"
-                      style={{ marginRight: "10px" }}
+                      style={{
+                        color: "blue",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
-                      Editar
+                      <FaEdit size={20} />
                     </button>
 
                     <button
                       className="btn-deletar"
                       onClick={() => handleDeletar(maquina.id_maquina)}
                       title="Deletar Máquina"
+                      style={{
+                        color: "red",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
-                      Deletar
+                      <FaTrash size={20} />
                     </button>
                   </td>
                 </tr>

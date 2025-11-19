@@ -35,7 +35,9 @@ body,
   overflow-x: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  max-height: calc(100vh - 140px);
+  max-height: calc(
+    100vh - 140px
+  ); /* Altura máxima para permitir rolagem vertical */
   overflow-y: auto;
 }
 
@@ -49,7 +51,7 @@ body,
   min-width: 1000px;
   border-collapse: collapse;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(206, 206, 206);
+  background-color: rgb(240, 240, 240);
 }
 
 .tabela-equipamentos thead {
@@ -65,13 +67,9 @@ body,
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
    -------------------------------------------------------------------- */
 
-.tabela-equipamentos thead {
-  background-color: #84a8e5;
-}
-
 .tabela-equipamentos th {
   background-color: #84a8e5;
-  color: #000000;
+  color: #ffffff;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
@@ -108,7 +106,7 @@ body,
    -------------------------------------------------------------------- */
 
 .tabela-equipamentos td {
-  border: 1px solid rgb(255, 255, 255);
+  border: 1px solid #dcdcdc;
   padding: 12px 10px;
   text-align: center;
   vertical-align: middle;
@@ -117,8 +115,8 @@ body,
 }
 
 .tabela-equipamentos tr:hover {
-  background-color: #93d4ff;
-  border-color: #fdfeff;
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  border-color: #a0c9f8;
 }
 
 /* --------------------------------------------------------------------
@@ -126,24 +124,29 @@ body,
    -------------------------------------------------------------------- */
 
 .tabela-equipamentos td:last-child {
-  white-space: normal;
+   white-space: normal;
   display: flex;
   gap: 8px;
   justify-content: center;
   align-items: center;
-  padding: 16px 10px;
-  border-color: rgb(255, 255, 255);
+  padding: 6px 6px;
+  border-color: #dcdcdc;
 }
 
 .tabela-equipamentos td button {
   width: 80px;
-  padding: 15px;
-  font-size: 0.8em;
-  font-weight: 500;
+  padding: 8px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabela-setores td button:active {
+  transform: translateY(1px); /* Efeito de clique */
 }
 
 .btn-editar {
@@ -152,7 +155,7 @@ body,
 }
 
 .btn-editar:hover {
-  background-color: #ff7300;
+  background-color: #e59427;
 }
 
 .btn-deletar {
@@ -161,5 +164,28 @@ body,
 }
 
 .btn-deletar:hover {
-  background-color: #ff0015;
+  background-color: #d82b3d;
 }
+
+.alerta-erro {
+  padding: 10px;
+  background-color: #ffe0e6;
+  color: #cc0033;
+  border: 1px solid #ffb3c0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.alerta-sucesso {
+  padding: 10px;
+  background-color: #e6ffe0;
+  color: #008000;
+  border: 1px solid #b3ffc0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
