@@ -59,7 +59,11 @@ function CadastrarOrdemServico() {
       );
       setMaquinasFiltradas(filtradas); // Limpa a seleção se a máquina atual não estiver no novo filtro
 
-      if (!filtradas.find((m) => String(m.id_maquina) === String(idMaquina))) {
+      if (
+        !filtradas.find(
+          (m) => String(m.idMaquina || m.id_maquina) === String(idMaquina)
+        )
+      ) {
         setIdMaquina("");
       }
     } else {
@@ -176,11 +180,12 @@ function CadastrarOrdemServico() {
                   <option
                     // CORREÇÃO: Chave fallback para evitar "key=undefined"
                     key={
-                      maquina.idMaquina
-                        ? String(maquina.idMaquina)
-                        : `maquina_null_${index}`
+                      String(maquina.idMaquina || maquina.id_maquina) ||
+                      `maquina_null_${index}`
                     }
-                    value={String(maquina.idMaquina)}
+                    value={String(
+                      maquina.idMaquina || maquina.id_maquina || ""
+                    )}
                   >
                     {maquina.nome}
                   </option>
