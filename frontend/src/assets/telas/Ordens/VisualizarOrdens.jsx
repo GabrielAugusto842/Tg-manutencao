@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
-import { FaCheckCircle, FaEdit, FaTrash} from "react-icons/fa";
+import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
 const ordensFAKE = [
   {
@@ -16,45 +16,52 @@ const ordensFAKE = [
   },
 ];
 
-function VisualizarOrdensContent() {
+function VisualizarOrdensContent({ user }) {
+
   const [ordem, setOrdem] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
-  const buscarOrdensSimulada = () => {
+  const podeAceitar =
+    user?.cargo === "Manutentor" || user?.cargo === "Gerente de Manutenção";
+  const podeEditar = user?.cargo === "Gerente de Manutenção";
+  const podeExcluir = user?.cargo === "Gerente de Manutenção";
+
+   useEffect(() => {
+    if (!user) return; // só busca ordens quando o user estiver disponível
+
     setCarregando(true);
     setErro(null);
     setMensagemSucesso(null);
-    // Simula o tempo de rede
 
     setTimeout(() => {
-      setOrdem([...ordensFAKE]); 
+      setOrdem([...ordensFAKE]);
       setCarregando(false);
     }, 500);
+  }, [user]);
+
+  // Ações de exemplo
+  const handleAceitar = (id) => {
+    alert(`Ordem ${id} aceita!`);
   };
 
-  useEffect(() => {
-    buscarOrdensSimulada();
-  }, []);
+  const handleEditar = (id) => {
+    alert(`Editar ordem ${id}`);
+  };
 
-    const handleAceitar = (id) => {
-    alert(`Aceitar ordem ${id}`);
-    };
-
-    const handleEditar = (id) => {
-    const ordemAlvo = ordem.find((e) => e.id_ordem === id) || {
-      descricao: "Ordem",
-      custo: "N/A",
-    };
-
-    alert(`Editar: ${ordemAlvo.descricao} (${ordemAlvo.custo})`);
-    };
-
-    const handleExcluir = (id) => {
+  const handleExcluir = (id) => {
     alert(`Excluir ordem ${id}`);
-    };
-  
+  };
+
+  if (carregando) {
+    return (
+      <div className="container">
+        <p>Carregando Ordens de Serviço...</p>
+      </div>
+    );
+  }
+
   if (carregando) {
     return (
       <div className="container">
@@ -85,8 +92,8 @@ function VisualizarOrdensContent() {
 
       {ordem.length === 0 ? (
         <p>
-          Nenhuma Ordem cadastrada. (A lista pode estar vazia devido à
-          simulação de exclusão.)
+          Nenhuma Ordem cadastrada. (A lista pode estar vazia devido à simulação
+          de exclusão.)
         </p>
       ) : (
         <div className="tabela-wrapper">
@@ -117,33 +124,53 @@ function VisualizarOrdensContent() {
                   <td>{ordem.id_maquina}</td>
 
                   <td className="acoes-coluna-icones">
-                    <button
-                      className="btn-aceitar"
-                      onClick={() => handleAceitar(ordem.id_ordem)}
-                      title="Aceitar"
-                      style={{ color: "green", background: "none", border: "none", cursor: "pointer" }}
-                    >
-                      <FaCheckCircle size={20} />
-                    </button>
-
+                    {podeAceitar && (
                       <button
-                      className="btn-editar"
-                      onClick={() => handleEditar(ordem.id_ordem)}
-                      title="Editar"
-                      style={{ color: "blue", background: "none", border: "none", cursor: "pointer" }}
-                    >
-                      <FaEdit size={20} />
-                    </button>
+                        className="btn-aceitar"
+                        onClick={() => handleAceitar(ordem.id_ordem)}
+                        title="Aceitar"
+                        style={{
+                          color: "green",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <FaCheckCircle size={20} />
+                      </button>
+                    )}
 
-                    <button
-                      className="btn-excluir"
-                      onClick={() => handleExcluir(ordem.id_ordem)}
-                      title="Excluir"
-                      style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}
-                    >
-                      <FaTrash size={20} />
-                    </button>
+                    {podeEditar && (
+                      <button
+                        className="btn-editar"
+                        onClick={() => handleEditar(ordem.id_ordem)}
+                        title="Editar"
+                        style={{
+                          color: "blue",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <FaEdit size={20} />
+                      </button>
+                    )}
 
+                    {podeExcluir && (
+                      <button
+                        className="btn-excluir"
+                        onClick={() => handleExcluir(ordem.id_ordem)}
+                        title="Excluir"
+                        style={{
+                          color: "red",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <FaTrash size={20} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -162,3 +189,4 @@ export default function VisualizarOrdens() {
     </Layout>
   );
 }
+

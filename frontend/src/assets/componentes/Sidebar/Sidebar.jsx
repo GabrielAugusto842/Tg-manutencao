@@ -30,7 +30,10 @@ function Sidebar({ user }) {
 
   const podeCadastrarOrdem = cargoUsuario === "Operador";
 
-  const podeVerTodasOrdens = cargoUsuario === "Gerente de Manutenção";
+const podeVerTodasOrdens =
+  cargoUsuario === "Gerente de Manutenção" ||
+  cargoUsuario === "Operador";
+
   const podeVerRelatorios = cargoUsuario === "Gerente de Manutenção";
 
   const podeVerMinhasOrdens = cargoUsuario === "Manutentor";

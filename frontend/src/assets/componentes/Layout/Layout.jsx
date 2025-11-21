@@ -46,7 +46,14 @@ const Layout = ({ children, title }) => {
           {/* Opcional: passa user para o Navbar */}
         </header>
 
-        <div className="layout-content">{children}</div>
+        <div className="layout-content">
+          {React.Children.map(children, (child) => {
+            if (React.isValidElement(child)) {
+              return React.cloneElement(child, { user });
+            }
+            return child;
+          })}
+        </div>
       </div>
     </div>
   );
