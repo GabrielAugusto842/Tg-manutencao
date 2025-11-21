@@ -2,39 +2,8 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Equipamento/VisualizarEquipamentos.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import api from "../../Services/api.jsx";
 
-const equipamantosFAKE = [
-  {
-    id_maquina: 1,
-    nome: "laptop",
-    marca: "asus",
-    modelo: "X515J",
-    numero_serie: "N1U2M3E4R506",
-    tag: "123a",
-    producaoPorHora: 500,
-    id_setor: 1,
-  },
-  {
-    id_maquina: 2,
-    nome: "Desktop",
-    marca: "Dell",
-    modelo: "OptiPlex 3000",
-    numero_serie: "XYZ998877",
-    tag: "456b",
-    producaoPorHora: 120,
-    id_setor: 2,
-  },
-  {
-    id_maquina: 3,
-    nome: "Impressora",
-    marca: "HP",
-    modelo: "LaserJet Pro",
-    numero_serie: "PRT112233",
-    tag: "789c",
-    producaoPorHora: 800,
-    id_setor: 1,
-  },
-];
 
 function VisualizarEquipamentosContent() {
   const [equipamentos, setEquipamentos] = useState([]);
@@ -42,21 +11,26 @@ function VisualizarEquipamentosContent() {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
-  const buscarEquipamentosSimulada = () => {
+
+const buscarEquipamentos = async () => {
+  try {
     setCarregando(true);
     setErro(null);
     setMensagemSucesso(null);
-    // Simula o tempo de rede
 
-    setTimeout(() => {
-      setEquipamentos([...equipamantosFAKE]); // Re-seta os dados mock (útil após deleção)
+    const response = await api.get("/maquina");
+    setEquipamentos(response.data);
+     } catch (error) {
+      console.error("Erro ao buscar máquinas:", error);
+      setErro("Erro ao carregar máquinas do servidor.");
+    } finally {
       setCarregando(false);
-    }, 500);
+    }
   };
 
   useEffect(() => {
-    buscarEquipamentosSimulada();
-  }, []);
+    buscarEquipamentos();
+  }, [])
 
   const handleEditar = (id) => {
     const equipamentoAlvo = equipamentos.find((e) => e.id_maquina === id) || {
@@ -70,7 +44,7 @@ function VisualizarEquipamentosContent() {
     );
   };
 
-  const handleDeletar = (id) => {
+  const handleDeletar = async (id) => {
     const equipamentoAlvo = equipamentos.find((e) => e.id_maquina === id);
 
     if (
@@ -81,19 +55,25 @@ function VisualizarEquipamentosContent() {
       return;
     }
 
-    // --- INÍCIO DA SIMULAÇÃO DE DELEÇÃO ---
+    try {
+    
     setCarregando(true);
     setErro(null);
     setMensagemSucesso(null);
 
-    // Simulação de sucesso após um pequeno delay
-    setTimeout(() => {
-      const novaLista = equipamentos.filter((e) => e.id_maquina !== id);
-      setEquipamentos(novaLista); // Atualiza o estado para remover visualmente
-      setMensagemSucesso(`Máquina ID: ${id} deletada (simulado) com sucesso!`);
+    await api.delete(`/maquina/${id}`);
+
+    setEquipamentos((prev) =>
+      prev.filter((e) => e.id_maquina !== id)
+    );
+
+    setMensagemSucesso(`Máquina ID ${id} deletada com sucesso!`);
+  } catch (error) {
+      console.error("Erro ao deletar máquina:", error);
+      setErro("Erro ao excluir máquina.");
+    } finally {
       setCarregando(false);
-    }, 800); // 800ms de delay para simular a requisição
-    // --- FIM DA SIMULAÇÃO DE DELEÇÃO ---
+    }
   };
 
   if (carregando) {

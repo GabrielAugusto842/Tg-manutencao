@@ -20,7 +20,7 @@ function CadastrarEquipamentos() {
   useEffect(() => {
     const carregarSetores = async () => {
       try {
-        const response = await api.get("/setor");
+        const response = await api.get("/setores");
 
         const setoresFormatados = response.data.map((setor) => ({
           id: setor.idSetor,
@@ -56,15 +56,15 @@ function CadastrarEquipamentos() {
       nome,
       marca,
       modelo,
-      id_setor: idSetor,
-      numero_serie,
+      idSetor: idSetor,
+      numeroSerie: numero_serie,
       tag,
-      producaoPorHora,
+      producaoPorHora: Number(producaoPorHora),
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/equipamentos",
+        "http://localhost:3002/api/maquina",
         dadosEquipamento
       );
 

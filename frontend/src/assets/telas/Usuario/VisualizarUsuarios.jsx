@@ -3,7 +3,7 @@ import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Usuario/VisualizarUsuarios.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
-const API_URL = "http://localhost:3001/api/user";
+const API_URL = "http://localhost:3002/api/user";
 
 function VisualizarUsuariosContent() {
   const [usuarios, setUsuarios] = useState([]);

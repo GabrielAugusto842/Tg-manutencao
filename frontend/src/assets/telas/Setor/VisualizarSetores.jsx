@@ -4,7 +4,7 @@ import "../../telas/Setor/VisualizarSetores.css";
 import { FaCheckCircle, FaEdit, FaTrash} from "react-icons/fa";
 
 
-const API_URL = "http://localhost:3001/api/setores";
+const API_URL = "http://localhost:3002/api/setores";
 
 function VisualizarSetoresContent() {
   const [setores, setSetores] = useState([]);
