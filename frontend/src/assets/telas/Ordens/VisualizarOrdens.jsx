@@ -3,6 +3,9 @@ import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
+const USUARIO_LOGADO_ID = 4;
+const ID_ESTADO_ABERTA = 500;
+
 const ordensFAKE = [
   {
     id_ordem: 1,
@@ -16,6 +19,8 @@ const ordensFAKE = [
   },
 ];
 
+
+
 function VisualizarOrdensContent({ user }) {
 
   const [ordem, setOrdem] = useState([]);
@@ -23,10 +28,14 @@ function VisualizarOrdensContent({ user }) {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
+  const usuarioLogadoId = user?.idUsuario;
+  const cargoUsuario = user?.cargo;
+
   const podeAceitar =
     user?.cargo === "Manutentor" || user?.cargo === "Gerente de Manutenção";
-  const podeEditar = user?.cargo === "Gerente de Manutenção";
-  const podeExcluir = user?.cargo === "Gerente de Manutenção";
+
+  const podeEditarGM = cargoUsuario === "Gerente de Manutenção"; 
+  const podeExcluirGM = cargoUsuario === "Gerente de Manutenção";
 
    useEffect(() => {
     if (!user) return; // só busca ordens quando o user estiver disponível
@@ -51,7 +60,9 @@ function VisualizarOrdensContent({ user }) {
   };
 
   const handleExcluir = (id) => {
-    alert(`Excluir ordem ${id}`);
+    // Lógica de remoção local FAKE
+    setOrdem(prev => prev.filter(o => o.id_ordem !== id));
+    setMensagemSucesso(`Ordem ${id} excluída com sucesso!`);
   };
 
   if (carregando) {
@@ -112,17 +123,29 @@ function VisualizarOrdensContent({ user }) {
               </tr>
             </thead>
             <tbody>
-              {ordem.map((ordem) => (
-                <tr key={ordem.id_maquina}>
-                  <td>{ordem.id_ordem}</td>
-                  <td>{ordem.descricao}</td>
-                  <td>{ordem.data_inicio}</td>
-                  <td>{ordem.data_termino}</td>
-                  <td>{ordem.custo}</td>
-                  <td>{ordem.id_usuario}</td>
-                  <td>{ordem.id_estado}</td>
-                  <td>{ordem.id_maquina}</td>
+              {ordem.map((ordem) => {
+              // 🛑 NOVA LÓGICA DE EXCLUSÃO PARA OPERADOR
+                const isAutor = ordem.id_usuario === usuarioLogadoId;
+                const isAberta = ordem.id_estado === ID_ESTADO_ABERTA;
+ 
+                const podeExcluirOperador = (
+                 isAutor && isAberta && cargoUsuario === "Operador"
+               );
 
+                 // Ação de Excluir é permitida para Gerente OU para Operador (se as regras forem atendidas)
+                const podeExcluirFinal = podeExcluirGM || podeExcluirOperador;
+                
+                return (
+                  <tr key={ordem.id_ordem}> 
+                    <td>{ordem.id_ordem}</td>
+                    <td>{ordem.descricao}</td>
+                    <td>{ordem.data_inicio}</td>
+                    <td>{ordem.data_termino}</td>
+                    <td>{ordem.custo}</td>
+                    <td>{ordem.id_usuario}</td>
+                    <td>{ordem.id_estado}</td>
+                    <td>{ordem.id_maquina}</td>
+                    
                   <td className="acoes-coluna-icones">
                     {podeAceitar && (
                       <button
@@ -140,7 +163,7 @@ function VisualizarOrdensContent({ user }) {
                       </button>
                     )}
 
-                    {podeEditar && (
+                    {podeEditarGM && (
                       <button
                         className="btn-editar"
                         onClick={() => handleEditar(ordem.id_ordem)}
@@ -156,7 +179,7 @@ function VisualizarOrdensContent({ user }) {
                       </button>
                     )}
 
-                    {podeExcluir && (
+                    {podeExcluirFinal && (
                       <button
                         className="btn-excluir"
                         onClick={() => handleExcluir(ordem.id_ordem)}
@@ -173,7 +196,7 @@ function VisualizarOrdensContent({ user }) {
                     )}
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
@@ -182,11 +205,21 @@ function VisualizarOrdensContent({ user }) {
   );
 }
 
+
+
 export default function VisualizarOrdens() {
-  return (
-    <Layout title="Visualizar Ordens de Serviço">
-      <VisualizarOrdensContent />
-    </Layout>
-  );
+    // 💡 SIMULAÇÃO: O usuário logado aqui é um "Operador"
+    // E o idUsuario é 4 para corresponder à ordem FAKE
+    const [user] = useState({ 
+        cargo: "Operador", 
+        idUsuario: USUARIO_LOGADO_ID 
+    }); 
+
+    return (
+        <Layout title="Visualizar Ordens de Serviço">
+            {/* 🛑 CORREÇÃO: Passando o usuário logado para o componente filho */}
+            <VisualizarOrdensContent user={user} />
+        </Layout>
+    );
 }
 
