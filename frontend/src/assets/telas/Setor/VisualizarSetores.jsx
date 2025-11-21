@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Setor/VisualizarSetores.css";
 import { FaCheckCircle, FaEdit, FaTrash} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 
 const API_URL = "http://localhost:3002/api/setores";
@@ -11,6 +12,7 @@ function VisualizarSetoresContent() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null); // Novo estado para feedback
+  const navigate = useNavigate();
 
   // Função para buscar usuários (refatorada para ser reutilizada)
   const buscarSetores = async () => {
@@ -46,14 +48,9 @@ function VisualizarSetoresContent() {
   }, []);
 
   const handleEditar = (id) => {
-    const setorAlvo = setores.find((s) => s.id_setor === id);
-    // Implementar a lógica de navegação para a tela de edição aqui, por exemplo:
-    // history.push(`/usuarios/editar/${id}`);
 
-    console.log(`Função de Edição chamada para o Setor ID: ${id}.`);
-    alert(`Abrindo tela de edição para o Setor: ${setorAlvo.setor}...`);
-
-    // Se você não for usar a navegação do React Router, substitua o alert pela sua lógica.
+    navigate(`/setores/editar/${id}`);
+    
   };
 
   // FUNÇÃO DE DELEÇÃO

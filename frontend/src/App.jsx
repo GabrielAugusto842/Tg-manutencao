@@ -16,6 +16,7 @@ import TrocarSenha from "./assets/telas/TrocarSenha";
 import CadastrarSetor from "./assets/telas/Setor/CadastrarSetor";
 import VisualizarSetores from "./assets/telas/Setor/VisualizarSetores";
 import EditarUsuario from "./assets/telas/Usuario/EditarUsuario";
+import EditarSetor from "./assets/telas/Setor/EditarSetor";
 
 function App() {
   useTokenExpiration();
@@ -53,6 +54,7 @@ function App() {
 
         <Route path="/setores/cadastrar" element={<CadastrarSetor />} />
         <Route path="/setores/visualizar" element={<VisualizarSetores />} />
+        <Route path="/setores/editar/:id" element={<EditarSetor />} />
       </Routes>
     </BrowserRouter>
   );
