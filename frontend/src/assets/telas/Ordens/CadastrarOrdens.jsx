@@ -14,46 +14,36 @@ function CadastrarOrdemServico() {
   const [idSetor, setIdSetor] = useState("");
   const [maquinas, setMaquinas] = useState([]);
   const [estados, setEstados] = useState([]);
-  const [idUsuarioDirecionado, setIdUsuarioDirecionado] = useState("");
-  const [usuarios, setUsuarios] = useState([]);
   const [setores, setSetores] = useState([]);
 
   const [maquinasFiltradas, setMaquinasFiltradas] = useState([]);
 
   useEffect(() => {
     const carregarDados = async () => {
-      // --- Carregamento de Máquinas (Tratamento de erro individual para 404) ---
+      // --- Carregamento de Máquinas ---
       try {
-        const maquinasResponse = await api.get("/maquinas");
+        const maquinasResponse = await api.get("/maquina");
         setMaquinas(maquinasResponse.data);
         setMaquinasFiltradas(maquinasResponse.data);
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
-        // Se a rota de máquinas falhar, o restante continua a carregar
-        console.warn(
-          "Aviso: Falha ao carregar Máquinas (404 esperado?). Continuando..."
-        );
-      } // --- Carregamento de Setores ---
+        console.warn("Aviso: Falha ao carregar Máquinas. Continuando...");
+      }
 
+      // --- Carregamento de Setores ---
       try {
         const setoresReponse = await api.get("/setores");
         setSetores(setoresReponse.data);
       } catch (error) {
         console.error("Erro ao carregar Setores:", error);
-      } // --- Carregamento de Estados ---
+      }
 
+      // --- Carregamento de Estados ---
       try {
-        const estadosOS = await api.get("/estados");
+        const estadosOS = await api.get("/estado");
         setEstados(estadosOS.data);
       } catch (error) {
         console.error("Erro ao carregar Estados:", error);
-      } // --- Carregamento de Manutentores (Rota Corrigida) ---
-
-      try {
-        const manutentoresReponse = await api.get("/user/manutentores");
-        setUsuarios(manutentoresReponse.data);
-      } catch (error) {
-        console.error("Erro ao carregar Manutentores:", error);
       }
     };
 
@@ -63,17 +53,19 @@ function CadastrarOrdemServico() {
   useEffect(() => {
     if (idSetor) {
       const filtradas = maquinas.filter(
-        (maquina) => String(maquina.id_setor) === String(idSetor)
+        // Corrigindo para verificar se a propriedade existe antes de comparar
+        (maquina) =>
+          maquina.idSetor && String(maquina.idSetor) === String(idSetor)
       );
-      setMaquinasFiltradas(filtradas);
+      setMaquinasFiltradas(filtradas); // Limpa a seleção se a máquina atual não estiver no novo filtro
 
-      // Se a máquina atual não estiver no novo filtro, limpa a seleção
       if (!filtradas.find((m) => String(m.id_maquina) === String(idMaquina))) {
         setIdMaquina("");
       }
     } else {
-      // Se nenhum setor for selecionado, mostra todas as máquinas
+      // Se "Todos os Setores" ou nada for selecionado
       setMaquinasFiltradas(maquinas);
+      setIdMaquina("");
     }
   }, [idSetor, maquinas, idMaquina]);
 
@@ -103,7 +95,6 @@ function CadastrarOrdemServico() {
       id_usuario: idUsuario,
       id_maquina: idMaquina,
       id_estado: estadoInicialID,
-      id_usuario_direcionado: idUsuarioDirecionado || null,
     };
 
     try {
@@ -114,7 +105,6 @@ function CadastrarOrdemServico() {
         "Ordem de Serviço cadastrada com sucesso! Ela está aberta para manutenção."
       );
 
-      setIdUsuarioDirecionado("");
       setIdSetor("");
       setDescricao("");
       setIdMaquina("");
@@ -135,10 +125,9 @@ function CadastrarOrdemServico() {
     <Layout title="Cadastro de Ordem de Serviço">
       <div className="form-container" style={{ marginTop: "20px" }}>
         <form onSubmit={handleSubmit}>
-          {/* LINHA 1: Setor e Direcionamento */}
           <div className="form-row">
             {/* Campo de Seleção de Setor */}
-            <div className="form-group half-width">
+            <div className="form-group full-width">
               <label htmlFor="idSetor">Setor:</label>
               <select
                 id="idSetor"
@@ -146,28 +135,20 @@ function CadastrarOrdemServico() {
                 onChange={(e) => setIdSetor(e.target.value)}
               >
                 <option value="">Todos os Setores</option>
-                {setores.map((setor) => (
-                  <option key={setor.id_setor} value={setor.id_setor}>
+                {setores.map((setor, index) => (
+                  <option
+                    // CORREÇÃO: Chave fallback para evitar "key=undefined"
+                    key={
+                      setor.idSetor ? String(setor.idSetor) : `setor-${index}`
+                    }
+                    value={
+                      setor.idSetor
+                        ? String(setor.idSetor)
+                        : `setor_null_${index}`
+                    }
+                  >
                     {setor.nomeSetor}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Campo de Direcionamento (Opcional) */}
-            <div className="form-group half-width">
-              <label htmlFor="idUsuarioDirecionado">
-                Manutentor (Opcional):
-              </label>
-              <select
-                id="idUsuarioDirecionado"
-                value={idUsuarioDirecionado}
-                onChange={(e) => setIdUsuarioDirecionado(e.target.value)}
-              >
-                <option value="">Direcionar</option>
-                {usuarios.map((usuario) => (
-                  <option key={usuario.id_usuario} value={usuario.id_usuario}>
-                    {usuario.nome}
+                    {/* CORREÇÃO: Usando 'setor' em vez de 'nomeSetor' */}
                   </option>
                 ))}
               </select>
@@ -191,15 +172,21 @@ function CadastrarOrdemServico() {
                     ? `Selecione a Máquina... (${maquinasFiltradas.length} encontradas)`
                     : "Selecione a ..."}
                 </option>
-                {maquinasFiltradas.map((maquina) => (
-                  <option key={maquina.id_maquina} value={maquina.id_maquina}>
+                {maquinasFiltradas.map((maquina, index) => (
+                  <option
+                    // CORREÇÃO: Chave fallback para evitar "key=undefined"
+                    key={
+                      maquina.idMaquina
+                        ? String(maquina.idMaquina)
+                        : `maquina_null_${index}`
+                    }
+                    value={String(maquina.idMaquina)}
+                  >
                     {maquina.nome}
                   </option>
                 ))}
               </select>
             </div>
-
-            {/* [REMOVIDO] Campo Custo (custo) - OPCIONAL */}
           </div>
 
           {/* LINHA 3: Descrição */}
