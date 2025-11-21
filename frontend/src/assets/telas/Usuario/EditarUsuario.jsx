@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
+import "./EditarUsuario.css";
 
 const API_URL = "http://localhost:3002/api/user";
 const API_CARGOS = "http://localhost:3002/api/cargo";
@@ -137,70 +138,74 @@ function EditarUsuario() {
 
   return (
     <Layout title={`Editar Usuário: ${usuario.nome}`}>
-      <form onSubmit={handleSalvar}>
-        <label>
-          Nome:
-          <input
-            type="text"
-            name="nome"
-            value={dadosFormulario.nome}
-            onChange={handleInputChange}
-          />
-        </label>
+      {/* Aplica a classe do contêiner/card */}
+      <div className="edicao-usuario-container">
+        {/* Aplica a classe do formulário */}
+        <form onSubmit={handleSalvar} className="edicao-usuario-form">
+          <label>
+            Nome:
+            <input
+              type="text"
+              name="nome"
+              value={dadosFormulario.nome}
+              onChange={handleInputChange}
+            />
+          </label>
 
-        <label>
-          Email:
-          <input
-            type="text"
-            name="email"
-            value={dadosFormulario.email}
-            onChange={handleInputChange}
-          />
-        </label>
+          <label>
+            Email:
+            <input
+              type="text"
+              name="email"
+              value={dadosFormulario.email}
+              onChange={handleInputChange}
+            />
+          </label>
 
-        <label>
-          Nova Senha (opcional):
-          <input
-            type="password"
-            name="novaSenha" // Use o mesmo nome do estado
-            value={dadosFormulario.novaSenha}
-            onChange={handleInputChange}
-            placeholder="Deixe vazio para não alterar"
-          />
-        </label>
+          <label>
+            Nova Senha (opcional):
+            <input
+              type="password"
+              name="novaSenha"
+              value={dadosFormulario.novaSenha}
+              onChange={handleInputChange}
+              placeholder="Deixe vazio para não alterar"
+            />
+          </label>
 
-        <label>
-          Cargo:
-          <select
-            value={idCargo || ""}
-            onChange={(e) => setIdCargo(Number(e.target.value))}
-          >
-            <option value="">Selecione um cargo</option>
-            {opcoesCargo.map((cargo) => (
-              <option key={cargo.id} value={cargo.id}>
-                {cargo.nome}
-              </option>
-            ))}
-          </select>
-        </label>
+          <label>
+            Cargo:
+            <select
+              value={idCargo || ""}
+              onChange={(e) => setIdCargo(Number(e.target.value))}
+            >
+              <option value="">Selecione um cargo</option>
+              {opcoesCargo.map((cargo) => (
+                <option key={cargo.id} value={cargo.id}>
+                  {cargo.nome}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label>
-          Setor:
-          <select
-            value={idSetor || ""}
-            onChange={(e) => setIdSetor(Number(e.target.value))}
-          >
-            <option value="">Selecione um setor</option>
-            {opcoesSetor.map((setor) => (
-              <option key={setor.id} value={setor.id}>
-                {setor.nome}
-              </option>
-            ))}
-          </select>
-        </label>
+          <label>
+            Setor:
+            <select
+              value={idSetor || ""}
+              onChange={(e) => setIdSetor(Number(e.target.value))}
+            >
+              <option value="">Selecione um setor</option>
+              {opcoesSetor.map((setor) => (
+                <option key={setor.id} value={setor.id}>
+                  {setor.nome}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <button type="submit">Salvar Edição</button>
-      </form>
+          <button type="submit">Salvar Edição</button>
+        </form>
+      </div>
     </Layout>
   );
 }

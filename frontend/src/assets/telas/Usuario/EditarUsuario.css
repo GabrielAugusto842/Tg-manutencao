@@ -1,0 +1,77 @@
+/* Container principal do card do formulário */
+.edicao-usuario-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo do formulário para layout e espaçamento */
+.edicao-usuario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Estilo dos rótulos (labels) */
+.edicao-usuario-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Estilo dos campos de input e select */
+.edicao-usuario-form input[type="text"],
+.edicao-usuario-form input[type="password"],
+.edicao-usuario-form select {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.edicao-usuario-form input:focus,
+.edicao-usuario-form select:focus {
+  border-color: #007bff; /* Cor primária no foco */
+  outline: none;
+}
+
+/* Estilo do botão */
+.edicao-usuario-form button[type="submit"] {
+  padding: 12px 20px;
+  background-color: #28a745; /* Cor verde para salvar */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.edicao-usuario-form button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* Estilos para mensagens de estado */
+.msg-carregando {
+  text-align: center;
+  padding: 20px;
+  color: #007bff;
+}
+
+.msg-erro {
+  text-align: center;
+  padding: 20px;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+}
