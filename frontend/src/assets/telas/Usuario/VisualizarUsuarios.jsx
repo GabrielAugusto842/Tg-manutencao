@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Usuario/VisualizarUsuarios.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/user";
 
-function VisualizarUsuariosContent() {
+function VisualizarUsuariosContent({navigate}) {
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -45,14 +46,15 @@ function VisualizarUsuariosContent() {
   }, []);
 
   const handleEditar = (id) => {
-    const usuarioAlvo = usuarios.find((u) => u.id === id);
-    // Implementar a lógica de navegação para a tela de edição aqui, por exemplo:
-    // history.push(`/usuarios/editar/${id}`);
 
-    console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
+    const usuarioAlvo = usuarios.find((u) => u.id_usuario === id);
+
+    navigate(`/usuario/editar/${id}`);
+        console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
+
+
     alert(`Abrindo tela de edição para ${usuarioAlvo.nome}...`);
 
-    // Se você não for usar a navegação do React Router, substitua o alert pela sua lógica.
   };
 
   // FUNÇÃO DE DELEÇÃO
@@ -195,9 +197,12 @@ function VisualizarUsuariosContent() {
 }
 
 export default function VisualizarUsuarios() {
+
+  const navigate = useNavigate();
+
   return (
     <Layout title="Visualizar Usuários">
-      <VisualizarUsuariosContent />
+      <VisualizarUsuariosContent navigate={navigate} />
     </Layout>
   );
 }

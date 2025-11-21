@@ -5,9 +5,10 @@ import { authMiddleware } from "../middleware/authMiddleware";
 const router = Router();
 const usuarioController = new UsuarioController();
 
-
-
-router.get("/manutentores", usuarioController.getManutentores.bind(usuarioController));
+router.get(
+  "/manutentores",
+  usuarioController.getManutentores.bind(usuarioController)
+);
 
 router.get("/", (req, res) => {
   usuarioController.getUsuarios(req, res);
@@ -17,7 +18,10 @@ router.get("/:email", (req, res) => {
   usuarioController.getUsuario(req, res);
 });
 
-router.post("/", usuarioController.cadastroUsuario.bind(usuarioController));
+router.put("/id/:id", usuarioController.updateUsuario.bind(usuarioController));
 
+router.get("/id/:id", usuarioController.getById.bind(usuarioController));
+
+router.post("/", usuarioController.cadastroUsuario.bind(usuarioController));
 
 export default router;

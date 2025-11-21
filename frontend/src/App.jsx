@@ -15,6 +15,7 @@ import Layout from "./assets/componentes/Layout/Layout";
 import TrocarSenha from "./assets/telas/TrocarSenha";
 import CadastrarSetor from "./assets/telas/Setor/CadastrarSetor";
 import VisualizarSetores from "./assets/telas/Setor/VisualizarSetores";
+import EditarUsuario from "./assets/telas/Usuario/EditarUsuario";
 
 function App() {
   useTokenExpiration();
@@ -35,6 +36,7 @@ function App() {
         {/* Usuários */}
         <Route path="/usuario/cadastrar" element={<CadastrarUsuario />} />
         <Route path="/usuario/visualizar" element={<VisualizarUsuarios />} />
+        <Route path="/usuario/editar/:id" element={<EditarUsuario />} />
 
         {/* Equipamentos */}
         <Route

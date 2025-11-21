@@ -2,11 +2,33 @@ import { db } from "../config/db";
 import { Usuario } from "../models/Usuario";
 
 export class UserRepository {
+
+
+ async updateUsuario(id: number, dados: Partial<Usuario>): Promise<void> {
+    const camposAtualizados = Object.entries(dados)
+        .map(([key, value]) => `${key} = ?`)
+        .join(", ");
+
+    const valores = Object.values(dados);
+    
+    // Se a senha estiver presente, ela será hasheada e passada aqui.
+    const query = `UPDATE usuario SET ${camposAtualizados} WHERE id_usuario = ?`;
+
+    await db.execute(query, [...valores, id]);
+}
+
+
   async findByEmail(email: string): Promise<Usuario | null> {
     const [rows] = await db.query("SELECT * FROM usuario WHERE email = ?", [email]);
     const usuario = (rows as any)[0];
     return usuario ? new Usuario(usuario.id_usuario, usuario.nome, usuario.email, usuario.senha, usuario.id_cargo, usuario.id_setor) : null;
   }
+
+  public async findById(id: number): Promise<Usuario | null> {
+        const [rows] = await db.query("SELECT * FROM usuario WHERE id_usuario = ?", [id]);
+        const usuario = (rows as any)[0];
+        return usuario ? new Usuario(usuario.id_usuario, usuario.nome, usuario.email, usuario.senha, usuario.id_cargo, usuario.id_setor) : null;
+    }
 
   public async updatePassword(userId: number, newPasswordHash: string): Promise<boolean> {
 
