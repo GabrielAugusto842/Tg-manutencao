@@ -34,11 +34,9 @@ export class SetorController {
 
             if (!nomeSetor) {
                 return res.status(400).json({ error: 'Campo nome do setor é obrigatório' });
-            } else if(!descricao) {
-                return res.status(400).json({ error: 'Campo descrição é obrigatório' });
             }
 
-            const novoSetor = await this.setorRepo.createSetor(nomeSetor, descricao);
+            const novoSetor = await this.setorRepo.createSetor(nomeSetor, descricao || null);
             return res.status(201).json(novoSetor);
         } catch (error) {
             console.error('Erro ao criar setor:', error);
@@ -54,11 +52,9 @@ export class SetorController {
 
             if (!nomeSetor) {
                 return res.status(400).json({ error: 'Campo nome do setor é obrigatório' });
-            } else if(!descricao) {
-                return res.status(400).json({ error: 'Campo descrição é obrigatório' });
             }
 
-            const updated = await this.setorRepo.updateSetor(Number(idSetor), nomeSetor, descricao);
+            const updated = await this.setorRepo.updateSetor(Number(idSetor), nomeSetor, descricao || null);
             if (!updated) {
                 return res.status(404).json({ error: 'Setor não encontrado' });
             }

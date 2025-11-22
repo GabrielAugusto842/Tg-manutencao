@@ -5,11 +5,13 @@ export class Maquina {
     private numeroSerie: string;
     private modelo: string | null;
     private tag: string | null;
-    private producaoHora: number;
+    private producaoHora: number | null;
+    private disponibilidadeMes: number;
     private idSetor: number;
 
     constructor(data: {id_maquina: number, nome: string, marca: string, numero_serie: string,
-        modelo: string | null, tag: string | null, producaoPorHora: number, id_setor: number
+        modelo: string | null, tag: string | null, producao_hora: number | null, 
+        disponibilidade_mes: number, id_setor: number
     }) {
         this.idMaquina = data.id_maquina;
         this.nome = data.nome;
@@ -17,7 +19,8 @@ export class Maquina {
         this.numeroSerie = data.numero_serie;
         this.modelo = data.modelo;
         this.tag = data.tag;
-        this.producaoHora = data.producaoPorHora;
+        this.producaoHora = data.producao_hora;
+        this.disponibilidadeMes = data.disponibilidade_mes;
         this.idSetor = data.id_setor;
     }
 
@@ -63,11 +66,18 @@ export class Maquina {
         this.tag = tag; 
     }
 
-    public get getProducaoHora(): number {
+    public get getProducaoHora(): number | null {
         return this.producaoHora;
     }
     public set setProducaoHora(producaoHora: number) {
         this.producaoHora = producaoHora; 
+    }
+
+    public get getDisponibilidadeMes(): number {
+        return this.disponibilidadeMes;
+    }
+    public set setDisponibilidadeMes(disponibilidadeMes: number) {
+        this.disponibilidadeMes = disponibilidadeMes; 
     }
 
     public get getIdSetor(): number {

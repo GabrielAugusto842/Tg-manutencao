@@ -7,6 +7,7 @@ import cargoRoutes from "./routes/cargoRoutes";
 import estadoRoutes from "./routes/estadoRoutes";
 import setorRoutes from "./routes/setorRoutes";
 import maquinaRoutes from "./routes/maquinaRoutes";
+import ordServRoutes from "./routes/ordServRoutes";
 
 const app: Application = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/api/cargo", cargoRoutes);
 app.use("/api/estado", estadoRoutes);
 app.use("/api/setores", setorRoutes);
 app.use("/api/maquina", maquinaRoutes);
+app.use("/api/os", ordServRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));

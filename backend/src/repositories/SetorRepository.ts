@@ -16,7 +16,7 @@ export class SetorRepository {
         return row ? new Setor(row): null;
     }
 
-    async createSetor(nomeSetor: string, descricao: string): Promise<Setor> {
+    async createSetor(nomeSetor: string, descricao: string | null): Promise<Setor> {
         const [result]: any = await db.execute(
             'INSERT INTO setor (setor, descricao) VALUES (?, ?)', [nomeSetor, descricao]
         );
@@ -24,7 +24,7 @@ export class SetorRepository {
         return new Setor({id_setor: newId, setor: nomeSetor, descricao});
     }
 
-    async updateSetor(idSetor: number, nomeSetor: string, descricao: string): Promise<boolean> {
+    async updateSetor(idSetor: number, nomeSetor: string, descricao: string | null): Promise<boolean> {
         const [result]: any = await db.execute(
             'UPDATE setor SET setor = ?, descricao = ? WHERE id_setor = ?',
             [nomeSetor, descricao, idSetor]
