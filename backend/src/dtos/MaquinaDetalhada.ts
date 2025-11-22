@@ -9,6 +9,7 @@ export class MaquinaDetalhada {
   private idSetor: number;
   private setor: string;
   private descricao: string;
+    getMarca: any;
 
   constructor(data: {
     id_maquina: number;

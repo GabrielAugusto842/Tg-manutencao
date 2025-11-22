@@ -3,24 +3,24 @@ import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Equipamento/VisualizarEquipamentos.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 import api from "../../Services/api.jsx";
-
+import { useNavigate } from "react-router-dom";
 
 function VisualizarEquipamentosContent() {
   const [equipamentos, setEquipamentos] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const navigate = useNavigate();
 
+  const buscarEquipamentos = async () => {
+    try {
+      setCarregando(true);
+      setErro(null);
+      setMensagemSucesso(null);
 
-const buscarEquipamentos = async () => {
-  try {
-    setCarregando(true);
-    setErro(null);
-    setMensagemSucesso(null);
-
-    const response = await api.get("/maquina");
-    setEquipamentos(response.data);
-     } catch (error) {
+      const response = await api.get("/maquina");
+      setEquipamentos(response.data);
+    } catch (error) {
       console.error("Erro ao buscar máquinas:", error);
       setErro("Erro ao carregar máquinas do servidor.");
     } finally {
@@ -30,19 +30,7 @@ const buscarEquipamentos = async () => {
 
   useEffect(() => {
     buscarEquipamentos();
-  }, [])
-
-  const handleEditar = (id) => {
-    const equipamentoAlvo = equipamentos.find((e) => e.id_maquina === id) || {
-      nome: "Máquina",
-      modelo: "N/A",
-    };
-
-    console.log(`Função de Edição chamada para a máquina ID: ${id}.`);
-    alert(
-      `Implementar navegação para edição da máquina: ${equipamentoAlvo.nome} (${equipamentoAlvo.modelo})...`
-    );
-  };
+  }, []);
 
   const handleDeletar = async (id) => {
     const equipamentoAlvo = equipamentos.find((e) => e.id_maquina === id);
@@ -56,19 +44,16 @@ const buscarEquipamentos = async () => {
     }
 
     try {
-    
-    setCarregando(true);
-    setErro(null);
-    setMensagemSucesso(null);
+      setCarregando(true);
+      setErro(null);
+      setMensagemSucesso(null);
 
-    await api.delete(`/maquina/${id}`);
+      await api.delete(`/maquina/${id}`);
 
-    setEquipamentos((prev) =>
-      prev.filter((e) => e.id_maquina !== id)
-    );
+      setEquipamentos((prev) => prev.filter((e) => e.id_maquina !== id));
 
-    setMensagemSucesso(`Máquina ID ${id} deletada com sucesso!`);
-  } catch (error) {
+      setMensagemSucesso(`Máquina ID ${id} deletada com sucesso!`);
+    } catch (error) {
       console.error("Erro ao deletar máquina:", error);
       setErro("Erro ao excluir máquina.");
     } finally {
@@ -126,19 +111,25 @@ const buscarEquipamentos = async () => {
             </thead>
             <tbody>
               {equipamentos.map((maquina) => (
-                <tr key={maquina.id_maquina}>
+                <tr key={maquina.idMaquina}>
                   <td>{maquina.nome}</td>
                   <td>{maquina.marca}</td>
                   <td>{maquina.modelo}</td>
-                  <td>{maquina.numero_serie}</td>
+                  <td>{maquina.numeroSerie}</td>
                   <td>{maquina.tag}</td>
-                  <td>{maquina.producaoPorHora}</td>
-                  <td>{maquina.id_setor}</td>
+                  <td>{maquina.producaoHora}</td>
+                  <td>{maquina.nomeSetor || maquina.setor}</td>
 
                   <td className="acoes-coluna-icones">
                     <button
                       className="btn-editar"
-                      onClick={() => handleEditar(maquina.id_maquina)}
+                      onClick={() => {
+                        if (!maquina.idMaquina) {
+                          alert("ID da máquina inválido!");
+                          return;
+                        }
+                        navigate(`/equipamentos/editar/${maquina.idMaquina}`);
+                      }}
                       title="Editar Máquina"
                       style={{
                         color: "blue",

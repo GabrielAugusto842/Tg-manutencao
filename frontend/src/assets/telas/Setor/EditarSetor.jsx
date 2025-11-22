@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
 import api from "../../Services/api.jsx";
 
-// Utilize o arquivo CSS para estilizar o formulário
-// import "./EditarSetor.css";
 
 function EditarSetor() {
   const { id } = useParams();

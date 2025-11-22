@@ -17,6 +17,7 @@ import CadastrarSetor from "./assets/telas/Setor/CadastrarSetor";
 import VisualizarSetores from "./assets/telas/Setor/VisualizarSetores";
 import EditarUsuario from "./assets/telas/Usuario/EditarUsuario";
 import EditarSetor from "./assets/telas/Setor/EditarSetor";
+import EditarEquipamento from "./assets/telas/Equipamento/EditarEquipamento";
 
 function App() {
   useTokenExpiration();
@@ -48,6 +49,7 @@ function App() {
           path="/equipamentos/visualizar"
           element={<VisualizarEquipamentos />}
         />
+        <Route path="/equipamentos/editar/:id" element={<EditarEquipamento />} />
 
         {/* Relatórios */}
         <Route path="/relatorios" element={<Relatorios />} />
