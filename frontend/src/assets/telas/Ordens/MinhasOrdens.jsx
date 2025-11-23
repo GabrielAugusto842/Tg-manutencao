@@ -11,7 +11,7 @@ function VisualizarOrdensContent({ user }) {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
-  const idUsuario = user?.idUsuario; // PEGA O USUÁRIO LOGADO
+  const idUsuario = user?.id_usuario;
 
   // Busca ordens REAIS do banco
   const buscarOrdens = async () => {

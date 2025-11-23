@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";
 
@@ -10,6 +11,10 @@ function VisualizarOrdensContent({ user }) {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const navigate = useNavigate();
+
+  const dadosUsuario = JSON.parse(localStorage.getItem("user"));
+  const usuarioLogadoId = dadosUsuario?.id_usuario;
 
   const [filtroMaquina, setFiltroMaquina] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
@@ -28,7 +33,6 @@ function VisualizarOrdensContent({ user }) {
   };
 
   const cargoUsuario = user?.cargo;
-  const usuarioLogadoId = user?.idUsuario;
   const eOperador = cargoUsuario === "Operador";
 
   const podeEditarGM = cargoUsuario === "Gerente de Manutenção";
@@ -67,6 +71,7 @@ function VisualizarOrdensContent({ user }) {
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
+      console.log("OS recebidas:", dados);
       setOrdens(dados);
     } catch (e) {
       setErro("Não foi possível carregar as ordens de serviço.");
@@ -82,10 +87,15 @@ function VisualizarOrdensContent({ user }) {
 
   // Ações
   const handleAceitar = async (id) => {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja aceitar esta O.S?"
+    );
+    if (!confirmar) return; // Sai se o usuário clicar em "Cancelar"
+
     try {
       setCarregando(true);
-      const resposta = await fetch(`${API_URL}/aceitar/${id}`, {
 
+      const resposta = await fetch(`${API_URL}/aceitar/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -93,9 +103,10 @@ function VisualizarOrdensContent({ user }) {
         },
         body: JSON.stringify({ idUsuario: usuarioLogadoId }),
       });
-      if (!resposta.ok) throw new Error("Erro ao aceitar a ordem");
-      setMensagemSucesso(`Ordem ${id} aceita com sucesso!`);
-      buscarOrdens();
+
+      if (!resposta.ok) throw new Error("Erro ao aceitar O.S");
+
+      navigate("/ordens/minhasos");
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -210,7 +221,7 @@ function VisualizarOrdensContent({ user }) {
             </thead>
             <tbody>
               {ordensFiltradas.map((ordem) => (
-                <tr key={ordem.id_ord_serv}>
+                <tr key={ordem.idOrdServ}>
                   <td>{ordem.nomeMaquina}</td>
                   <td>{ordem.setor}</td>
                   <td>{ordem.descricao}</td>
@@ -231,7 +242,7 @@ function VisualizarOrdensContent({ user }) {
                     <td className="acoes-coluna-icones">
                       {podeAceitar && ordem.status === "Aberto" && (
                         <button
-                          onClick={() => handleAceitar(ordem.id_ord_serv)}
+                          onClick={() => handleAceitar(ordem.idOrdServ)}
                           title="Aceitar"
                         >
                           <FaCheckCircle size={20} color="green" />
@@ -240,7 +251,7 @@ function VisualizarOrdensContent({ user }) {
 
                       {podeEditarGM && (
                         <button
-                          onClick={() => handleEditar(ordem.id_ord_serv)}
+                          onClick={() => handleEditar(ordem.idOrdServ)}
                           title="Editar"
                         >
                           <FaEdit size={20} color="blue" />
@@ -248,7 +259,7 @@ function VisualizarOrdensContent({ user }) {
                       )}
                       {podeExcluirGM && (
                         <button
-                          onClick={() => handleExcluir(ordem.id_ord_serv)}
+                          onClick={() => handleExcluir(ordem.idOrdServ)}
                           title="Excluir"
                         >
                           <FaTrash size={20} color="red" />
