@@ -38,13 +38,18 @@ export class OrdServRepository {
   }
 
   async getByManutentor(idManutentor: number) {
-    const [rows]: any = await db.execute(
-      `SELECT * FROM ordem_servico WHERE id_usuario = ?`,
-      [idManutentor]
-    );
+  const [rows]: any = await db.execute(
+    `SELECT os.id_ord_serv, os.descricao, os.solucao, os.data_abertura,
+            os.data_inicio, os.data_termino, os.operacao, os.custo,
+            e.id_estado, e.codigo, e.status
+       FROM ordem_servico AS os
+  INNER JOIN estado AS e ON os.id_estado = e.id_estado
+      WHERE os.id_usuario = ?`,
+    [idManutentor]
+  );
 
-    return rows;
-  }
+  return rows;
+}
 
   async findById(idOrdServ: number): Promise<OrdServDetalhada | null> {
     const [rows] = await db.execute(

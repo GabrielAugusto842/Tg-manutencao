@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
-import "../../telas/Ordens/VisualizarOrdens.css";
+import "../../telas/Ordens/MinhasOrdens.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:3002/api/os";
@@ -10,6 +10,19 @@ function VisualizarOrdensContent({ user }) {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+
+  const corStatus = (status) => {
+    switch (status) {
+      case "Aberto":
+        return "blue";
+      case "Em andamento":
+        return "orange";
+      case "Finalizado":
+        return "green";
+      default:
+        return "black";
+    }
+  };
 
   const idUsuario = user?.id_usuario;
 
@@ -29,6 +42,8 @@ function VisualizarOrdensContent({ user }) {
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
+
+      console.log("Dados vindos da rota minhasOS:", dados);
       setOrdens(dados);
     } catch (e) {
       console.error(e);
@@ -37,6 +52,21 @@ function VisualizarOrdensContent({ user }) {
       setCarregando(false);
     }
   };
+
+  function formatarDataBrasil(dataString) {
+    if (!dataString) return "-";
+
+    const data = new Date(dataString);
+
+    return data.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   useEffect(() => {
     if (idUsuario) buscarOrdens();
@@ -88,7 +118,6 @@ function VisualizarOrdensContent({ user }) {
           <table className="tabela-ordens">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Descrição</th>
                 <th>Data Abertura</th>
                 <th>Data Início</th>
@@ -99,18 +128,24 @@ function VisualizarOrdensContent({ user }) {
             </thead>
 
             <tbody>
-              {ordens.map((o) => (
-                <tr key={o.id_ord_serv}>
-                  <td>{o.id_ord_serv}</td>
-                  <td>{o.descricao}</td>
-                  <td>{o.dataAbertura || "-"}</td>
-                  <td>{o.dataInicio || "-"}</td>
-                  <td>{o.dataTermino || "-"}</td>
-                  <td>{o.status}</td>
+              {ordens.map((ordem) => (
+                <tr key={ordem.id_ord_serv}>
+                  <td>{ordem.descricao}</td>
+                  <td>{formatarDataBrasil(ordem.data_abertura)}</td>
+                  <td>{formatarDataBrasil(ordem.data_inicio)}</td>
+                  <td>{formatarDataBrasil(ordem.data_termino)}</td>
+                  <td
+                    style={{
+                      color: corStatus(ordem.status),
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {ordem.status}
+                  </td>
 
                   <td className="acoes-coluna-icones">
                     <button
-                      onClick={() => handleAceitar(o.id_ord_serv)}
+                      onClick={() => handleAceitar(ordem.id_ord_serv)}
                       style={{
                         color: "green",
                         background: "none",
@@ -122,7 +157,7 @@ function VisualizarOrdensContent({ user }) {
                     </button>
 
                     <button
-                      onClick={() => handleEditar(o.id_ord_serv)}
+                      onClick={() => handleEditar(ordem.id_ord_serv)}
                       style={{
                         color: "blue",
                         background: "none",
@@ -134,7 +169,7 @@ function VisualizarOrdensContent({ user }) {
                     </button>
 
                     <button
-                      onClick={() => handleExcluir(o.id_ord_serv)}
+                      onClick={() => handleExcluir(ordem.id_ord_serv)}
                       style={{
                         color: "red",
                         background: "none",
