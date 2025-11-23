@@ -227,7 +227,7 @@ body,
 }
 
 .tabela-ordens th:nth-child(1) {
-  width: 10%;
+  width: 8%;
 } /* Máquina */
 .tabela-ordens th:nth-child(2) {
   width: 10%;
@@ -236,10 +236,10 @@ body,
   width: 25%;
 } /* Descrição */
 .tabela-ordens th:nth-child(4) {
-  width: 10%;
+  width: 8%;
 } /* Data Início */
 .tabela-ordens th:nth-child(5) {
-  width: 10%;
+  width: 8%;
 } /* Data Término */
 .tabela-ordens th:nth-child(6) {
   width: 8%;
@@ -282,12 +282,12 @@ body,
 
 .tabela-ordens td:last-child {
   display: flex;
-  gap: 10px;
-  justify-content: center;
   align-items: center;
-  padding: 17px;
-  border-color: #dcdcdc;
-  height: 100%;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 10px;
+
+  border-bottom: none;
 }
 
 .tabela-ordens td button {
@@ -300,7 +300,6 @@ body,
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
 }
 
 .btn-aceitar {

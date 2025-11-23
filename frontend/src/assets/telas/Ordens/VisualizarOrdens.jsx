@@ -29,10 +29,26 @@ function VisualizarOrdensContent({ user }) {
 
   const cargoUsuario = user?.cargo;
   const usuarioLogadoId = user?.idUsuario;
+  const eOperador = cargoUsuario === "Operador";
 
   const podeEditarGM = cargoUsuario === "Gerente de Manutenção";
   const podeExcluirGM = cargoUsuario === "Gerente de Manutenção";
   const podeAceitar = cargoUsuario === "Manutentor";
+
+  function formatarDataBrasil(dataString) {
+    if (!dataString) return "-";
+
+    const data = new Date(dataString);
+
+    return data.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   // Busca ordens do backend
   const buscarOrdens = async () => {
@@ -68,7 +84,8 @@ function VisualizarOrdensContent({ user }) {
   const handleAceitar = async (id) => {
     try {
       setCarregando(true);
-      const resposta = await fetch(`${API_URL}/${id}`, {
+      const resposta = await fetch(`${API_URL}/aceitar/${id}`, {
+
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -184,11 +201,11 @@ function VisualizarOrdensContent({ user }) {
                 <th>Setor</th>
                 <th>Descrição</th>
                 <th>Data Abertura</th>
+                <th>Data Início</th>
                 <th>Data Término</th>
-                <th>Custo</th>
                 <th>Usuário</th>
                 <th>Status</th>
-                <th>Ações</th>
+                {!eOperador && <th>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -197,9 +214,9 @@ function VisualizarOrdensContent({ user }) {
                   <td>{ordem.nomeMaquina}</td>
                   <td>{ordem.setor}</td>
                   <td>{ordem.descricao}</td>
-                  <td>{ordem.data_inicio || "-"}</td>
-                  <td>{ordem.data_termino || "-"}</td>
-                  <td>{ordem.custo || "-"}</td>
+                  <td>{formatarDataBrasil(ordem.dataAbertura)}</td>
+                  <td>{formatarDataBrasil(ordem.dataInicio)}</td>
+                  <td>{formatarDataBrasil(ordem.dataTermino)}</td>
                   <td>{ordem.nomeUsuario || "-"}</td>
                   <td
                     style={{
@@ -210,32 +227,35 @@ function VisualizarOrdensContent({ user }) {
                     {ordem.status}
                   </td>
 
-                  <td className="acoes-coluna-icones">
-                    {podeAceitar && ordem.status === "Aberto" && (
-                      <button
-                        onClick={() => handleAceitar(ordem.id_ord_serv)}
-                        title="Aceitar"
-                      >
-                        <FaCheckCircle size={20} color="green" />
-                      </button>
-                    )}
-                    {podeEditarGM && (
-                      <button
-                        onClick={() => handleEditar(ordem.id_ord_serv)}
-                        title="Editar"
-                      >
-                        <FaEdit size={20} color="blue" />
-                      </button>
-                    )}
-                    {podeExcluirGM && (
-                      <button
-                        onClick={() => handleExcluir(ordem.id_ord_serv)}
-                        title="Excluir"
-                      >
-                        <FaTrash size={20} color="red" />
-                      </button>
-                    )}
-                  </td>
+                  {!eOperador && (
+                    <td className="acoes-coluna-icones">
+                      {podeAceitar && ordem.status === "Aberto" && (
+                        <button
+                          onClick={() => handleAceitar(ordem.id_ord_serv)}
+                          title="Aceitar"
+                        >
+                          <FaCheckCircle size={20} color="green" />
+                        </button>
+                      )}
+
+                      {podeEditarGM && (
+                        <button
+                          onClick={() => handleEditar(ordem.id_ord_serv)}
+                          title="Editar"
+                        >
+                          <FaEdit size={20} color="blue" />
+                        </button>
+                      )}
+                      {podeExcluirGM && (
+                        <button
+                          onClick={() => handleExcluir(ordem.id_ord_serv)}
+                          title="Excluir"
+                        >
+                          <FaTrash size={20} color="red" />
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

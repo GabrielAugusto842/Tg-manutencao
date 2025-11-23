@@ -3,52 +3,54 @@ import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 
-const ordensFAKE = [
-  {
-    id_ordem: 1,
-    descricao: "Ajuste da bomda hidraulica",
-    data_inicio: "2023-10-01T10:00:00",
-    data_termino: "2023-10-01T12:00:00",
-    custo: 150.0,
-    id_usuario: 4,
-    id_estado: 500,
-    id_maquina: 1,
-  },
-];
+const API_URL = "http://localhost:3002/api/os";
 
-function VisualizarOrdensContent() {
-  const [ordem, setOrdem] = useState([]);
+function VisualizarOrdensContent({ user }) {
+  const [ordens, setOrdens] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
-  const buscarOrdensSimulada = () => {
-    setCarregando(true);
-    setErro(null);
-    setMensagemSucesso(null);
-    // Simula o tempo de rede
+  const idUsuario = user?.idUsuario; // PEGA O USUÁRIO LOGADO
 
-    setTimeout(() => {
-      setOrdem([...ordensFAKE]);
+  // Busca ordens REAIS do banco
+  const buscarOrdens = async () => {
+    try {
+      setCarregando(true);
+      setErro(null);
+      setMensagemSucesso(null);
+
+      const resposta = await fetch(`${API_URL}/manutentor/${idUsuario}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!resposta.ok) throw new Error("Erro ao buscar ordens");
+
+      const dados = await resposta.json();
+      setOrdens(dados);
+    } catch (e) {
+      console.error(e);
+      setErro("Erro ao carregar Ordens de Serviço");
+    } finally {
       setCarregando(false);
-    }, 500);
+    }
   };
 
   useEffect(() => {
-    buscarOrdensSimulada();
-  }, []);
+    if (idUsuario) buscarOrdens();
+  }, [idUsuario]);
 
   const handleAceitar = (id) => {
     alert(`Aceitar ordem ${id}`);
   };
 
   const handleEditar = (id) => {
-    const ordemAlvo = ordem.find((e) => e.id_ordem === id) || {
-      descricao: "Ordem",
-      custo: "N/A",
-    };
-
-    alert(`Editar: ${ordemAlvo.descricao} (${ordemAlvo.custo})`);
+    const ordemAlvo = ordens.find((e) => e.id_ord_serv === id);
+    alert(
+      `Editar: ${ordemAlvo?.descricao || "Ordem"} (${ordemAlvo?.custo || 0})`
+    );
   };
 
   const handleExcluir = (id) => {
@@ -65,62 +67,50 @@ function VisualizarOrdensContent() {
 
   return (
     <div className="visualizar-ordens-page">
-      {/* Mensagens de Feedback */}
       {erro && (
-        <div
-          className="alerta-erro"
-          style={{ color: "red", marginBottom: "15px" }}
-        >
+        <div className="alerta-erro" style={{ color: "red", marginBottom: 15 }}>
           {erro}
         </div>
       )}
       {mensagemSucesso && (
         <div
           className="alerta-sucesso"
-          style={{ color: "green", marginBottom: "15px" }}
+          style={{ color: "green", marginBottom: 15 }}
         >
           {mensagemSucesso}
         </div>
       )}
 
-      {ordem.length === 0 ? (
-        <p>
-          Nenhuma Ordem cadastrada. (A lista pode estar vazia devido à simulação
-          de exclusão.)
-        </p>
+      {ordens.length === 0 ? (
+        <p>Nenhuma Ordem encontrada para este manutentor.</p>
       ) : (
         <div className="tabela-wrapper">
           <table className="tabela-ordens">
             <thead>
               <tr>
-                <th>id_ordem</th>
-                <th>Descricao</th>
-                <th>data_inicio</th>
-                <th>data_termino</th>
-                <th>custo</th>
-                <th>id_usuario</th>
-                <th>id_estado</th>
-                <th>id_maquina</th>
-                <th>acoes</th>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Data Abertura</th>
+                <th>Data Início</th>
+                <th>Data Término</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
+
             <tbody>
-              {ordem.map((ordem) => (
-                <tr key={ordem.id_maquina}>
-                  <td>{ordem.id_ordem}</td>
-                  <td>{ordem.descricao}</td>
-                  <td>{ordem.data_inicio}</td>
-                  <td>{ordem.data_termino}</td>
-                  <td>{ordem.custo}</td>
-                  <td>{ordem.id_usuario}</td>
-                  <td>{ordem.id_estado}</td>
-                  <td>{ordem.id_maquina}</td>
+              {ordens.map((o) => (
+                <tr key={o.id_ord_serv}>
+                  <td>{o.id_ord_serv}</td>
+                  <td>{o.descricao}</td>
+                  <td>{o.dataAbertura || "-"}</td>
+                  <td>{o.dataInicio || "-"}</td>
+                  <td>{o.dataTermino || "-"}</td>
+                  <td>{o.status}</td>
 
                   <td className="acoes-coluna-icones">
                     <button
-                      className="btn-aceitar"
-                      onClick={() => handleAceitar(ordem.id_ordem)}
-                      title="Aceitar"
+                      onClick={() => handleAceitar(o.id_ord_serv)}
                       style={{
                         color: "green",
                         background: "none",
@@ -132,9 +122,7 @@ function VisualizarOrdensContent() {
                     </button>
 
                     <button
-                      className="btn-editar"
-                      onClick={() => handleEditar(ordem.id_ordem)}
-                      title="Editar"
+                      onClick={() => handleEditar(o.id_ord_serv)}
                       style={{
                         color: "blue",
                         background: "none",
@@ -146,9 +134,7 @@ function VisualizarOrdensContent() {
                     </button>
 
                     <button
-                      className="btn-excluir"
-                      onClick={() => handleExcluir(ordem.id_ordem)}
-                      title="Excluir"
+                      onClick={() => handleExcluir(o.id_ord_serv)}
                       style={{
                         color: "red",
                         background: "none",
@@ -169,10 +155,10 @@ function VisualizarOrdensContent() {
   );
 }
 
-export default function VisualizarOrdens() {
+export default function VisualizarOrdens({ user }) {
   return (
     <Layout title="Minhas Ordens de Serviço">
-      <VisualizarOrdensContent />
+      <VisualizarOrdensContent user={user} />
     </Layout>
   );
 }

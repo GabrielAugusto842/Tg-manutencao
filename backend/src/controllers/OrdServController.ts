@@ -140,6 +140,33 @@ export class OrdServController {
     }
   };
 
+  aceitarOrdServ = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const idOrdServ = Number(req.params.id);
+      const { idUsuario } = req.body;
+
+      if (!idUsuario) {
+        return res.status(400).json({ error: "idUsuario é obrigatório!" });
+      }
+
+      const aceito = await this.ordServRepo.aceitarOrdemServico(
+        idOrdServ,
+        idUsuario
+      );
+
+      if (!aceito) {
+        return res.status(400).json({ error: "Não foi possível aceitar a OS" });
+      }
+
+      return res.json({ message: "Ordem de serviço aceita com sucesso!" });
+    } catch (error: any) {
+      console.error("Erro ao aceitar OS:", error);
+      return res
+        .status(500)
+        .json({ error: error.message || "Erro ao aceitar OS" });
+    }
+  };
+
   deleteOrdServ = async (req: Request, res: Response): Promise<Response> => {
     try {
       const idOrdServ = req.params.id;
@@ -155,6 +182,20 @@ export class OrdServController {
       return res
         .status(500)
         .json({ error: "Erro ao excluir ordem de serviço" });
+    }
+  };
+
+  getByManutentor = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { id } = req.params;
+      const ordens = await this.ordServRepo.getByManutentor(Number(id));
+
+      return res.json(ordens);
+    } catch (error) {
+      console.error("Erro ao buscar O.S do manutentor:", error);
+      return res
+        .status(500)
+        .json({ error: "Erro ao buscar as ordens do manutentor" });
     }
   };
 }
