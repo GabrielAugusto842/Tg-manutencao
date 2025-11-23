@@ -80,45 +80,15 @@ body,
   padding: 12px 10px;
 }
 
-.tabela-ordens th:nth-child(1) {
-  width: 6%; /* 8% */
-} 
-/* 2. Descricao (A que mais precisa de espaço) */
-.tabela-ordens th:nth-child(2) {
-  width: 18%; /* 25% */
-} 
-/* 3. data_inicio */
-.tabela-ordens th:nth-child(3) {
-  width: 12%; /* 12% */
-} 
-/* 4. data_termino */
-.tabela-ordens th:nth-child(4) {
-  width: 12%; /* 12% */
-} 
-/* 5. custo */
-.tabela-ordens th:nth-child(5) {
-  width: 8%; /* 8% */
-} 
-/* 6. id_usuario */
-.tabela-ordens th:nth-child(6) {
-  width: 8%; /* 8% */
-} 
-/* 7. id_estado */
-.tabela-ordens th:nth-child(7) {
-  width: 8%; /* 8% */
-} 
-/* 8. id_maquina */
-.tabela-ordens th:nth-child(8) {
-  width: 8%; /* 8% */
-} 
-/* 9. acoes (Espaço para o botão 'ACEITAR') */
-.tabela-ordens th:nth-child(9) {
-  width: 10%; /* 11% (Total: 8+25+12+12+8+8+8+8+11 = 100%) */
-}
-
-.tabela-ordens th:nth-child(10) {
-  width: 15%; /* 11% (Total: 8+25+12+12+8+8+8+8+11 = 100%) */
-}
+.tabela-ordens th:nth-child(1) { width: 10%; } /* Máquina */
+.tabela-ordens th:nth-child(2) { width: 10%; } /* Setor */
+.tabela-ordens th:nth-child(3) { width: 25%; } /* Descrição */
+.tabela-ordens th:nth-child(4) { width: 10%; } /* Data Início */
+.tabela-ordens th:nth-child(5) { width: 10%; } /* Data Término */
+.tabela-ordens th:nth-child(6) { width: 8%; }  /* Custo */
+.tabela-ordens th:nth-child(7) { width: 10%; } /* Usuário */
+.tabela-ordens th:nth-child(8) { width: 10%; } /* Status */
+.tabela-ordens th:nth-child(9) { width: 7%; }  /* Ações */
 
 /* --------------------------------------------------------------------
    6. CÉLULAS E INTERAÇÃO
@@ -141,8 +111,6 @@ body,
   background-color: #c9e2ff; /* Destaque ao passar o mouse */
   border-color: #a0c9f8;
 }
-
-
 
 /* --------------------------------------------------------------------
    7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
@@ -169,8 +137,6 @@ body,
   transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-
-
 
 .btn-aceitar {
   background-color: #41ff01;
@@ -216,5 +182,3 @@ body,
   text-align: center;
   font-weight: bold;
 }
-
-

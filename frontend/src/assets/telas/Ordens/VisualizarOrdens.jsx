@@ -11,6 +11,22 @@ function VisualizarOrdensContent({ user }) {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
+  const [filtroMaquina, setFiltroMaquina] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("");
+
+  const corStatus = (status) => {
+    switch (status) {
+      case "Aberto":
+        return "blue";
+      case "Em andamento":
+        return "orange";
+      case "Finalizado":
+        return "green";
+      default:
+        return "black";
+    }
+  };
+
   const cargoUsuario = user?.cargo;
   const usuarioLogadoId = user?.idUsuario;
 
@@ -18,6 +34,7 @@ function VisualizarOrdensContent({ user }) {
   const podeExcluirGM = cargoUsuario === "Gerente de Manutenção";
   const podeAceitar = cargoUsuario === "Manutentor";
 
+  // Busca ordens do backend
   const buscarOrdens = async () => {
     try {
       setCarregando(true);
@@ -47,6 +64,7 @@ function VisualizarOrdensContent({ user }) {
     if (user) buscarOrdens();
   }, [user]);
 
+  // Ações
   const handleAceitar = async (id) => {
     try {
       setCarregando(true);
@@ -90,6 +108,14 @@ function VisualizarOrdensContent({ user }) {
     }
   };
 
+  // Aplica filtros
+  const ordensFiltradas = ordens.filter((o) => {
+    return (
+      (filtroMaquina === "" || o.nomeMaquina === filtroMaquina) &&
+      (filtroStatus === "" || o.status === filtroStatus)
+    );
+  });
+
   if (carregando) return <div className="container">Carregando ordens...</div>;
 
   return (
@@ -99,37 +125,91 @@ function VisualizarOrdensContent({ user }) {
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
 
-      {ordens.length === 0 ? (
+      {/* FILTROS */}
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          marginBottom: "15px",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <label htmlFor="filtroMaquina">Filtrar por Máquina:</label>
+          <select
+            id="filtroMaquina"
+            value={filtroMaquina}
+            onChange={(e) => setFiltroMaquina(e.target.value)}
+            style={{ marginLeft: "5px" }}
+          >
+            <option value="">Todas</option>
+            {Array.from(new Set(ordens.map((o) => o.nomeMaquina))).map(
+              (maquina, i) => (
+                <option key={i} value={maquina}>
+                  {maquina}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="filtroStatus">Filtrar por Status:</label>
+          <select
+            id="filtroStatus"
+            value={filtroStatus}
+            onChange={(e) => setFiltroStatus(e.target.value)}
+            style={{ marginLeft: "5px" }}
+          >
+            <option value="">Todos</option>
+            {Array.from(new Set(ordens.map((o) => o.status))).map(
+              (status, i) => (
+                <option key={i} value={status}>
+                  {status}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+      </div>
+
+      {ordensFiltradas.length === 0 ? (
         <p>Nenhuma ordem de serviço encontrada.</p>
       ) : (
         <div className="tabela-wrapper">
           <table className="tabela-ordens">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Máquina</th>
+                <th>Setor</th>
                 <th>Descrição</th>
-                <th>Data Início</th>
+                <th>Data Abertura</th>
                 <th>Data Término</th>
                 <th>Custo</th>
                 <th>Usuário</th>
                 <th>Status</th>
-                <th>Máquina</th>
-                <th>Setor</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {ordens.map((ordem) => (
+              {ordensFiltradas.map((ordem) => (
                 <tr key={ordem.id_ord_serv}>
-                  <td>{ordem.id_ord_serv}</td>
+                  <td>{ordem.nomeMaquina}</td>
+                  <td>{ordem.setor}</td>
                   <td>{ordem.descricao}</td>
                   <td>{ordem.data_inicio || "-"}</td>
                   <td>{ordem.data_termino || "-"}</td>
                   <td>{ordem.custo || "-"}</td>
                   <td>{ordem.nomeUsuario || "-"}</td>
-                  <td>{ordem.status}</td>
-                  <td>{ordem.nomeMaquina}</td>
-                  <td>{ordem.setor}</td>
+                  <td
+                    style={{
+                      color: corStatus(ordem.status),
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {ordem.status}
+                  </td>
+
                   <td className="acoes-coluna-icones">
                     {podeAceitar && ordem.status === "Aberto" && (
                       <button
