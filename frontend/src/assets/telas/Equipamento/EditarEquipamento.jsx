@@ -18,6 +18,7 @@ function EditarEquipamento() {
     numero_serie: "",
     tag: "",
     producaoPorHora: "",
+    disponibilidadeMes: "0,",
   });
   const [idSetor, setIdSetor] = useState(null);
   const [opcoesSetor, setOpcoesSetor] = useState([]);
@@ -35,14 +36,19 @@ function EditarEquipamento() {
     try {
       const res = await api.get(`/maquina/${id}`);
       setEquipamento(res.data);
-      setIdSetor(res.data.id_setor);
+      setIdSetor(res.data.idSetor);
       setDadosFormulario({
         nome: res.data.nome || "",
         marca: res.data.marca || "",
         modelo: res.data.modelo || "",
-        numero_serie: res.data.numero_serie || "",
+        numero_serie: res.data.numeroSerie || "",
         tag: res.data.tag || "",
-        producaoPorHora: res.data.producaoPorHora || "",
+        producaoPorHora:
+          res.data.producaoHora !== null ? String(res.data.producaoHora) : "",
+        disponibilidadeMes:
+          res.data.disponibilidadeMes !== null
+            ? String(res.data.disponibilidadeMes)
+            : "",
       });
     } catch (e) {
       setErro("Erro ao carregar equipamento.");
@@ -99,7 +105,8 @@ function EditarEquipamento() {
         tag: dadosFormulario.tag || null,
 
         // O nome da chave no payload deve ser o mesmo esperado pelo Controller/Repository
-        producaoPorHora: producao,
+        producaoHora: producao,
+        disponibilidadeMes: Number(dadosFormulario.disponibilidadeMes),
 
         // MUDANÇA CRUCIAL 2: Ajusta a chave para camelCase para coincidir com o Repository/Controller
         idSetor: setorId,
@@ -181,6 +188,16 @@ function EditarEquipamento() {
               type="number"
               name="producaoPorHora"
               value={dadosFormulario.producaoPorHora}
+              onChange={handleInputChange}
+            />
+          </label>
+
+          <label>
+            Disponibilidade por Mês:
+            <input
+              type="number"
+              name="disponibilidadeMes"
+              value={dadosFormulario.disponibilidadeMes}
               onChange={handleInputChange}
             />
           </label>
