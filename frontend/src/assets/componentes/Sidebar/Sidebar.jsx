@@ -32,7 +32,8 @@ function Sidebar({ user }) {
 
 const podeVerTodasOrdens =
   cargoUsuario === "Gerente de Manutenção" ||
-  cargoUsuario === "Operador";
+  cargoUsuario === "Operador" ||
+  cargoUsuario === "Manutentor";
 
   const podeVerRelatorios = cargoUsuario === "Gerente de Manutenção";
 

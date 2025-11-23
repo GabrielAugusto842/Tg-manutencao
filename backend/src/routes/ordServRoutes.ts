@@ -9,9 +9,9 @@ const osController = new OrdServController(ordServRepo);
 
 const router = Router();
 
+router.get('/abertas', osController.getOSAbertas);
 router.get('/:id', osController.getById);
 router.get('/', osController.getAllOrdServ);
-router.get('/abertas/', osController.getOSAbertas);
 router.post('/', osController.createOrdServ);
 router.put('/:id', osController.updateOrdServ);
 router.put('/finalizar/:id', osController.finalizarOrdServ);

@@ -69,6 +69,9 @@ export class OrdServRepository {
         const dataAbertura = getCurrentDateTime();
         console.log(dataAbertura);
 
+        console.log({descricao, operacao, idMaquina});
+
+
         const [result]: any = await db.execute(
             `INSERT INTO ordem_servico (descricao, data_abertura, operacao, id_estado, id_maquina) 
             VALUES (?, ?, ?, ?, ?)`, 
