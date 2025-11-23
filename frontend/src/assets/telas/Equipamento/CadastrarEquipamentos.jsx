@@ -12,6 +12,7 @@ function CadastrarEquipamentos() {
   const [mensagem, setMensagem] = useState("");
   const [tag, setTag] = useState("");
   const [producaoPorHora, setProducaoPorHora] = useState("");
+  const [disponibilidadeMes, setDisponibilidadeMes] = useState("");
 
   const [setorNome, setSetorNome] = useState("");
   const [idSetor, setIdSetor] = useState(null);
@@ -60,6 +61,7 @@ function CadastrarEquipamentos() {
       numeroSerie: numero_serie,
       tag,
       producaoPorHora: Number(producaoPorHora),
+      disponibilidadeMes: Number(disponibilidadeMes),
     };
 
     try {
@@ -216,6 +218,24 @@ function CadastrarEquipamentos() {
                 value={producaoPorHora}
                 onChange={(e) => setProducaoPorHora(e.target.value)}
                 placeholder="Ex: 500"
+              />
+            </div>
+          </div>
+
+          {/* LINHA 5: Disponibilidade Mensal */}
+          <div className="form-row">
+            <div className="form-group full-width">
+              <label htmlFor="disponibilidadeMes">
+                Disponibilidade no Mês (horas):{" "}
+                <span className="required">*</span>
+              </label>
+              <input
+                id="disponibilidadeMes"
+                type="number"
+                value={disponibilidadeMes}
+                onChange={(e) => setDisponibilidadeMes(e.target.value)}
+                placeholder="Ex: 160"
+                required
               />
             </div>
           </div>
