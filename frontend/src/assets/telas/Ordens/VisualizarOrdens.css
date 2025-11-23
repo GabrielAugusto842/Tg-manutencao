@@ -80,15 +80,179 @@ body,
   padding: 12px 10px;
 }
 
-.tabela-ordens th:nth-child(1) { width: 10%; } /* Máquina */
-.tabela-ordens th:nth-child(2) { width: 10%; } /* Setor */
-.tabela-ordens th:nth-child(3) { width: 25%; } /* Descrição */
-.tabela-ordens th:nth-child(4) { width: 10%; } /* Data Início */
-.tabela-ordens th:nth-child(5) { width: 10%; } /* Data Término */
-.tabela-ordens th:nth-child(6) { width: 8%; }  /* Custo */
-.tabela-ordens th:nth-child(7) { width: 10%; } /* Usuário */
-.tabela-ordens th:nth-child(8) { width: 10%; } /* Status */
-.tabela-ordens th:nth-child(9) { width: 7%; }  /* Ações */
+.tabela-ordens th:nth-child(1) {
+  width: 10%;
+} /* Máquina */
+.tabela-ordens th:nth-child(2) {
+  width: 10%;
+} /* Setor */
+.tabela-ordens th:nth-child(3) {
+  width: 25%;
+} /* Descrição */
+.tabela-ordens th:nth-child(4) {
+  width: 10%;
+} /* Data Início */
+.tabela-ordens th:nth-child(5) {
+  width: 10%;
+} /* Data Término */
+.tabela-ordens th:nth-child(6) {
+  width: 8%;
+} /* Custo */
+.tabela-ordens th:nth-child(7) {
+  width: 10%;
+} /* Usuário */
+.tabela-ordens th:nth-child(8) {
+  width: 10%;
+} /* Status */
+.tabela-ordens th:nth-child(9) {
+  width: 7%;
+} /* Ações */
+
+/* --------------------------------------------------------------------
+   6. CÉLULAS E INTERAÇÃO
+   -------------------------------------------------------------------- */
+
+.tabela-ordens td {
+  border: 1px solid #dcdcdc;
+  padding: 12px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.tabela-ordens tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
+}
+
+.tabela-ordens tr:hover {
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  border-color: #a0c9f8;
+}
+
+/* --------------------------------------------------------------------
+   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
+   -------------------------------------------------------------------- */
+
+.tabela-ordens td:last-child {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 17px;
+  border-color: #dcdcdc;
+  height: 100%;
+}
+
+/* ====================================================================
+   1. RESET E BASE GERAL
+   ==================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------
+   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
+   -------------------------------------------------------------------- */
+body,
+#root,
+.app-container-principal {
+  height: 100vh;
+  width: 100vw;
+  display: flex; /* Define o layout como flexível */
+  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+}
+
+/* ====================================================================
+   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
+   ==================================================================== */
+
+.visualizar-ordens-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.tabela-wrapper {
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-height: calc(
+    100vh - 140px
+  ); /* Altura máxima para permitir rolagem vertical */
+  overflow-y: auto;
+}
+
+/* ====================================================================
+   4. ESTILOS BASE DA TABELA
+   ==================================================================== */
+
+.tabela-ordens {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(240, 240, 240);
+}
+
+.tabela-ordens thead {
+  background-color: #84a8e5;
+  /* IMPLEMENTAÇÃO DA LINHA FIXA */
+  position: sticky;
+  top: 0; /* Gruda no topo do container de rolagem */
+  z-index: 10; /* Garante que fique acima das linhas do corpo */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+}
+
+/* --------------------------------------------------------------------
+   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
+   -------------------------------------------------------------------- */
+
+.tabela-ordens thead {
+  background-color: #84a8e5;
+}
+
+.tabela-ordens th {
+  background-color: #84a8e5;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  padding: 12px 10px;
+}
+
+.tabela-ordens th:nth-child(1) {
+  width: 10%;
+} /* Máquina */
+.tabela-ordens th:nth-child(2) {
+  width: 10%;
+} /* Setor */
+.tabela-ordens th:nth-child(3) {
+  width: 25%;
+} /* Descrição */
+.tabela-ordens th:nth-child(4) {
+  width: 10%;
+} /* Data Início */
+.tabela-ordens th:nth-child(5) {
+  width: 10%;
+} /* Data Término */
+.tabela-ordens th:nth-child(6) {
+  width: 8%;
+} /* Custo */
+.tabela-ordens th:nth-child(7) {
+  width: 10%;
+} /* Usuário */
+.tabela-ordens th:nth-child(8) {
+  width: 10%;
+} /* Status */
+.tabela-ordens th:nth-child(9) {
+  width: 7%;
+} /* Ações */
 
 /* --------------------------------------------------------------------
    6. CÉLULAS E INTERAÇÃO
@@ -132,10 +296,56 @@ body,
   font-size: 0.85em;
   font-weight: 600;
   border: none;
+  background: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.btn-aceitar {
+  color: green;
+  background: none;
+}
+
+.btn-editar {
+  background-color: #fbab34;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #e59427;
+}
+
+.btn-deletar {
+  background-color: #f34254;
+  color: white;
+}
+
+.btn-deletar:hover {
+  background-color: #d82b3d;
+}
+
+.alerta-erro {
+  padding: 10px;
+  background-color: #ffe0e6;
+  color: #cc0033;
+  border: 1px solid #ffb3c0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.alerta-sucesso {
+  padding: 10px;
+  background-color: #e6ffe0;
+  color: #008000;
+  border: 1px solid #b3ffc0;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .btn-aceitar {
