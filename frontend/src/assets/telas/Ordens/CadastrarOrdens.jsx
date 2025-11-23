@@ -7,6 +7,7 @@ function CadastrarOrdemServico() {
   const [descricao, setDescricao] = useState("");
   const [idMaquina, setIdMaquina] = useState("");
   const [idSetor, setIdSetor] = useState("");
+  const [operacao, setOperacao] = useState(false); // novo estado
   const [maquinas, setMaquinas] = useState([]);
   const [maquinasFiltradas, setMaquinasFiltradas] = useState([]);
   const [setores, setSetores] = useState([]);
@@ -64,7 +65,7 @@ function CadastrarOrdemServico() {
     try {
       const dadosOrdemServico = {
         descricao,
-        operacao: false, // OS criada como não operando
+        operacao, // envia true ou false conforme selecionado
         idMaquina,
       };
 
@@ -75,9 +76,11 @@ function CadastrarOrdemServico() {
         "Ordem de Serviço cadastrada com sucesso! Ela está aberta para manutenção."
       );
 
+      // reset campos
       setDescricao("");
       setIdMaquina("");
       setIdSetor("");
+      setOperacao(false);
     } catch (error) {
       console.error("Erro ao criar OS:", error.response || error.message);
       setMensagem(
@@ -131,6 +134,32 @@ function CadastrarOrdemServico() {
                 </option>
               ))}
             </select>
+          </div>
+          {/* Máquina parada */}
+          <div className="form-group full-width">
+            <label>Máquina está parada?</label>
+            <div style={{ display: "flex", gap: "20px", marginTop: "5px" }}>
+              <label>
+                <input
+                  type="radio"
+                  name="parada"
+                  value="true"
+                  checked={operacao === true}
+                  onChange={() => setOperacao(true)}
+                />
+                Sim
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="parada"
+                  value="false"
+                  checked={operacao === false}
+                  onChange={() => setOperacao(false)}
+                />
+                Não
+              </label>
+            </div>
           </div>
 
           {/* Descrição */}
