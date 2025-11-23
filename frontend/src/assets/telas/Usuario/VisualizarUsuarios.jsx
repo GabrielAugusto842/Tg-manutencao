@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/user";
 
-function VisualizarUsuariosContent({navigate}) {
+function VisualizarUsuariosContent({ navigate }) {
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -46,15 +46,12 @@ function VisualizarUsuariosContent({navigate}) {
   }, []);
 
   const handleEditar = (id) => {
-
     const usuarioAlvo = usuarios.find((u) => u.id_usuario === id);
 
     navigate(`/usuario/editar/${id}`);
-        console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
-
+    console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
 
     alert(`Abrindo tela de edição para ${usuarioAlvo.nome}...`);
-
   };
 
   // FUNÇÃO DE DELEÇÃO
@@ -74,23 +71,25 @@ function VisualizarUsuariosContent({navigate}) {
       setErro(null);
       setMensagemSucesso(null);
 
-      const resposta = await fetch(`${API_URL}/${id}`, {
+      const resposta = await fetch(`${API_URL}/id/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       if (!resposta.ok) {
-        // Tenta ler o erro do corpo da resposta, se disponível
-        const erroData = await resposta
-          .json()
-          .catch(() => ({ message: resposta.statusText }));
-        throw new Error(`Erro ao deletar usuário: ${erroData.message}`);
+        const erroData = await resposta.json().catch(() => ({}));
+        const msg = erroData.message || erroData.error || resposta.statusText;
+        throw new Error(`Erro ao deletar usuário: ${msg}`);
       }
 
-      // Se a operação for bem-sucedida, recarrega a lista para remover o usuário
-      await buscarUsuarios();
-      setMensagemSucesso(`Usuário ID: ${id} deletado com sucesso!`);
+      // Atualiza a lista local sem precisar recarregar da API
+      setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id));
+
+      setMensagemSucesso(`Usuário "${usuarioAlvo.nome}" deletado com sucesso!`);
     } catch (e) {
-      setErro(`Falha ao deletar usuário: ${e.message}`);
+      setErro(e.message);
       console.error("Erro na operação de deleção:", e);
     } finally {
       setCarregando(false);
@@ -197,7 +196,6 @@ function VisualizarUsuariosContent({navigate}) {
 }
 
 export default function VisualizarUsuarios() {
-
   const navigate = useNavigate();
 
   return (
