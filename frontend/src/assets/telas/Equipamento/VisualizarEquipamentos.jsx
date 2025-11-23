@@ -33,11 +33,11 @@ function VisualizarEquipamentosContent() {
   }, []);
 
   const handleDeletar = async (id) => {
-    const equipamentoAlvo = equipamentos.find((e) => e.id_maquina === id);
+    const equipamentoAlvo = equipamentos.find((e) => e.idMaquina === id);
 
     if (
       !window.confirm(
-        `Tem certeza que deseja DELETAR PERMANENTEMENTE a máquina: ${equipamentoAlvo.nome} (Série: ${equipamentoAlvo.numero_serie})?`
+        `Tem certeza que deseja DELETAR PERMANENTEMENTE a máquina: ${equipamentoAlvo.nome} (Série: ${equipamentoAlvo.numeroSerie})?`
       )
     ) {
       return;
@@ -50,7 +50,7 @@ function VisualizarEquipamentosContent() {
 
       await api.delete(`/maquina/${id}`);
 
-      setEquipamentos((prev) => prev.filter((e) => e.id_maquina !== id));
+      setEquipamentos((prev) => prev.filter((e) => e.idMaquina !== id));
 
       setMensagemSucesso(`Máquina ID ${id} deletada com sucesso!`);
     } catch (error) {
@@ -105,7 +105,8 @@ function VisualizarEquipamentosContent() {
                 <th>Número de Série</th>
                 <th>Tag</th>
                 <th>Prod. p/ Hora</th>
-                <th>ID Setor</th>
+                <th>Disponib. / Mês</th>
+                <th>Setor</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -117,7 +118,8 @@ function VisualizarEquipamentosContent() {
                   <td>{maquina.modelo}</td>
                   <td>{maquina.numeroSerie}</td>
                   <td>{maquina.tag}</td>
-                  <td>{maquina.producaoHora}</td>
+                  <td>{maquina.producaoHora ?? "---"}</td>
+                  <td>{maquina.disponibilidadeMes}</td>
                   <td>{maquina.nomeSetor || maquina.setor}</td>
 
                   <td className="acoes-coluna-icones">
