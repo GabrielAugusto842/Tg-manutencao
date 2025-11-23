@@ -1,9 +1,9 @@
 export class Setor {
     private idSetor: number;
     private nomeSetor: string;
-    private descricao: string;
+    private descricao: string | null;
 
-    constructor(data: {id_setor: number, setor: string, descricao: string}) {
+    constructor(data: {id_setor: number, setor: string, descricao: string | null}) {
         this.idSetor = data.id_setor;
         this.nomeSetor = data.setor;
         this.descricao = data.descricao;
@@ -23,7 +23,7 @@ export class Setor {
         this.nomeSetor = nomeSetor; 
     }
 
-    public get getDescricao(): string {
+    public get getDescricao(): string | null {
         return this.descricao;
     }
     public set setDescricao(descricao: string) {

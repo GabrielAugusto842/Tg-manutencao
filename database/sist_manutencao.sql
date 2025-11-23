@@ -111,12 +111,13 @@ CREATE TABLE `maquina` (
   `modelo` varchar(45) DEFAULT NULL,
   `numero_serie` varchar(80) NOT NULL,
   `tag` varchar(45) DEFAULT NULL,
-  `producaoPorHora` int NOT NULL,
+  `producao_hora` int DEFAULT NULL,
+  `disponibilidade_mes` int NOT NULL,
   `id_setor` int NOT NULL,
   PRIMARY KEY (`id_maquina`),
   KEY `fk_maquina_setor_idx` (`id_setor`),
   CONSTRAINT `fk_maquina_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id_setor`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,7 +126,7 @@ CREATE TABLE `maquina` (
 
 LOCK TABLES `maquina` WRITE;
 /*!40000 ALTER TABLE `maquina` DISABLE KEYS */;
-INSERT INTO `maquina` VALUES (1,'laptop','asus','X515J','N1U2M3E4R5O6','123a',500,1);
+INSERT INTO `maquina` VALUES (1,'laptop','asus','X515J','N1U2M3E4R5O6','123a',500,198,1),(2,'laptop','asus','Y626K','M2V3K2F5Q4P7','234b',200,234,3);
 /*!40000 ALTER TABLE `maquina` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,10 +140,13 @@ DROP TABLE IF EXISTS `ordem_servico`;
 CREATE TABLE `ordem_servico` (
   `id_ord_serv` int NOT NULL AUTO_INCREMENT,
   `descricao` text NOT NULL,
-  `data_inicio` datetime NOT NULL,
+  `solucao` text,
+  `data_abertura` datetime NOT NULL,
+  `data_inicio` datetime DEFAULT NULL,
   `data_termino` datetime DEFAULT NULL,
+  `operacao` tinyint(1) NOT NULL DEFAULT '1',
   `custo` decimal(5,2) DEFAULT NULL,
-  `id_usuario` int NOT NULL,
+  `id_usuario` int DEFAULT NULL,
   `id_estado` int NOT NULL,
   `id_maquina` int NOT NULL,
   PRIMARY KEY (`id_ord_serv`),
@@ -152,7 +156,7 @@ CREATE TABLE `ordem_servico` (
   CONSTRAINT `fk_os_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `fk_os_maquina` FOREIGN KEY (`id_maquina`) REFERENCES `maquina` (`id_maquina`),
   CONSTRAINT `fk_os_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,9 +165,65 @@ CREATE TABLE `ordem_servico` (
 
 LOCK TABLES `ordem_servico` WRITE;
 /*!40000 ALTER TABLE `ordem_servico` DISABLE KEYS */;
-INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou','2025-09-20 00:00:00',NULL,NULL,1,1,1);
+INSERT INTO `ordem_servico` VALUES (1,'Máquina queimou',NULL,'2025-09-20 00:00:00',NULL,NULL,1,NULL,NULL,1,1),(2,'Máquina quebrou a esteira',NULL,'2025-11-18 00:00:00','2025-11-18 08:00:00',NULL,0,NULL,3,2,2),(3,'Tela está quebrada','Trocamos a tela','2025-11-15 00:00:00','2025-11-15 08:00:00','2025-11-15 16:00:00',1,200.00,1,3,1),(4,'Teclado quebrado',NULL,'2025-11-18 00:00:00','2025-11-18 08:00:00',NULL,0,NULL,2,2,1),(5,'Barulho estranho alto',NULL,'2025-11-20 00:00:00',NULL,NULL,0,NULL,NULL,1,2);
 /*!40000 ALTER TABLE `ordem_servico` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `os_abertas`
+--
+
+DROP TABLE IF EXISTS `os_abertas`;
+/*!50001 DROP VIEW IF EXISTS `os_abertas`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `os_abertas` AS SELECT 
+ 1 AS `id_ord_serv`,
+ 1 AS `descricao`,
+ 1 AS `solucao`,
+ 1 AS `data_abertura`,
+ 1 AS `data_inicio`,
+ 1 AS `data_termino`,
+ 1 AS `operacao`,
+ 1 AS `custo`,
+ 1 AS `id_estado`,
+ 1 AS `codigo`,
+ 1 AS `status`,
+ 1 AS `id_maquina`,
+ 1 AS `nome_maquina`,
+ 1 AS `numero_serie`,
+ 1 AS `id_setor`,
+ 1 AS `setor`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `os_detalhada`
+--
+
+DROP TABLE IF EXISTS `os_detalhada`;
+/*!50001 DROP VIEW IF EXISTS `os_detalhada`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `os_detalhada` AS SELECT 
+ 1 AS `id_ord_serv`,
+ 1 AS `descricao`,
+ 1 AS `solucao`,
+ 1 AS `data_abertura`,
+ 1 AS `data_inicio`,
+ 1 AS `data_termino`,
+ 1 AS `operacao`,
+ 1 AS `custo`,
+ 1 AS `id_usuario`,
+ 1 AS `nome_usuario`,
+ 1 AS `id_estado`,
+ 1 AS `codigo`,
+ 1 AS `status`,
+ 1 AS `id_maquina`,
+ 1 AS `nome_maquina`,
+ 1 AS `numero_serie`,
+ 1 AS `id_setor`,
+ 1 AS `setor`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `setor`
@@ -175,9 +235,9 @@ DROP TABLE IF EXISTS `setor`;
 CREATE TABLE `setor` (
   `id_setor` int NOT NULL AUTO_INCREMENT,
   `setor` varchar(45) NOT NULL,
-  `descricao` text NOT NULL,
+  `descricao` text,
   PRIMARY KEY (`id_setor`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +246,7 @@ CREATE TABLE `setor` (
 
 LOCK TABLES `setor` WRITE;
 /*!40000 ALTER TABLE `setor` DISABLE KEYS */;
-INSERT INTO `setor` VALUES (1,'Produção','Criar novos produtos');
+INSERT INTO `setor` VALUES (1,'Produção','Responsável pela fabricação de produtos e prestação de serviços.'),(3,'Manutenção','Responsável por reparar, trocar, consertar, lubrificar e monitorar o funcionamento das máquinas e seus componentes.');
 /*!40000 ALTER TABLE `setor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,7 +269,7 @@ CREATE TABLE `usuario` (
   KEY `id_setor_idx` (`id_setor`),
   CONSTRAINT `fk_usuario_cargo` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id_cargo`),
   CONSTRAINT `fk_usuario_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id_setor`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,9 +278,45 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Usuario','usuario@email.com','$2b$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',1,1);
+INSERT INTO `usuario` VALUES (1,'Usuario','usuario@email.com','$2b$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',1,1),(2,'Gabriel','gabriel@gmail.com','$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',2,3),(3,'Vinicius','vinicius@fatec.com','$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',2,1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `os_abertas`
+--
+
+/*!50001 DROP VIEW IF EXISTS `os_abertas`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `os_abertas` AS select `os`.`id_ord_serv` AS `id_ord_serv`,`os`.`descricao` AS `descricao`,`os`.`solucao` AS `solucao`,`os`.`data_abertura` AS `data_abertura`,`os`.`data_inicio` AS `data_inicio`,`os`.`data_termino` AS `data_termino`,`os`.`operacao` AS `operacao`,`os`.`custo` AS `custo`,`e`.`id_estado` AS `id_estado`,`e`.`codigo` AS `codigo`,`e`.`status` AS `status`,`m`.`id_maquina` AS `id_maquina`,`m`.`nome` AS `nome_maquina`,`m`.`numero_serie` AS `numero_serie`,`s`.`id_setor` AS `id_setor`,`s`.`setor` AS `setor` from (((`ordem_servico` `os` join `estado` `e` on((`os`.`id_estado` = `e`.`id_estado`))) join `maquina` `m` on((`os`.`id_maquina` = `m`.`id_maquina`))) join `setor` `s` on((`m`.`id_setor` = `s`.`id_setor`))) where (`e`.`codigo` = 1) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `os_detalhada`
+--
+
+/*!50001 DROP VIEW IF EXISTS `os_detalhada`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `os_detalhada` AS select `os`.`id_ord_serv` AS `id_ord_serv`,`os`.`descricao` AS `descricao`,`os`.`solucao` AS `solucao`,`os`.`data_abertura` AS `data_abertura`,`os`.`data_inicio` AS `data_inicio`,`os`.`data_termino` AS `data_termino`,`os`.`operacao` AS `operacao`,`os`.`custo` AS `custo`,`u`.`id_usuario` AS `id_usuario`,`u`.`nome` AS `nome_usuario`,`e`.`id_estado` AS `id_estado`,`e`.`codigo` AS `codigo`,`e`.`status` AS `status`,`m`.`id_maquina` AS `id_maquina`,`m`.`nome` AS `nome_maquina`,`m`.`numero_serie` AS `numero_serie`,`s`.`id_setor` AS `id_setor`,`s`.`setor` AS `setor` from ((((`ordem_servico` `os` left join `usuario` `u` on((`os`.`id_usuario` = `u`.`id_usuario`))) join `estado` `e` on((`os`.`id_estado` = `e`.`id_estado`))) join `maquina` `m` on((`os`.`id_maquina` = `m`.`id_maquina`))) join `setor` `s` on((`m`.`id_setor` = `s`.`id_setor`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -231,4 +327,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-09 14:01:38
+-- Dump completed on 2025-11-22 20:25:47

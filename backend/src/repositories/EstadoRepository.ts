@@ -7,4 +7,10 @@ export class EstadoRepository {
         const [rows] = await db.execute('SELECT id_estado, codigo, status FROM estado');
         return (rows as any[]).map(row => new Estado(row));
     }
+
+    async getByCodigo(codigo: number): Promise<Estado | null> {
+        const [rows] = await db.execute('SELECT id_estado, codigo, status FROM estado WHERE codigo = ?', codigo);
+        const row = (rows as any[])[0];
+        return row ? new Estado(row) : null;
+    }
 }

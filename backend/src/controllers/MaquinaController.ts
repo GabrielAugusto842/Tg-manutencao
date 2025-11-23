@@ -34,15 +34,16 @@ export class MaquinaController {
             const modelo = req.body.modelo;
             const numeroSerie = req.body.numeroSerie;
             const tag = req.body.tag;
-            const producaoPorHora = req.body.producaoPorHora;
+            const producaoHora = req.body.producaoHora;
+            const disponibilidadeMes = req.body.disponibilidadeMes;
             const idSetor = req.body.idSetor;
 
-            if (!nome || !marca || !numeroSerie || !producaoPorHora || !idSetor) {
+            if (!nome || !marca || !numeroSerie || !disponibilidadeMes || !idSetor) {
                 return res.status(400).json({ error: 'Campo obrigatório não preenchido!' });
             }
 
             const novaMaquina = await this.maquinaRepo.createMaquina(nome, marca, numeroSerie, 
-                modelo || null, tag || null, producaoPorHora, idSetor
+                modelo || null, tag || null, producaoHora || null, disponibilidadeMes, idSetor
             );
             return res.status(201).json(novaMaquina);
         } catch (error) {
@@ -59,16 +60,18 @@ export class MaquinaController {
             const modelo = req.body.modelo;
             const numeroSerie = req.body.numeroSerie;
             const tag = req.body.tag;
-            const producaoPorHora = req.body.producaoPorHora;
+            const producaoHora = req.body.producaoHora;
+            const disponibilidadeMes = req.body.disponibilidadeMes;
             const idSetor = req.body.idSetor;
             console.log(req.body)
 
-            if (!nome || !marca || !numeroSerie || !producaoPorHora || !idSetor) {
+            if (!nome || !marca || !numeroSerie || !disponibilidadeMes || !idSetor) {
                 return res.status(400).json({ error: 'Campo obrigatório não preenchido!' });
             }
 
             const updated = await this.maquinaRepo.updateMaquina(
-                Number(idMaquina), nome, marca, numeroSerie, modelo || null, tag || null, producaoPorHora, idSetor
+                Number(idMaquina), nome, marca, numeroSerie, modelo || null, tag || null,
+                producaoHora || null, disponibilidadeMes, idSetor
             );
             if (!updated) {
                 return res.status(404).json({ error: 'Máquina não encontrada' });

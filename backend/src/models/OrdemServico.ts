@@ -1,24 +1,31 @@
 export class OrdemServico {
     private idOrdServ: number;
     private descricao: string;
-    private dataInicio: string;
-    private dataTermino: string;
+    private solucao: string | null;
+    private dataAbertura: string;
+    private dataInicio: string | null;
+    private dataTermino: string | null;
+    private operacao: boolean;
     private custo: number | null;
     private idUsuario: number | null; //id do manutentor
-    private codigoEstado: number;
+    private idEstado: number;
     private idMaquina: number;
 
-    constructor(idOrdServ: number, descricao: string, dataInicio: string, dataTermino: string,
-        custo: number | null, idUsuario: number | null, codigoEstado: number, idMaquina: number
-    ) {
-        this.idOrdServ = idOrdServ;
-        this.descricao = descricao;
-        this.dataInicio = dataInicio;
-        this.dataTermino = dataTermino;
-        this.custo = custo;
-        this.idUsuario = idUsuario;
-        this.codigoEstado = codigoEstado;
-        this.idMaquina = idMaquina;
+    constructor(data: {id_ord_serv: number, descricao: string, solucao: string | null, 
+        data_abertura: string, data_inicio: string | null, data_termino: string | null, operacao: boolean,
+        custo: number | null, id_usuario: number | null, id_estado: number, id_maquina: number
+    }) {
+        this.idOrdServ = data.id_ord_serv;
+        this.descricao = data.descricao;
+        this.solucao = data.solucao;
+        this.dataAbertura = data.data_abertura;
+        this.dataInicio = data.data_inicio;
+        this.dataTermino = data.data_termino;
+        this.operacao = data.operacao;
+        this.custo = data.custo;
+        this.idUsuario = data.id_usuario;
+        this.idEstado = data.id_estado;
+        this.idMaquina = data.id_maquina;
     }
 
     public get getIdOrdServ(): number {
@@ -35,18 +42,39 @@ export class OrdemServico {
         this.descricao = descricao; 
     }
 
-    public get getDataInicio(): string {
+    public get getSolucao(): string | null {
+        return this.solucao;
+    }
+    public set setSolucao(solucao: string) {
+        this.solucao = solucao; 
+    }
+
+    public get getDataAbertura(): string {
+        return this.dataAbertura;
+    }
+    public set setDataAbertura(dataAbertura: string) {
+        this.dataAbertura = dataAbertura; 
+    }
+
+    public get getDataInicio(): string | null {
         return this.dataInicio;
     }
     public set setDataInicio(dataInicio: string) {
         this.dataInicio = dataInicio; 
     }
     
-    public get getDataTermino(): string {
+    public get getDataTermino(): string | null {
         return this.dataTermino;
     }
     public set setDataTermino(dataTermino: string) {
         this.dataTermino = dataTermino; 
+    }
+
+    public get getOperacao(): boolean {
+        return this.operacao;
+    }
+    public set setOperacao(operacao: boolean) {
+        this.operacao = operacao; 
     }
 
     public get getCusto(): number | null {
@@ -63,11 +91,11 @@ export class OrdemServico {
         this.idUsuario = idUsuario; 
     }
 
-    public get getCodEstado(): number {
-        return this.codigoEstado;
+    public get getIdEstado(): number {
+        return this.idEstado;
     }
-    public set setCodEstado(codigoEstado: number) {
-        this.codigoEstado = codigoEstado; 
+    public set setIdEstado(idEstado: number) {
+        this.idEstado = idEstado; 
     }
 
     public get getIdMaquina(): number {
