@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/MinhasOrdens.css";
-import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";
 
@@ -10,6 +11,7 @@ function VisualizarOrdensContent({ user }) {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
+  const navigate = useNavigate();
 
   const corStatus = (status) => {
     switch (status) {
@@ -42,7 +44,6 @@ function VisualizarOrdensContent({ user }) {
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
-
       console.log("Dados vindos da rota minhasOS:", dados);
       setOrdens(dados);
     } catch (e) {
@@ -72,37 +73,26 @@ function VisualizarOrdensContent({ user }) {
     if (idUsuario) buscarOrdens();
   }, [idUsuario]);
 
-  const handleAceitar = (id) => {
-    alert(`Aceitar ordem ${id}`);
+  const handlePreencher = (id) => {
+    navigate(`/preencher-os/${id}`);
   };
-
-  const handleEditar = (id) => {
-    const ordemAlvo = ordens.find((e) => e.id_ord_serv === id);
-    alert(
-      `Editar: ${ordemAlvo?.descricao || "Ordem"} (${ordemAlvo?.custo || 0})`
-    );
-  };
-
-  const handleExcluir = (id) => {
-    alert(`Excluir ordem ${id}`);
-  };
-
-  if (carregando) {
-    return (
-      <div className="container">
-        <p>Carregando Ordens de Serviço...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="visualizar-ordens-page">
-      {erro && (
+      {/* LOADING */}
+      {carregando && (
+        <p style={{ fontWeight: "bold", fontSize: 18 }}>Carregando ordens...</p>
+      )}
+
+      {/* ERRO */}
+      {!carregando && erro && (
         <div className="alerta-erro" style={{ color: "red", marginBottom: 15 }}>
           {erro}
         </div>
       )}
-      {mensagemSucesso && (
+
+      {/* SUCESSO */}
+      {!carregando && mensagemSucesso && (
         <div
           className="alerta-sucesso"
           style={{ color: "green", marginBottom: 15 }}
@@ -111,13 +101,18 @@ function VisualizarOrdensContent({ user }) {
         </div>
       )}
 
-      {ordens.length === 0 ? (
+      {/* SEM ORDENS */}
+      {!carregando && ordens.length === 0 && (
         <p>Nenhuma Ordem encontrada para este manutentor.</p>
-      ) : (
+      )}
+
+      {/* TABELA */}
+      {!carregando && ordens.length > 0 && (
         <div className="tabela-wrapper">
           <table className="tabela-ordens">
             <thead>
               <tr>
+                <th>Máquina</th>
                 <th>Descrição</th>
                 <th>Data Abertura</th>
                 <th>Data Início</th>
@@ -130,6 +125,7 @@ function VisualizarOrdensContent({ user }) {
             <tbody>
               {ordens.map((ordem) => (
                 <tr key={ordem.id_ord_serv}>
+                  <td>{ordem.nome_maquina}</td>
                   <td>{ordem.descricao}</td>
                   <td>{formatarDataBrasil(ordem.data_abertura)}</td>
                   <td>{formatarDataBrasil(ordem.data_inicio)}</td>
@@ -145,39 +141,15 @@ function VisualizarOrdensContent({ user }) {
 
                   <td className="acoes-coluna-icones">
                     <button
-                      onClick={() => handleAceitar(ordem.id_ord_serv)}
+                      onClick={() => handlePreencher(ordem.id_ord_serv)}
                       style={{
-                        color: "green",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FaCheckCircle size={20} />
-                    </button>
-
-                    <button
-                      onClick={() => handleEditar(ordem.id_ord_serv)}
-                      style={{
-                        color: "blue",
+                        color: "purple",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
                       }}
                     >
                       <FaEdit size={20} />
-                    </button>
-
-                    <button
-                      onClick={() => handleExcluir(ordem.id_ord_serv)}
-                      style={{
-                        color: "red",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FaTrash size={20} />
                     </button>
                   </td>
                 </tr>
