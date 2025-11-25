@@ -52,9 +52,6 @@ body,
   table-layout: fixed;
 }
 
-
-
-
 /* Cabeçalho fixo */
 .tabela-ordens thead {
   background-color: #84a8e5;
@@ -76,10 +73,10 @@ body,
 
 /* Largura das colunas */
 .tabela-ordens th:nth-child(1) {
-  width: 10%;
+  width: 12%;
 }
 .tabela-ordens th:nth-child(2) {
-  width: 10%;
+  width: 11%;
 }
 .tabela-ordens th:nth-child(3) {
   width: 20%;
@@ -116,6 +113,15 @@ body,
   word-wrap: break-word;
 }
 
+.tabela-ordens td:empty {
+  border-bottom: none !important;
+}
+
+.tabela-ordens tr td:nth-last-child(1):not(.acoes-coluna-icones) {
+  display: table-cell !important;
+  border-right: none !important;
+}
+
 .tabela-ordens tr:nth-child(even) {
   background-color: #f7f7f7;
 }
@@ -139,7 +145,7 @@ body,
 
 .tabela-ordens td button {
   width: 80px;
-  padding: 8px 10px;
+  padding: 12px 10px;
   font-size: 0.85em;
   font-weight: 600;
   border: none;
