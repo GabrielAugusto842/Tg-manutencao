@@ -140,17 +140,14 @@ function VisualizarOrdensContent({ user }) {
                   </td>
 
                   <td className="acoes-coluna-icones">
-                    <button
-                      onClick={() => handlePreencher(ordem.id_ord_serv)}
-                      style={{
-                        color: "purple",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FaEdit size={20} />
-                    </button>
+                    {ordem.status !== "Finalizado" && (
+                      <button
+                        className="btn-preencher"
+                        onClick={() => handlePreencher(ordem.id_ord_serv)}
+                      >
+                        Preencher O.S
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

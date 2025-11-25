@@ -245,7 +245,6 @@ body,
   width: 8%;
 } /* Custo */
 
-
 /* --------------------------------------------------------------------
    6. CÉLULAS E INTERAÇÃO
    -------------------------------------------------------------------- */
@@ -274,12 +273,9 @@ body,
 
 .tabela-ordens td:last-child {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
-  padding: 12px 10px;
-
-  border-bottom: none;
 }
 
 .tabela-ordens td button {
@@ -315,6 +311,31 @@ body,
 
 .btn-deletar:hover {
   background-color: #d82b3d;
+}
+
+.btn-preencher {
+  background-color: #ff8c00 !important;
+  color: white;
+  border: none;
+  padding: 8px 18px; /* altura menor, largura maior */
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 120px; /* aumenta a largura */
+  height: 36px; /* diminui a altura */
+
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-preencher:hover {
+  background-color: #e67a00;
+  transform: scale(1.05);
 }
 
 .alerta-erro {
