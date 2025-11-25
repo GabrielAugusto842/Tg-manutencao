@@ -14,6 +14,21 @@ export default function PreencherOS() {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
+  function formatarDataBrasil(dataString) {
+    if (!dataString) return "-";
+
+    const data = new Date(dataString);
+
+    return data.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   useEffect(() => {
     buscarOS();
   }, []);
@@ -75,20 +90,21 @@ export default function PreencherOS() {
   return (
     <Layout title="Preencher Ordem de Serviço">
       <div className="container">
-        <h2>Ordem #{ordem.id_ord_serv}</h2>
+        <h2>Máquina: {ordem.nomeMaquina}</h2>
 
         {erro && <p style={{ color: "red" }}>{erro}</p>}
         {mensagemSucesso && <p style={{ color: "green" }}>{mensagemSucesso}</p>}
 
         <p>
-          <strong>Descrição:</strong> {ordem.descricao}
+          <strong>Descrição (Problema):</strong> {ordem.descricao}
         </p>
         <p>
-          <strong>Data Abertura:</strong> {ordem.data_abertura}
+          <strong>Data Abertura:</strong>{" "}
+          {formatarDataBrasil(ordem.dataAbertura)}
         </p>
 
         <div style={{ marginTop: 20 }}>
-          <label>Solução:</label>
+          <label>Solução aplicada:</label>
           <textarea
             value={solucao}
             onChange={(e) => setSolucao(e.target.value)}
