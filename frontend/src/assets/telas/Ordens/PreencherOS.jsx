@@ -63,7 +63,7 @@ export default function PreencherOS() {
       }
 
       setMensagemSucesso("Ordem finalizada com sucesso!");
-      setTimeout(() => navigate("/minhas-os"), 1500);
+      setTimeout(() => navigate("/ordens/minhasos"), 1500);
     } catch (e) {
       console.error(e);
       setErro("Erro ao finalizar OS");
