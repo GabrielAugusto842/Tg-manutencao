@@ -13,6 +13,9 @@ function VisualizarOrdensContent({ user }) {
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const navigate = useNavigate();
 
+  const [filtroMaquina, setFiltroMaquina] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("");
+
   const corStatus = (status) => {
     switch (status) {
       case "Aberto":
@@ -28,7 +31,7 @@ function VisualizarOrdensContent({ user }) {
 
   const idUsuario = user?.id_usuario;
 
-  // Busca ordens REAIS do banco
+  // Busca ordens do banco
   const buscarOrdens = async () => {
     try {
       setCarregando(true);
@@ -44,7 +47,7 @@ function VisualizarOrdensContent({ user }) {
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
-      console.log("Dados vindos da rota minhasOS:", dados);
+      console.log("Dados da rota minhasOS:", dados);
       setOrdens(dados);
     } catch (e) {
       console.error(e);
@@ -77,8 +80,64 @@ function VisualizarOrdensContent({ user }) {
     navigate(`/preencher-os/${id}`);
   };
 
+  // ===== FILTROS =====
+  const ordensFiltradas = ordens.filter((o) => {
+    return (
+      (filtroMaquina === "" || o.nome_maquina === filtroMaquina) &&
+      (filtroStatus === "" || o.status === filtroStatus)
+    );
+  });
+
   return (
     <div className="visualizar-ordens-page">
+      {/* FILTROS - IGUAL AO VISUALIZAR ORDENS */}
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          marginBottom: "15px",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <label htmlFor="filtroMaquina">Filtrar por Máquina:</label>
+          <select
+            id="filtroMaquina"
+            value={filtroMaquina}
+            onChange={(e) => setFiltroMaquina(e.target.value)}
+            style={{ marginLeft: "5px" }}
+          >
+            <option value="">Todas</option>
+            {Array.from(new Set(ordens.map((o) => o.nome_maquina))).map(
+              (maquina, i) => (
+                <option key={i} value={maquina}>
+                  {maquina}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="filtroStatus">Filtrar por Status:</label>
+          <select
+            id="filtroStatus"
+            value={filtroStatus}
+            onChange={(e) => setFiltroStatus(e.target.value)}
+            style={{ marginLeft: "5px" }}
+          >
+            <option value="">Todos</option>
+            {Array.from(new Set(ordens.map((o) => o.status))).map(
+              (status, i) => (
+                <option key={i} value={status}>
+                  {status}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+      </div>
+
       {/* LOADING */}
       {carregando && (
         <p style={{ fontWeight: "bold", fontSize: 18 }}>Carregando ordens...</p>
@@ -107,7 +166,7 @@ function VisualizarOrdensContent({ user }) {
       )}
 
       {/* TABELA */}
-      {!carregando && ordens.length > 0 && (
+      {!carregando && ordensFiltradas.length > 0 && (
         <div className="tabela-wrapper">
           <table className="tabela-ordens">
             <thead>
@@ -123,13 +182,14 @@ function VisualizarOrdensContent({ user }) {
             </thead>
 
             <tbody>
-              {ordens.map((ordem) => (
+              {ordensFiltradas.map((ordem) => (
                 <tr key={ordem.id_ord_serv}>
                   <td>{ordem.nome_maquina}</td>
                   <td>{ordem.descricao}</td>
                   <td>{formatarDataBrasil(ordem.data_abertura)}</td>
                   <td>{formatarDataBrasil(ordem.data_inicio)}</td>
                   <td>{formatarDataBrasil(ordem.data_termino)}</td>
+
                   <td
                     style={{
                       color: corStatus(ordem.status),
