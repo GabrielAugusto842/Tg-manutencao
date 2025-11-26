@@ -1,181 +1,211 @@
 /* ====================================================================
-   1. RESET E BASE GERAL
-   ==================================================================== */
+   1. RESET E BASE GERAL
+   ==================================================================== */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
 }
 
 /* --------------------------------------------------------------------
-   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
-   -------------------------------------------------------------------- */
+   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
+   -------------------------------------------------------------------- */
 body,
 #root,
 .app-container-principal {
-  height: 100vh;
-  width: 100vw;
-  display: flex; /* Define o layout como flexível */
-  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+ height: 100vh;
+ width: 100vw;
+ display: flex; /* Define o layout como flexível */
+ overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
 }
 
 /* ====================================================================
-   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
-   ==================================================================== */
+   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
+   ==================================================================== */
 
 .visualizar-usuarios-page {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 20px;
+ width: 100%;
+ box-sizing: border-box;
+ padding: 20px;
 }
 
 .tabela-wrapper {
-  overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: calc(
-    100vh - 140px
-  ); /* Altura máxima para permitir rolagem vertical */
-  overflow-y: auto;
+ overflow-x: auto;
+ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ border-radius: 8px;
+ max-height: calc(
+ 100vh - 140px
+ ); /* Altura máxima para permitir rolagem vertical */
+ overflow-y: auto;
 }
 
 .tabela-usuarios {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 700px; /* Largura mínima para 4 colunas */
-  border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(240, 240, 240);
+ table-layout: fixed;
+ width: 100%;
+ min-width: 1000px; /* Largura mínima para 4 colunas */
+ border-collapse: collapse;
+ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ background-color: rgb(240, 240, 240);
 }
 
 .tabela-usuarios thead {
-  background-color: #84a8e5;
-  /* IMPLEMENTAÇÃO DA LINHA FIXA */
-  position: sticky;
-  top: 0; /* Gruda no topo do container de rolagem */
-  z-index: 10; /* Garante que fique acima das linhas do corpo */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+ background-color: #84a8e5;
+ /* IMPLEMENTAÇÃO DA LINHA FIXA */
+ position: sticky;
+ top: 0; /* Gruda no topo do container de rolagem */
+ z-index: 10; /* Garante que fique acima das linhas do corpo */
+ box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
 }
 
 /* --------------------------------------------------------------------
-   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
-   -------------------------------------------------------------------- */
+   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
+   -------------------------------------------------------------------- */
 .tabela-usuarios th {
-  background-color: #84a8e5;
-  color: #ffffff;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 0.9em;
-  padding: 12px 10px;
+ background-color: #84a8e5;
+ color: #ffffff;
+ font-weight: bold;
+ text-transform: uppercase;
+ font-size: 0.9em;
+ padding: 20px 12px;
 }
 
 .tabela-usuarios thead {
-  background-color: #84a8e5;
+ background-color: #84a8e5;
 }
 
 .tabela-usuarios th:nth-child(1) {
-  width: 10%;
+ width: 20%;
 } /* ID */
 .tabela-usuarios th:nth-child(2) {
-  width: 25%;
+ width: 30%;
 } /* Nome do Setor */
 .tabela-usuarios th:nth-child(3) {
-  width: 15%;
+ width: 20%;
 } /* Descrição (Maior espaço) */
 .tabela-usuarios th:nth-child(4) {
-  width: 30%;
+ width: 20%;
 } /* Ações */
 
 /* --------------------------------------------------------------------
-   6. CÉLULAS E INTERAÇÃO
-   -------------------------------------------------------------------- */
+   6. CÉLULAS E INTERAÇÃO
+   -------------------------------------------------------------------- */
 
 .tabela-usuarios td {
-  border: 1px solid #dcdcdc;
-  padding: 12px 10px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1em;
-  word-wrap: break-word;
+ border: 1px solid #dcdcdc;
+ padding: 25px 10px;
+ text-align: center;
+ vertical-align: middle;
+ font-size: 1em;
+ word-wrap: break-word;
+}
+
+/* 🟢 NOVO: Remove a borda direita da célula que fica imediatamente antes da coluna de Ações (Setor) para limpar a separação vertical */
+.tabela-usuarios td:nth-last-child(2) {
+ border-right: none;
 }
 
 .tabela-usuarios tr:nth-child(even) {
-  background-color: #f7f7f7; /* Zebrado leve */
+ background-color: #f7f7f7; /* Zebrado leve */
 }
 
 .tabela-usuarios tr:hover {
-  background-color: #c9e2ff; /* Destaque ao passar o mouse */
-  border-color: #a0c9f8;
+ background-color: #c9e2ff; /* Destaque ao passar o mouse */
+ border-color: #a0c9f8;
 }
 
 /* --------------------------------------------------------------------
-   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
-   -------------------------------------------------------------------- */
+   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
+   -------------------------------------------------------------------- */
 
+/* Última coluna — sem bordas e totalmente limpa */
 .tabela-usuarios td:last-child {
-  white-space: normal;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
-  border-color: #dcdcdc;
+ /* Mantenha display: flex, gap, justify-content: center, etc. */
+ white-space: normal;
+ display: flex;
+ gap: 15px;
+ justify-content: center;
+ align-items: center;
+ padding: 18px; /* Padding reduzido para ícones */
+ 
+ /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+ border-bottom: none;
+ border-right: none;
+ 
+ border-color: #ffffff;
+ border-left: none; /* Já estava */
 }
 
 .tabela-usuarios td button {
-  width: 80px;
-  padding: 8px 10px;
-  font-size: 0.85em;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+ /* 🗑️ REGRAS CHAVE PARA BOTÕES DE ÍCONE SEM BORDA */
+ width: 35px; /* Tamanho fixo para o botão */
+ height: 35px; /* Torna o botão quadrado */
+ padding: 0; /* Remove padding interno */
+ font-size: 1.5em;
+ border: none; /* **CRUCIAL: Remove a borda padrão** */
+ cursor: pointer;
+ border-radius: 60%; /* Faz o botão ser circular */
+ transition: background-color 0.3s, color 0.3s, transform 0.2s;
+ box-shadow: none; /* Remove a sombra */
+ display: flex;
+ justify-content: center;
+ align-items: center;
 }
 
 .tabela-usuarios td button:active {
-  transform: translateY(1px); /* Efeito de clique */
+ transform: scale(0.95); /* Efeito de clique mais sutil */
 }
 
+/* 🎨 ESTILOS ESPECÍFICOS DE COR */
+
 .btn-editar {
-  background-color: #fbab34;
-  color: white;
+ color: #3498db; /* Cor azul moderna para edição */
 }
 
 .btn-editar:hover {
-  background-color: #e59427;
+ background-color: #3498db1a; /* Fundo azul muito sutil (transparente) */
+ color: #217dbb; /* Escurece o ícone no hover */
 }
 
 .btn-deletar {
-  background-color: #f34254;
-  color: white;
+ color: #e74c3c; /* Cor vermelha moderna para deleção */
 }
 
 .btn-deletar:hover {
-  background-color: #d82b3d;
+ background-color: #e74c3c1a; /* Fundo vermelho muito sutil (transparente) */
+ color: #c0392b; /* Escurece o ícone no hover */
 }
 
 .alerta-erro {
-  padding: 10px;
-  background-color: #ffe0e6;
-  color: #cc0033;
-  border: 1px solid #ffb3c0;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: bold;
+ padding: 10px;
+ background-color: #ffe0e6;
+ color: #cc0033;
+ border: 1px solid #ffb3c0;
+ border-radius: 4px;
+ margin-bottom: 15px;
+ text-align: center;
+ font-weight: bold;
 }
 
 .alerta-sucesso {
-  padding: 10px;
-  background-color: #e6ffe0;
-  color: #008000;
-  border: 1px solid #b3ffc0;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: bold;
+ padding: 10px;
+ background-color: #e6ffe0;
+ color: #008000;
+ border: 1px solid #b3ffc0;
+ border-radius: 4px;
+ margin-bottom: 15px;
+ text-align: center;
+ font-weight: bold;
+}
+
+.icone-acao {
+ font-size: 1.4rem; /* Tamanho maior */
+ cursor: pointer;
+ transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icone-acao:hover {
+ transform: scale(1.25); /* Leve zoom no hover */
+ opacity: 0.8;
 }
