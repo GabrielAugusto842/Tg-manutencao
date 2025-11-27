@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Usuario/VisualizarUsuarios.css";
-import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import api from "../../Services/api.jsx";
 
 const API_URL = "http://localhost:3002/api/user";
 
@@ -10,14 +11,24 @@ function VisualizarUsuariosContent({ navigate }) {
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
-  const [mensagemSucesso, setMensagemSucesso] = useState(null); // Novo estado para feedback
+  const [mensagemSucesso, setMensagemSucesso] = useState(null);
 
-  // Função para buscar usuários (refatorada para ser reutilizada)
+  // 🔎 Filtros
+  const [filtroBusca, setFiltroBusca] = useState("");
+  const [filtroCargo, setFiltroCargo] = useState("");
+  const [filtroSetor, setFiltroSetor] = useState("");
+
+  // 🔎 Opções dinâmicas
+  const [opcoesCargo, setOpcoesCargo] = useState([]);
+  const [opcoesSetor, setOpcoesSetor] = useState([]);
+
+  // ==========================
+  //  BUSCAR USUÁRIOS
+  // ==========================
   const buscarUsuarios = async () => {
     try {
       setCarregando(true);
       setErro(null);
-      setMensagemSucesso(null);
 
       const resposta = await fetch(API_URL, {
         headers: {
@@ -26,170 +37,195 @@ function VisualizarUsuariosContent({ navigate }) {
       });
 
       if (!resposta.ok) {
-        throw new Error(`Erro ao buscar dados: ${resposta.statusText}`);
+        throw new Error(`Erro ao buscar dados.`);
       }
 
-      const dados = await resposta.json();
-      setUsuarios(dados);
+      setUsuarios(await resposta.json());
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
-      setErro(
-        "Não foi possível carregar os usuários. Verifique sua conexão ou a API."
-      );
-      console.error("Erro na busca de usuários:", e);
+      setErro("Erro ao carregar usuários.");
     } finally {
       setCarregando(false);
     }
   };
+
+  // ==========================
+  //  CARREGAR CARGOS & SETORES
+  // ==========================
+  useEffect(() => {
+    const carregarCargos = async () => {
+      try {
+        const res = await api.get("/cargo");
+        setOpcoesCargo(
+          res.data.map((c) => ({
+            id: c.idCargo,
+            nome: c.cargo,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao carregar cargos", error);
+      }
+    };
+
+    const carregarSetores = async () => {
+      try {
+        const res = await api.get("/setores");
+        setOpcoesSetor(
+          res.data.map((s) => ({
+            id: s.idSetor,
+            nome: s.nomeSetor,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao carregar setores", error);
+      }
+    };
+
+    carregarCargos();
+    carregarSetores();
+  }, []);
 
   useEffect(() => {
     buscarUsuarios();
   }, []);
 
-  const handleEditar = (id) => {
-    const usuarioAlvo = usuarios.find((u) => u.id_usuario === id);
+  // ==========================
+  //   EDITAR E DELETAR
+  // ==========================
+  const handleEditar = (id) => navigate(`/usuario/editar/${id}`);
 
-    navigate(`/usuario/editar/${id}`);
-    console.log(`Função de Edição chamada para o usuário ID: ${id}.`);
-
-    alert(`Abrindo tela de edição para ${usuarioAlvo.nome}...`);
-  };
-
-  // FUNÇÃO DE DELEÇÃO
   const handleDeletar = async (id) => {
-    const usuarioAlvo = usuarios.find((u) => u.id_usuario === id);
+    const usuario = usuarios.find((u) => u.id_usuario === id);
 
-    if (
-      !window.confirm(
-        `Tem certeza que deseja DELETAR PERMANENTEMENTE o usuário: ${usuarioAlvo.nome}?`
-      )
-    ) {
-      return;
-    }
+    if (!window.confirm(`Deseja excluir "${usuario.nome}"?`)) return;
 
     try {
-      setCarregando(true);
-      setErro(null);
-      setMensagemSucesso(null);
-
       const resposta = await fetch(`${API_URL}/id/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      if (!resposta.ok) {
-        const erroData = await resposta.json().catch(() => ({}));
-        const msg = erroData.message || erroData.error || resposta.statusText;
-        throw new Error(`Erro ao deletar usuário: ${msg}`);
-      }
+      if (!resposta.ok) throw new Error("Erro ao deletar.");
 
-      // Atualiza a lista local sem precisar recarregar da API
       setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id));
-
-      setMensagemSucesso(`Usuário "${usuarioAlvo.nome}" deletado com sucesso!`);
+      setMensagemSucesso(`Usuário "${usuario.nome}" deletado.`);
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
-      setErro(e.message);
-      console.error("Erro na operação de deleção:", e);
-    } finally {
-      setCarregando(false);
+      setErro("Erro ao excluir usuário.");
     }
   };
 
-  // ----------------------------------------------------
-  // LÓGICA DE EXIBIÇÃO DE ESTADO
-  // ----------------------------------------------------
+  // ==========================
+  //      LOADING
+  // ==========================
+  if (carregando) return <p>Carregando usuários...</p>;
 
-  if (carregando) {
-    return (
-      <div className="container">
-        <p>Carregando usuários...</p>
-      </div>
-    );
-  }
-
-  // ----------------------------------------------------
-  // RENDERIZAÇÃO DO CONTEÚDO FINAL
-  // ----------------------------------------------------
   return (
     <div className="visualizar-usuarios-page">
-      {/* Mensagens de Feedback */}
-      {erro && (
-        <div
-          className="alerta-erro"
-          style={{ color: "red", marginBottom: "15px" }}
-        >
-          {erro}
-        </div>
-      )}
+      {/* ALERTAS */}
+      {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
-        <div
-          className="alerta-sucesso"
-          style={{ color: "green", marginBottom: "15px" }}
+        <div className="alerta-sucesso">{mensagemSucesso}</div>
+      )}
+
+      {/* ===================== */}
+      {/* 🔍 ÁREA DE FILTROS   */}
+      {/* ===================== */}
+      <div className="filtros-container">
+        <input
+          type="text"
+          placeholder="Buscar nome ou e-mail..."
+          className="filtro-input"
+          value={filtroBusca}
+          onChange={(e) => setFiltroBusca(e.target.value)}
+        />
+
+        <select
+          className="filtro-select"
+          value={filtroCargo}
+          onChange={(e) => setFiltroCargo(e.target.value)}
         >
-          {mensagemSucesso}
-        </div>
-      )}
+          <option value="">Cargo (Todos)</option>
+          {opcoesCargo.map((cargo) => (
+            <option key={cargo.id} value={cargo.nome}>
+              {cargo.nome}
+            </option>
+          ))}
+        </select>
 
-      {usuarios.length === 0 ? (
-        <p>Nenhum usuário cadastrado.</p>
-      ) : (
-        <div className="tabela-wrapper">
-          <table className="tabela-usuarios">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>cargo</th>
-                <th>setor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((usuario) => {
+        <select
+          className="filtro-select"
+          value={filtroSetor}
+          onChange={(e) => setFiltroSetor(e.target.value)}
+        >
+          <option value="">Setor (Todos)</option>
+          {opcoesSetor.map((setor) => (
+            <option key={setor.id} value={setor.nome}>
+              {setor.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* ===================== */}
+      {/* 📋 TABELA DE USUÁRIOS */}
+      {/* ===================== */}
+      <div className="tabela-wrapper">
+        <table className="tabela-usuarios">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Cargo</th>
+              <th>Setor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {usuarios
+              .filter((u) => {
+                const busca = filtroBusca.toLowerCase();
                 return (
-                  <tr key={usuario.id_usuario}>
-                    <td>{usuario.nome}</td>
-                    <td>{usuario.email}</td>
-                    <td>{usuario.cargo}</td>
-                    <td>{usuario.setor}</td>
-
-                    <td className="acoes-coluna-icones">
-                      <button
-                        className="btn-editar"
-                        onClick={() => handleEditar(usuario.id_usuario)}
-                        title="Editar Usuário"
-                        style={{ color: "blue", background: "none", border: "none", cursor: "pointer" }}
-                       
-                      >
-                        <FaEdit size={20} />
-                      </button>
-
-                      {/* BOTÃO DE DELETAR MANTIDO */}
-                      <button
-                        className="btn-deletar"
-                        onClick={() => handleDeletar(usuario.id_usuario)}
-                        title="Deletar Usuário"
-                                                style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}
-                       
-                      >
-                        <FaTrash size={20} />
-                      </button>
-                    </td>
-                  </tr>
+                  (u.nome.toLowerCase().includes(busca) ||
+                    u.email.toLowerCase().includes(busca)) &&
+                  (filtroCargo ? u.cargo === filtroCargo : true) &&
+                  (filtroSetor ? u.setor === filtroSetor : true)
                 );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+              })
+              .map((u) => (
+                <tr key={u.id_usuario}>
+                  <td>{u.nome}</td>
+                  <td>{u.email}</td>
+                  <td>{u.cargo}</td>
+                  <td>{u.setor}</td>
+
+                  <td className="acoes-coluna-icones">
+                    <button
+                      className="btn-editar"
+                      onClick={() => handleEditar(u.id_usuario)}
+                    >
+                      <FaEdit size={20} />
+                    </button>
+
+                    <button
+                      className="btn-deletar"
+                      onClick={() => handleDeletar(u.id_usuario)}
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
 export default function VisualizarUsuarios() {
   const navigate = useNavigate();
-
   return (
     <Layout title="Visualizar Usuários">
       <VisualizarUsuariosContent navigate={navigate} />

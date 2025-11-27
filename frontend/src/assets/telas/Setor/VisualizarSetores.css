@@ -72,6 +72,10 @@ body,
   z-index: 10; /* Garante que fique acima das linhas do corpo */
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
 }
+
+.tabela-usuarios tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
 /* --------------------------------------------------------------------
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS (4 COLUNAS)
    -------------------------------------------------------------------- */
@@ -119,7 +123,7 @@ body,
 
 .tabela-setores th,
 .tabela-setores td {
-  border: none !important; 
+  border: none !important;
 }
 
 .tabela-setores tr:nth-child(even) {

@@ -25,15 +25,15 @@ body,
    3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
    ==================================================================== */
 
-.visualizar-usuarios-page {
+.layout-content.visualizar-usuarios-page {
   width: 100%;
   box-sizing: border-box;
   padding: 0px;
 }
 
-.tabela-wrapper {
+.layout-content .tabela-wrapper {
   overflow-x: auto;
-  max-height: calc(100vh - 160px);
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
 
   /* 🔵 Fundo levemente transparente, combinando com o sidebar */
@@ -53,7 +53,6 @@ body,
   padding: 5px;
 }
 
-
 .tabela-usuarios {
   width: 100%;
   border-collapse: collapse;
@@ -71,7 +70,7 @@ body,
 }
 
 .tabela-usuarios tr {
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 /* --------------------------------------------------------------------
@@ -123,7 +122,7 @@ body,
 
 .tabela-usuarios th,
 .tabela-usuarios td {
-  border: none !important; 
+  border: none !important;
 }
 
 .tabela-usuarios tr:nth-child(even) {
@@ -183,13 +182,13 @@ body,
   color: #217dbb; /* Escurece o ícone no hover */
 }
 
-.btn-deletar {
-  color: #e74c3c; /* Cor vermelha moderna para deleção */
+.layout-content .btn-deletar {
+  color: #8b1000; /* Cor vermelha moderna para deleção */
 }
 
-.btn-deletar:hover {
-  background-color: #e74c3c1a; /* Fundo vermelho muito sutil (transparente) */
-  color: #c0392b; /* Escurece o ícone no hover */
+.layout-content .btn-deletar:hover {
+  background-color: #e32d1d1a; /* Fundo vermelho muito sutil (transparente) */
+  color: #cf6b60; /* Escurece o ícone no hover */
 }
 
 .alerta-erro {
@@ -212,4 +211,39 @@ body,
   margin-bottom: 15px;
   text-align: center;
   font-weight: bold;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-input {
+  flex: 2;
+  padding: 8px 10px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filtro-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.filtro-input:focus,
+.filtro-select:focus {
+  border-color: #0066ff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
