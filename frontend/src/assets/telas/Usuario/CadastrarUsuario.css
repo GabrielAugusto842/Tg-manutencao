@@ -3,7 +3,9 @@
 
 body {
   font-family: "Inter", sans-serif; /* Aplica a fonte Inter */
-  /* Outros estilos de body aqui */
+  margin: 0;
+  padding: 0;
+  background-color: #f7fafc;
 }
 
 *,
@@ -12,22 +14,18 @@ body {
   box-sizing: border-box;
 }
 
-.form-container {
-  max-width: 1000px;
-  padding: 50px;
-
-  margin: 15px auto;
+.layout-content .form-container {
+  /* Remova o !important, agora a especificidade deve ser suficiente */
+  max-width: 900px;
+  padding: 35px;
+  margin: 20px auto;
 
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(6px);
-
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+  /* Mantenha todos os outros estilos aqui */
 }
 
-.form-group {
+.layout-content .form-group {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
@@ -35,7 +33,7 @@ body {
   padding: 0;
 }
 
-.form-group label {
+.layout-content .form-group label {
   font-size: 15px;
   font-weight: 500;
   color: #4a5568;
@@ -43,8 +41,8 @@ body {
   align-self: flex-start;
 }
 
-.form-group input,
-.form-group select {
+.layout-content .form-group input,
+.layout-content .form-group select {
   width: 100%; /* Garantir que o input e select ocupem 100% da largura disponível */
   max-width: 100%; /* Garantir que a largura máxima do campo seja 100% */
   border-radius: 8px;
@@ -55,15 +53,15 @@ body {
   font-size: 16px; /* Ajustar o padding para os campos ficarem mais compactos */
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #007bff; /* Azul primário */
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
-  background-color: #ffffff; /* Evita mudança de cor ao focar */
+.layout-content .form-group input:focus,
+.layout-content .form-group select:focus {
+  border-color: #0051ff; /* Usar a cor principal do botão */
+  box-shadow: 0 0 0 2px rgba(0, 81, 255, 0.3); /* Baseado em #0051ff */
+  background-color: #ffffff;
 }
 
-.form-button {
-  background: #0062ff; /* Cor sólida */
+.layout-content .form-button {
+  background: #0051ff; /* Cor sólida */
   border: none;
   color: white;
   border-radius: 8px;
@@ -73,17 +71,23 @@ body {
   transition: all 0.2s ease-in-out;
 }
 
-.form-button:hover {
+.layout-content .form-button:focus {
+  outline: 2px solid white; /* Contorno branco visível sobre o azul */
+  outline-offset: -3px; /* Coloca o contorno para dentro */
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), 0 0 0 6px #0051ff; /* Um foco mais robusto */
+}
+
+.layout-content .form-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
 }
 
-.form-button:active {
+.layout-content .form-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.message-feedback {
+.layout-content .message-feedback {
   margin-top: 20px;
   padding: 14px;
   border-radius: 10px;
@@ -116,7 +120,7 @@ body {
   }
 }
 
-.message-feedback.success {
+.layout-content .message-feedback.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
@@ -124,7 +128,7 @@ body {
   align-items: center;
 }
 
-.message-feedback.error {
+.layout-content .message-feedback.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
@@ -132,26 +136,26 @@ body {
   align-items: center;
 }
 
-.message-feedback .icon {
+.layout-content .message-feedback .icon {
   margin-right: 8px;
 }
 
-.form-row {
+.layout-content .form-row {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; /* Espaço entre os elementos da linha */
   margin-bottom: 20px; /* Espaço após a linha */
 }
 
-.half-width {
+.layout-content .half-width {
   flex: 1 1 calc(50% - 10px); /* 50% - metade do gap (10px) para compensar o gap total de 20px */
 }
 
-.full-width {
+.layout-content .full-width {
   flex: 1 1 100%;
 }
 
-.required {
+.layout-content .required {
   color: red;
   margin-left: 4px;
   font-size: 18px;
