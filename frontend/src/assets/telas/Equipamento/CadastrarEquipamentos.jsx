@@ -96,12 +96,12 @@ function CadastrarEquipamentos() {
 
   return (
     <Layout title="Cadastro de Equipamento">
-      <div className="form-container">
+      <div className="form-container-equipamentos">
         <form onSubmit={handleSubmit}>
           {/* LINHA 1: Nome e Marca (Duas Colunas) */}
-          <div className="form-row">
+          <div className="form-row-equipamentos">
             {/* Campo Nome */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="nome">
                 Nome: <span className="required">*</span>
               </label>
@@ -116,7 +116,7 @@ function CadastrarEquipamentos() {
             </div>
 
             {/* Campo Marca */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="marca">
                 Marca:<span className="required">*</span>
               </label>
@@ -132,9 +132,9 @@ function CadastrarEquipamentos() {
           </div>
 
           {/* LINHA 2: Modelo e Setor (Duas Colunas) */}
-          <div className="form-row">
+          <div className="form-row-equipamentos">
             {/* Campo Modelo */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="modelo">
                 Modelo: <span className="required">*</span>
               </label>
@@ -149,7 +149,7 @@ function CadastrarEquipamentos() {
             </div>
 
             {/* Campo Setor */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="setor">
                 Setor:<span className="required">*</span>
               </label>
@@ -174,9 +174,9 @@ function CadastrarEquipamentos() {
           </div>
 
           {/* LINHA 3: Número de Série e TAG (Duas Colunas) */}
-          <div className="form-row">
+          <div className="form-row-equipamentos">
             {/* Campo Número de Série */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="numero_serie">
                 Nº de Série: <span className="required">*</span>
               </label>
@@ -191,7 +191,7 @@ function CadastrarEquipamentos() {
             </div>
 
             {/* Campo TAG */}
-            <div className="form-group half-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="tag">
                 TAG/ID Interno: <span className="required">*</span>
               </label>
@@ -207,8 +207,8 @@ function CadastrarEquipamentos() {
           </div>
 
           {/* LINHA 4: Produção Por Hora (Uma Coluna de Largura Total, ou ajuste se houver outro campo) */}
-          <div className="form-row">
-            <div className="form-group full-width">
+          <div className="form-row-equipamentos">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="producaoPorHora">
                 Produção Por Hora (Opcional):
               </label>
@@ -220,11 +220,8 @@ function CadastrarEquipamentos() {
                 placeholder="Ex: 500"
               />
             </div>
-          </div>
 
-          {/* LINHA 5: Disponibilidade Mensal */}
-          <div className="form-row">
-            <div className="form-group full-width">
+            <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="disponibilidadeMes">
                 Disponibilidade no Mês (horas):{" "}
                 <span className="required">*</span>
@@ -241,10 +238,13 @@ function CadastrarEquipamentos() {
           </div>
 
           {/* Botão de Submissão */}
-          <div className="form-group full-width" style={{ marginTop: "30px" }}>
+          <div
+            className="form-group-equipamentos full-width-equipamentos"
+            style={{ marginTop: "30px" }}
+          >
             <button
               type="submit"
-              className="form-button primary-button full-width"
+              className="form-button-equipamentos primary-button full-width-equipamentos"
             >
               Cadastrar Equipamento
             </button>

@@ -1,152 +1,142 @@
 /* --- Contêiner Principal --- */
-.form-container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    max-width: 600px;
-    margin: 1px auto; /* Centraliza horizontalmente */
-    overflow: auto;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+body {
+  font-family: "Inter", sans-serif; /* Aplica a fonte Inter */
 }
 
-/* Garante que o conteúdo do Layout não tenha preenchimento superior conflitante */
-.layout-content-wrapper { 
-    padding-top: 0 !important;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* --- Estrutura do Formulário --- */
-.form-container form {
-    display: block;
-    width: 100%;
+.layout-content .form-container {
+  /* Remova o !important, agora a especificidade deve ser suficiente */
+  max-width: 1000;
+  padding: 40px;
+  margin: 0px auto;
+
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(30px);
+  /* Mantenha todos os outros estilos aqui */
 }
 
-/* Espaçamento entre grupos de campos */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left; 
-    /* Adiciona espaçamento inferior para separar os campos */
-    margin-bottom: 25px; 
+.layout-content .form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
 }
 
 /* Linha para campos lado a lado (mantido para flexibilidade, mas não usado na tela de Setor) */
-.form-row {
-    display: flex;
-    gap: 20px; /* Espaço entre campos na mesma linha */
-    margin-bottom: 25px; 
+.layout-content.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px; /* Espaço entre os elementos da linha */
+  margin-bottom: 20px; /* Espaço após a linha */
 }
 
 /* Campo de largura total (usado para Nome e Descrição do Setor) */
-.full-width {
-    width: 100%;
+.layout-content .half-width {
+  flex: 1 1 calc(50% - 10px); /* 50% - metade do gap (10px) para compensar o gap total de 20px */
 }
 
-/* Campo de meia largura (não usado na tela de Setor, mas mantido para flexibilidade) */
-.half-width {
-    width: 50%;
+.layout-content .full-width {
+  flex: 1 1 100%;
 }
 
 /* Garante que o label ocupe toda a largura */
 .form-group.full-width label {
-    display: block;
-    width: 100%;
-    text-align: left !important;
+  font-size: 18px;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 6px;
+  align-self: flex-start;
 }
-
 
 /* --- Estilo dos Elementos de Entrada (Input, Select, Textarea) --- */
-.form-group input,
-.form-group select,
-.form-group textarea {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    width: 100%; 
-    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
-    transition: border-color 0.2s, box-shadow 0.2s;
+.layout-content .form-group input,
+.layout-content .form-group select {
+  width: 100%; /* Garantir que o input e select ocupem 100% da largura disponível */
+  max-width: 100%; /* Garantir que a largura máxima do campo seja 100% */
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.2s ease-in-out;
+  padding: 12px;
+  font-size: 16px; /* Ajustar o padding para os campos ficarem mais compactos */
 }
 
-.form-group select {
-    height: 44px; 
-}
-
-.form-group textarea {
-    resize: vertical; 
-    min-height: 120px; 
-}
-
-/* Estilo de foco (highlight) */
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #0099ff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 153, 255, 0.2);
-    outline: none;
+.layout-content .form-group input:focus,
+.layout-content .form-group select:focus {
+  border-color: #0051ff; /* Usar a cor principal do botão */
+  box-shadow: 0 0 0 2px rgba(0, 81, 255, 0.3); /* Baseado em #0051ff */
+  background-color: #ffffff;
 }
 
 /* Indicador de campo obrigatório */
-.required {
-    color: #cc0000;
-    margin-left: 4px;
+.layout-content .required {
+  color: red;
+  margin-left: 4px;
+  font-size: 18px;
+  line-height: 1;
 }
-
 /* --- Botões --- */
-.form-button {
-    padding: 14px 25px; 
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    transition: background-color 0.3s ease;
-    width: 100%;
+.layout-content .form-button {
+  background: #0051ff; /* Cor sólida */
+  border: none;
+  color: white;
+  border-radius: 8px;
+  height: 50px;
+  font-weight: 700;
+  font-size: 17px;
+  transition: all 0.2s ease-in-out;
 }
 
 .primary-button {
-    background-color: #007bff;
-    color: white;
+  background-color: #007bff;
+  color: white;
 }
 
 .primary-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 /* --- Mensagens de Feedback --- */
-.message-feedback {
-    padding: 12px 20px;
-    margin-top: 25px;
-    border-radius: 6px;
-    font-weight: 600;
-    text-align: center;
+.layout-content .message-feedback.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  display: flex;
+  align-items: center;
 }
 
-.success {
-    background-color: #e6ffed;
-    color: #0a4c28; 
-    border: 1px solid #b3e6c3; 
+.layout-content .message-feedback.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  display: flex;
+  align-items: center;
 }
 
-.error {
-    background-color: #fff0f0; 
-    color: #8c0000; 
-    border: 1px solid #ffb3b3; 
+.layout-content .message-feedback .icon {
+  margin-right: 8px;
 }
-
 
 /* --- Responsividade --- */
 @media (max-width: 768px) {
-    .form-container {
-        margin: 15px; /* Mais margem nas laterais em telas pequenas */
-        padding: 20px;
-    }
-    /* Em telas menores, garante que campos .form-row se empilhem (se usados) */
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-    .half-width {
-        width: 100%; /* Meia largura vira largura total em mobile */
-    }
+  .form-container {
+    margin: 15px; /* Mais margem nas laterais em telas pequenas */
+    padding: 20px;
+  }
+  /* Em telas menores, garante que campos .form-row se empilhem (se usados) */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .half-width {
+    width: 100%; /* Meia largura vira largura total em mobile */
+  }
 }

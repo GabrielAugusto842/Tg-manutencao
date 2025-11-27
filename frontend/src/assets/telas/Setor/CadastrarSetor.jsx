@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
-import "../../telas/Setor/CadastrarSetor.css";
+import "../../telas/Setor/CadastrarSetor.css?=1.0.2";
 import api from "../../Services/api.jsx";
 
 function CadastrarSetor() {

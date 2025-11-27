@@ -1,7 +1,7 @@
 /* CadastrarUsuario.css */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
-body {
+.layout-content body {
   font-family: "Inter", sans-serif; /* Aplica a fonte Inter */
   margin: 0;
   padding: 0;
@@ -16,12 +16,12 @@ body {
 
 .layout-content .form-container {
   /* Remova o !important, agora a especificidade deve ser suficiente */
-  max-width: 900px;
+  max-width: 1000px;
   padding: 35px;
-  margin: 20px auto;
+  margin: 15px auto;
 
   background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(30px);
   /* Mantenha todos os outros estilos aqui */
 }
 
@@ -34,7 +34,7 @@ body {
 }
 
 .layout-content .form-group label {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 500;
   color: #4a5568;
   margin-bottom: 6px;

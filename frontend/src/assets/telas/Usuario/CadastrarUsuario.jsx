@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
 import api from "../../Services/api.jsx";
-import "../../telas/Usuario/CadastrarUsuario.css?=1.0.2";
+import "../../telas/Usuario/CadastrarUsuario.css?=1.0.3";
 
 function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'
@@ -219,7 +219,7 @@ function CadastrarUsuario() {
               type="submit"
               className="form-button primary-button full-width"
             >
-              Cadastrar
+              Cadastrar usuário
             </button>
           </div>
         </form>

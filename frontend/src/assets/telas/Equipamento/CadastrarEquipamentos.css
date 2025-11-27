@@ -1,48 +1,149 @@
-.form-row {
-  display: flex;
-  gap: 0px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+.layout-content body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7fafc;
 }
 
-.form-group {
-  margin-bottom: 1px;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.layout-content .form-container-equipamentos {
+  max-width: 1000px;
+  padding: 40px;
+  margin: 0px auto;
+
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(30px);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.layout-content .form-group-equipamentos {
+  margin-bottom: 15px;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
   padding: 0;
 }
 
-.form-group label {
-  display: flex;
-  align-items: center;
-  width: auto;
-  font-weight: 700;
-  color: #333;
+.layout-content .form-group-equipamentos label {
   font-size: 18px;
-  margin-bottom: 5px;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 6px;
+  align-self: flex-start;
 }
 
-.half-width {
-  width: calc(50% - 7.5px);
+.layout-content .form-group-equipamentos input,
+.layout-content .form-group-equipamentos select {
+  width: 100%; /* Garantir que o input e select ocupem 100% da largura disponível */
+  max-width: 100%; /* Garantir que a largura máxima do campo seja 100% */
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.2s ease-in-out;
+  padding: 12px;
+  font-size: 16px; /* Ajustar o padding para os campos ficarem mais compactos */
 }
 
-.form-group.half-width input,
-.form-group.half-width select,
-.form-group.half-width textarea {
-  width: 100%;
+.layout-content .form-group-equipamentos input:focus,
+.layout-content .form-group-equipamentos select:focus {
+  border-color: #0051ff;
+  box-shadow: 0 0 0 2px rgba(0, 81, 255, 0.3);
+  background-color: #ffffff;
 }
 
-@media (min-width: 769px) {
-  .form-row {
-    gap: 30px;
+.layout-content .form-row-equipamentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  margin-bottom: 20px;
+}
+
+.layout-content .half-width-equipamentos {
+  flex: 1 1 calc(50% - 30px);
+}
+
+.layout-content .full-width-equipamentos {
+  flex: 1 1 100%;
+}
+
+.layout-content .required {
+  color: rgb(255, 1, 1);
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.layout-content .form-button-equipamentos {
+  background: #0051ff; /* Cor sólida */
+  border: none;
+  color: white;
+  border-radius: 8px;
+  height: 60px;
+  font-weight: 700;
+  font-size: 17px;
+  transition: all 0.2s ease-in-out;
+}
+
+.primary-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.primary-button:hover {
+  background-color: #0056b3;
+}
+
+
+.layout-content .message-feedback {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  animation: fadeIn 0.3s ease;
+}
+
+.layout-content .message-feedback.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.layout-content .message-feedback.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.form-container {
-  max-width: 1250px;
-  margin: 30px auto;
-  padding: 60px 30px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+@media (max-width: 768px) {
+  .layout-content .form-row-equipamentos {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .layout-content .half-width-equipamentos {
+    flex: 1 1 100%;
+  }
+
+  .layout-content .form-container {
+    padding: 20px;
+    max-width: 100%;
+  }
 }
