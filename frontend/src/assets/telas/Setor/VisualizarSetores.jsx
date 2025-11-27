@@ -140,7 +140,6 @@ function VisualizarSetoresContent() {
           <table className="tabela-setores">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome do Setor</th>
                 <th>Descrição</th>
                 <th>Ações</th>
@@ -150,7 +149,6 @@ function VisualizarSetoresContent() {
               {setores.map((setor) => {
                 return (
                   <tr key={setor.idSetor}>
-                    <td>{setor.idSetor}</td>
                     <td>{setor.nomeSetor}</td>
                     <td>{setor.descricao}</td>
 

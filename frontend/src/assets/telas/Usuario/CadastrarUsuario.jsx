@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
 import api from "../../Services/api.jsx";
-import "../../telas/Usuario/CadastrarUsuario.css";
+import "../../telas/Usuario/CadastrarUsuario.css?=1.0";
 
 function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'
@@ -118,9 +118,10 @@ function CadastrarUsuario() {
       <div className="form-container">
         <form onSubmit={handleSubmit}>
           {/* LINHA 1: Nome e Grupo (Duas Colunas) */}
+
           <div className="form-row">
             {/* Campo Nome */}
-            <div className="form-group half-width">
+            <div className="form-group full-width">
               <label htmlFor="nome">
                 Nome: <span className="required">*</span>
               </label>
@@ -133,7 +134,9 @@ function CadastrarUsuario() {
                 required
               />
             </div>
+          </div>
 
+          <div className="form-row">
             {/* Campo Cargo/Setor (Grupo) */}
             <div className="form-group half-width">
               <label htmlFor="cargo">
@@ -156,28 +159,28 @@ function CadastrarUsuario() {
                 ))}
               </select>
             </div>
-          </div>
 
-          <div className="form-group half-width">
-            <label htmlFor="setor">
-              Setor:<span className="required">*</span>
-            </label>
-            <select
-              id="setor"
-              value={setor}
-              onChange={handleSetorChange}
-              required
-            >
-              <option value="" disabled>
-                Selecione um setor...
-              </option>
-
-              {opcoesSetor.map((opcao) => (
-                <option key={opcao.id} value={opcao.nome}>
-                  {opcao.nome}
+            <div className="form-group half-width">
+              <label htmlFor="setor">
+                Setor:<span className="required">*</span>
+              </label>
+              <select
+                id="setor"
+                value={setor}
+                onChange={handleSetorChange}
+                required
+              >
+                <option value="" disabled>
+                  Selecione um setor...
                 </option>
-              ))}
-            </select>
+
+                {opcoesSetor.map((opcao) => (
+                  <option key={opcao.id} value={opcao.nome}>
+                    {opcao.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* LINHA 2: E-mail (Uma Coluna de Largura Total) */}

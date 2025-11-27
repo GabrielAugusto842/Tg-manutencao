@@ -28,17 +28,29 @@ body,
 .visualizar-equipamentos-page {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 0px;
 }
 
 .tabela-wrapper {
   overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: calc(
-    100vh - 140px
-  ); /* Altura máxima para permitir rolagem vertical */
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
+
+  /* 🔵 Fundo levemente transparente, combinando com o sidebar */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+
+  /* 🔲 Borda suave estilo “cartão moderno” */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* 🔳 Cantos suaves */
+  border-radius: 12px;
+
+  /* 🌫 Sombra leve para dar profundidade e flutuação */
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);
+
+  /* Espaço interno bonito */
+  padding: 5px;
 }
 
 /* ====================================================================
@@ -46,12 +58,10 @@ body,
    ==================================================================== */
 
 .tabela-equipamentos {
-  table-layout: fixed;
   width: 100%;
-  min-width: 1000px;
   border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(240, 240, 240);
+  background: transparent;
+  border: none;
 }
 
 .tabela-equipamentos thead {
@@ -61,6 +71,10 @@ body,
   top: 0; /* Gruda no topo do container de rolagem */
   z-index: 10; /* Garante que fique acima das linhas do corpo */
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+}
+
+.tabela-equipamentos tr {
+  border-bottom: 1px solid rgba(0,0,0,0.07);
 }
 
 /* --------------------------------------------------------------------
@@ -73,35 +87,47 @@ body,
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
-  padding: 12px 10px;
+  padding: 20px 12px;
+}
+
+.tabela-equipamentos thead {
+  background-color: #84a8e5;
+}
+
+.tabela-equipamentos thead th {
+  background: linear-gradient(to bottom, #6f9fde, #4e7fba);
+  color: white;
 }
 
 .tabela-equipamentos th:nth-child(1) {
-  width: 18%;
+  width: 20%;
 } /* Nome */
 .tabela-equipamentos th:nth-child(2) {
-  width: 20%;
+  width: 10%;
 } /* Marca */
 .tabela-equipamentos th:nth-child(3) {
-  width: 20%;
+  width: 15%;
 } /* Modelo */
 .tabela-equipamentos th:nth-child(4) {
-  width: 20%;
+  width: 10%;
 } /* Número de Série */
 .tabela-equipamentos th:nth-child(5) {
-  width: 15%;
+  width: 10%;
 } /* Tag */
 .tabela-equipamentos th:nth-child(6) {
   width: 20%;
 } /* Prod. p/ Hora */
 .tabela-equipamentos th:nth-child(7) {
-  width: 20%;
+  width: 10%;
 } /* ID Setor */
 .tabela-equipamentos th:nth-child(8) {
-  width: 22%;
-} 
+  width: 8%;
+}
 .tabela-equipamentos th:nth-child(9) {
-  width: 22%;
+  width: 10%;
+}
+.tabela-equipamentos th:nth-child(10) {
+  width: 6%;
 }
 
 /* Ações (Precisa de espaço para os dois botões) */
@@ -119,6 +145,24 @@ body,
   word-wrap: break-word;
 }
 
+.tabela-usuarios td {
+  border: 1px solid #dcdcdc;
+  padding: 25px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.tabela-equipamentos th,
+.tabela-equipamentos td {
+  border: none !important; 
+}
+
+.tabela-equipamentos tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
+}
+
 .tabela-equipamentos tr:hover {
   background-color: #c9e2ff; /* Destaque ao passar o mouse */
   border-color: #a0c9f8;
@@ -129,47 +173,53 @@ body,
    -------------------------------------------------------------------- */
 
 .tabela-equipamentos td:last-child {
-   white-space: normal;
+  /* Mantenha display: flex, gap, justify-content: center, etc. */
+  white-space: normal;
   display: flex;
-  gap: 8px;
+  gap: 15px;
   justify-content: center;
   align-items: center;
-  padding: 6px 6px;
-  border-color: #dcdcdc;
+  padding: 18px; /* Padding reduzido para ícones */
+
+  /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+  border-bottom: none;
+  border-right: none;
+
+  border-left: none; /* Já estava */
 }
 
 .tabela-equipamentos td button {
   width: 80px;
-  padding: 8px 10px;
-  font-size: 0.85em;
+  padding: 6px 8px;
+  font-size: 1.5em;
   font-weight: 600;
   border: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
-.tabela-setores td button:active {
+.tabela-equipamentos td button:active {
   transform: translateY(1px); /* Efeito de clique */
 }
 
 .btn-editar {
-  background-color: #fbab34;
-  color: white;
+  color: #3498db; /* Cor azul moderna para edição */
 }
 
 .btn-editar:hover {
-  background-color: #e59427;
+  background-color: #3498db1a; /* Fundo azul muito sutil (transparente) */
+  color: #217dbb; /* Escurece o ícone no hover */
 }
 
 .btn-deletar {
-  background-color: #f34254;
-  color: white;
+  color: #e74c3c; /* Cor vermelha moderna para deleção */
 }
 
 .btn-deletar:hover {
-  background-color: #d82b3d;
+  background-color: #e74c3c1a; /* Fundo vermelho muito sutil (transparente) */
+  color: #c0392b; /* Escurece o ícone no hover */
 }
 
 .alerta-erro {
@@ -193,4 +243,3 @@ body,
   text-align: center;
   font-weight: bold;
 }
-

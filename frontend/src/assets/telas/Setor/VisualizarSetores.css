@@ -28,17 +28,29 @@ body,
 .visualizar-setores-page {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 0px;
 }
 
 .tabela-wrapper {
   overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: calc(
-    100vh - 140px
-  ); /* Altura máxima para permitir rolagem vertical */
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
+
+  /* 🔵 Fundo levemente transparente, combinando com o sidebar */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+
+  /* 🔲 Borda suave estilo “cartão moderno” */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* 🔳 Cantos suaves */
+  border-radius: 12px;
+
+  /* 🌫 Sombra leve para dar profundidade e flutuação */
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);
+
+  /* Espaço interno bonito */
+  padding: 5px;
 }
 
 /* ====================================================================
@@ -46,23 +58,20 @@ body,
    ==================================================================== */
 
 .tabela-setores {
-  table-layout: fixed;
   width: 100%;
-  min-width: 700px; /* Largura mínima para 4 colunas */
   border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(240, 240, 240);
+  background: transparent;
+  border: none;
 }
 
 .tabela-setores thead {
   background-color: #84a8e5;
   /* IMPLEMENTAÇÃO DA LINHA FIXA */
   position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  top: 0; /* Gruda no topo do container de rolagem */
+  z-index: 10; /* Garante que fique acima das linhas do corpo */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
 }
-
 /* --------------------------------------------------------------------
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS (4 COLUNAS)
    -------------------------------------------------------------------- */
@@ -73,20 +82,26 @@ body,
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
-  padding: 12px 10px;
+  padding: 20px 12px;
+}
+
+.tabela-setores thead {
+  background-color: #84a8e5;
+}
+
+.tabela-setores thead th {
+  background: linear-gradient(to bottom, #6f9fde, #4e7fba);
+  color: white;
 }
 
 .tabela-setores th:nth-child(1) {
-  width: 10%;
-} /* ID */
-.tabela-setores th:nth-child(2) {
-  width: 25%;
-} /* Nome do Setor */
-.tabela-setores th:nth-child(3) {
-  width: 45%;
-} /* Descrição (Maior espaço) */
-.tabela-setores th:nth-child(4) {
   width: 20%;
+} /* Nome do Setor */
+.tabela-setores th:nth-child(2) {
+  width: 55%;
+} /* Descrição (Maior espaço) */
+.tabela-setores th:nth-child(3) {
+  width: 10%;
 } /* Ações */
 
 /* --------------------------------------------------------------------
@@ -95,11 +110,20 @@ body,
 
 .tabela-setores td {
   border: 1px solid #dcdcdc;
-  padding: 12px 10px;
+  padding: 25px 10px;
   text-align: center;
   vertical-align: middle;
   font-size: 1em;
   word-wrap: break-word;
+}
+
+.tabela-setores th,
+.tabela-setores td {
+  border: none !important; 
+}
+
+.tabela-setores tr:nth-child(even) {
+  background-color: #f7f7f7; /* Zebrado leve */
 }
 
 .tabela-setores tr:hover {
@@ -112,47 +136,61 @@ body,
    -------------------------------------------------------------------- */
 
 .tabela-setores td:last-child {
+  /* Mantenha display: flex, gap, justify-content: center, etc. */
   white-space: normal;
   display: flex;
-  gap: 8px;
+  gap: 15px;
   justify-content: center;
   align-items: center;
-  padding: 6px 6px;
-  border-color: #dcdcdc;
+  padding: 18px; /* Padding reduzido para ícones */
+
+  /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+  border-bottom: none;
+  border-right: none;
+
+  border-left: none; /* Já estava */
 }
 
 .tabela-setores td button {
   width: 80px;
-  padding: 8px 10px;
-  font-size: 0.85em;
+  padding: 6px 8px;
+  font-size: 1.5em;
   font-weight: 600;
   border: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+
+.tabela-setores th,
+.tabela-setores td {
+  border-left: none !important;
+  border-right: none !important;
 }
 
 .tabela-setores td button:active {
   transform: translateY(1px); /* Efeito de clique */
 }
 
+/* 🎨 ESTILOS ESPECÍFICOS DE COR */
+
 .btn-editar {
-  background-color: #fbab34;
-  color: white;
+  color: #3498db; /* Cor azul moderna para edição */
 }
 
 .btn-editar:hover {
-  background-color: #e59427;
+  background-color: #3498db1a; /* Fundo azul muito sutil (transparente) */
+  color: #217dbb; /* Escurece o ícone no hover */
 }
 
 .btn-deletar {
-  background-color: #f34254;
-  color: white;
+  color: #e74c3c; /* Cor vermelha moderna para deleção */
 }
 
 .btn-deletar:hover {
-  background-color: #d82b3d;
+  background-color: #e74c3c1a; /* Fundo vermelho muito sutil (transparente) */
+  color: #c0392b; /* Escurece o ícone no hover */
 }
 
 /* ====================================================================

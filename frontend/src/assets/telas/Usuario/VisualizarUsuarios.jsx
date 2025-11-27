@@ -159,6 +159,7 @@ function VisualizarUsuariosContent({ navigate }) {
                         className="btn-editar"
                         onClick={() => handleEditar(usuario.id_usuario)}
                         title="Editar Usuário"
+                        style={{ color: "blue", background: "none", border: "none", cursor: "pointer" }}
                        
                       >
                         <FaEdit size={20} />
@@ -169,6 +170,7 @@ function VisualizarUsuariosContent({ navigate }) {
                         className="btn-deletar"
                         onClick={() => handleDeletar(usuario.id_usuario)}
                         title="Deletar Usuário"
+                                                style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}
                        
                       >
                         <FaTrash size={20} />
