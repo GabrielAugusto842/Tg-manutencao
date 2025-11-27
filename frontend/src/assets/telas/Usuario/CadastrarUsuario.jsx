@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
 import api from "../../Services/api.jsx";
-import "../../telas/Usuario/CadastrarUsuario.css";
+import "../../telas/Usuario/CadastrarUsuario.css?=1.0.1";
 
 function CadastrarUsuario() {
   // 1. Estados atualizados: adicionar 'setor'

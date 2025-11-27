@@ -13,7 +13,7 @@ body {
 }
 
 .form-container {
-  max-width: 900px;
+  max-width: 1000px;
   padding: 50px;
 
   margin: 15px auto;
@@ -149,10 +149,6 @@ body {
 
 .full-width {
   flex: 1 1 100%;
-}
-
-.half-width-cargo-setor {
-  flex: 1 1 calc(50% - 10px);
 }
 
 .required {
