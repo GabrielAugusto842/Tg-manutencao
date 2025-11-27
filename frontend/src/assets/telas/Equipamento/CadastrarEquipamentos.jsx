@@ -205,36 +205,45 @@ function CadastrarEquipamentos() {
               />
             </div>
           </div>
+          <div className="form-group-equipamentos half-width-equipamentos">
+            <label htmlFor="producaoPorHora">
+              Produção Por Hora (Opcional)
+              <span
+                className="tooltip-icon"
+                data-tooltip="Quantidade que a máquina produz por hora de operação."
+              >
+                i
+              </span>
+            </label>
 
-          {/* LINHA 4: Produção Por Hora (Uma Coluna de Largura Total, ou ajuste se houver outro campo) */}
-          <div className="form-row-equipamentos">
-            <div className="form-group-equipamentos half-width-equipamentos">
-              <label htmlFor="producaoPorHora">
-                Produção Por Hora (Opcional):
-              </label>
-              <input
-                id="producaoPorHora"
-                type="number"
-                value={producaoPorHora}
-                onChange={(e) => setProducaoPorHora(e.target.value)}
-                placeholder="Ex: 500"
-              />
-            </div>
+            <input
+              id="producaoPorHora"
+              type="number"
+              value={producaoPorHora}
+              onChange={(e) => setProducaoPorHora(e.target.value)}
+              placeholder="Ex: 500"
+            />
+          </div>
 
-            <div className="form-group-equipamentos half-width-equipamentos">
-              <label htmlFor="disponibilidadeMes">
-                Disponibilidade no Mês (horas):{" "}
-                <span className="required">*</span>
-              </label>
-              <input
-                id="disponibilidadeMes"
-                type="number"
-                value={disponibilidadeMes}
-                onChange={(e) => setDisponibilidadeMes(e.target.value)}
-                placeholder="Ex: 160"
-                required
-              />
-            </div>
+          <div className="form-group-equipamentos half-width-equipamentos">
+            <label htmlFor="disponibilidadeMes">
+              Disponibilidade no Mês (horas)
+              <span
+                className="tooltip-icon"
+                data-tooltip="Total de horas disponíveis para uso no mês. Normalmente 160 para turno de 8h / 5 dias."
+              >
+                i
+              </span>
+            </label>
+
+            <input
+              id="disponibilidadeMes"
+              type="number"
+              value={disponibilidadeMes}
+              onChange={(e) => setDisponibilidadeMes(e.target.value)}
+              placeholder="Ex: 160"
+              required
+            />
           </div>
 
           {/* Botão de Submissão */}
