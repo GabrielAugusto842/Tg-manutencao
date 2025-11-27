@@ -221,3 +221,23 @@ body,
   text-align: center;
   font-weight: bold;
 }
+
+.filtros-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.input-filtro {
+  flex: 2;
+  padding: 8px 10px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+}
