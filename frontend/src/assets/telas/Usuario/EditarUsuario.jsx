@@ -203,7 +203,7 @@ function EditarUsuario() {
             </select>
           </label>
 
-          <button type="submit">Salvar Edição</button>
+          <button type="submit">Salvar Alterações</button>
         </form>
       </div>
     </Layout>

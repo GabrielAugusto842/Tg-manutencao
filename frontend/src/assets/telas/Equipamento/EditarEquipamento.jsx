@@ -132,92 +132,94 @@ function EditarEquipamento() {
     <Layout title={`Editar Equipamento: ${equipamento.nome}`}>
       <div className="edicao-equipamento-container">
         <form onSubmit={handleSalvar} className="edicao-equipamento-form">
-          <label>
-            Nome:
-            <input
-              type="text"
-              name="nome"
-              value={dadosFormulario.nome}
-              onChange={handleInputChange}
-            />
-          </label>
+          <div className="form-grid">
+            <label>
+              Nome:
+              <input
+                type="text"
+                name="nome"
+                value={dadosFormulario.nome}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Marca:
-            <input
-              type="text"
-              name="marca"
-              value={dadosFormulario.marca}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label>
+              Número de Série:
+              <input
+                type="text"
+                name="numero_serie"
+                value={dadosFormulario.numero_serie}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Modelo:
-            <input
-              type="text"
-              name="modelo"
-              value={dadosFormulario.modelo}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label>
+              Marca:
+              <input
+                type="text"
+                name="marca"
+                value={dadosFormulario.marca}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Número de Série:
-            <input
-              type="text"
-              name="numero_serie"
-              value={dadosFormulario.numero_serie}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label>
+              Modelo:
+              <input
+                type="text"
+                name="modelo"
+                value={dadosFormulario.modelo}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Tag:
-            <input
-              type="text"
-              name="tag"
-              value={dadosFormulario.tag}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label>
+              Tag:
+              <input
+                type="text"
+                name="tag"
+                value={dadosFormulario.tag}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Produção por Hora:
-            <input
-              type="number"
-              name="producaoPorHora"
-              value={dadosFormulario.producaoPorHora}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label>
+              Setor:
+              <select
+                value={idSetor || ""}
+                onChange={(e) => setIdSetor(Number(e.target.value))}
+              >
+                <option value="">Selecione um setor</option>
+                {opcoesSetor.map((setor) => (
+                  <option key={setor.id} value={setor.id}>
+                    {setor.nome}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label>
-            Disponibilidade por Mês:
-            <input
-              type="number"
-              name="disponibilidadeMes"
-              value={dadosFormulario.disponibilidadeMes}
-              onChange={handleInputChange}
-            />
-          </label>
+            <label className="full-width">
+              Produção por Hora:
+              <input
+                type="number"
+                name="producaoPorHora"
+                value={dadosFormulario.producaoPorHora}
+                onChange={handleInputChange}
+              />
+            </label>
 
-          <label>
-            Setor:
-            <select
-              value={idSetor || ""}
-              onChange={(e) => setIdSetor(Number(e.target.value))}
-            >
-              <option value="">Selecione um setor</option>
-              {opcoesSetor.map((setor) => (
-                <option key={setor.id} value={setor.id}>
-                  {setor.nome}
-                </option>
-              ))}
-            </select>
-          </label>
+            <label className="full-width">
+              Disponibilidade por Mês:
+              <input
+                type="number"
+                name="disponibilidadeMes"
+                value={dadosFormulario.disponibilidadeMes}
+                onChange={handleInputChange}
+              />
+            </label>
+          </div>
 
-          <button type="submit">Salvar Edição</button>
+          <button type="submit">Salvar Alterações</button>
         </form>
       </div>
     </Layout>

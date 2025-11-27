@@ -1,17 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
-/* Aplicar fonte apenas na tela de edição */
-.edicao-usuario-container,
-.edicao-usuario-container * {
+/* Aplicar fonte apenas na tela de edição de setor */
+.editar-setor-container,
+.editar-setor-container * {
   font-family: "Poppins", sans-serif;
 }
 
 /* Container principal */
-.edicao-usuario-container {
+.editar-setor-container {
   max-width: 700px;
   margin: 20px auto;
   padding: 32px;
-  background: #f6f7fb;
+  background: #f6f7fb; /* igual ao editar usuário */
   border: 1px solid #d7dde4;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
@@ -19,7 +19,7 @@
 }
 
 /* Título */
-.edicao-usuario-titulo {
+.editar-setor-titulo {
   font-size: 22px;
   font-weight: 700;
   color: #222831;
@@ -27,7 +27,7 @@
 }
 
 /* Linha divisória */
-.edicao-secao-linha {
+.editar-setor-linha {
   height: 2px;
   background: #dfe3e9;
   border-radius: 4px;
@@ -35,22 +35,22 @@
 }
 
 /* Formulário */
-.edicao-usuario-form {
+.editar-setor-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 /* Labels */
-.edicao-usuario-form label {
+.editar-setor-form label {
   font-size: 14px;
   font-weight: 600;
   color: #414852;
 }
 
 /* Inputs */
-.edicao-usuario-form input,
-.edicao-usuario-form select {
+.editar-setor-form input,
+.editar-setor-form textarea {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -58,16 +58,17 @@
   background-color: #ffffff;
   font-size: 14px;
   transition: all 0.25s ease;
+  resize: vertical;
 }
 
-.edicao-usuario-form input:focus,
-.edicao-usuario-form select:focus {
+.editar-setor-form input:focus,
+.editar-setor-form textarea:focus {
   border-color: #0066ff;
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
 
 /* Botão */
-.edicao-usuario-form button[type="submit"] {
+.botao-salvar-setor {
   padding: 14px 20px;
   background: linear-gradient(135deg, #0066ff, #3787ff);
   color: white;
@@ -79,33 +80,34 @@
   transition: all 0.25s ease;
 }
 
-.edicao-usuario-form button[type="submit"]:hover {
+.botao-salvar-setor:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 102, 255, 0.35);
 }
 
-.edicao-usuario-form button[type="submit"]:active {
+.botao-salvar-setor:active {
   transform: scale(0.98);
 }
 
 /* Mensagens */
-.msg-carregando {
-  text-align: center;
-  padding: 18px;
-  color: #0066ff;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.msg-erro {
+.message-feedback {
   text-align: center;
   padding: 16px;
-  color: #842029;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
   border-radius: 10px;
   font-size: 14px;
   animation: fadeIn 0.25s ease;
+}
+
+.message-feedback.success {
+  color: #0f5132;
+  background-color: #d1e7dd;
+  border: 1px solid #badbcc;
+}
+
+.message-feedback.error {
+  color: #842029;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 /* Animação */

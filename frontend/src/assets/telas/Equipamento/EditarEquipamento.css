@@ -1,77 +1,118 @@
-/* Container principal do card do formulário */
-.edicao-equipamento-container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* Fonte aplicada somente nesta tela */
+.edicao-equipamento-container,
+.edicao-equipamento-container * {
+  font-family: "Poppins", sans-serif;
 }
 
-/* Estilo do formulário para layout e espaçamento */
+/* Card principal */
+.edicao-equipamento-container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 32px;
+  background: #f6f7fb;
+  border: 1px solid #d7dde4;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 colunas */
+  gap: 20px;
+}
+
+/* Para campos que devem ocupar a largura inteira */
+.full-width {
+  grid-column: span 2;
+}
+
+/* Formulário organizado em coluna */
 .edicao-equipamento-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Label com input na mesma linha */
+/* Label */
 .edicao-equipamento-form label {
   display: flex;
-  align-items: center; /* Alinha verticalmente */
-  font-weight: 600;
-  color: #333;
+  flex-direction: column;
   font-size: 14px;
-  gap: 15px; /* Espaço entre label e input */
+  font-weight: 600;
+  color: #414852;
 }
 
-/* Faz o input ocupar o restante do espaço */
-.edicao-equipamento-form input[type="text"],
+/* Inputs */
+.edicao-equipamento-form input,
 .edicao-equipamento-form select {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccd3dd;
+  background-color: #ffffff;
   font-size: 14px;
-  transition: border-color 0.3s;
+  transition: all 0.25s ease;
 }
 
 .edicao-equipamento-form input:focus,
 .edicao-equipamento-form select:focus {
-  border-color: #007bff;
-  outline: none;
+  border-color: #0066ff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
 
-/* Estilo do botão */
+/* Botão */
 .edicao-equipamento-form button[type="submit"] {
-  padding: 12px 20px;
-  background-color: #28a745;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #0066ff, #3787ff);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.25s ease;
 }
 
 .edicao-equipamento-form button[type="submit"]:hover {
-  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 102, 255, 0.35);
 }
 
-/* Estilos para mensagens de estado */
+.edicao-equipamento-form button[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* Mensagens */
 .msg-carregando {
   text-align: center;
-  padding: 20px;
-  color: #007bff;
+  padding: 18px;
+  color: #0066ff;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .msg-erro {
   text-align: center;
-  padding: 20px;
-  color: #dc3545;
+  padding: 16px;
+  color: #842029;
   background-color: #f8d7da;
   border: 1px solid #f5c6cb;
-  border-radius: 6px;
+  border-radius: 10px;
+  font-size: 14px;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
