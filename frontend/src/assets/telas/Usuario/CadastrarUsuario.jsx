@@ -219,7 +219,7 @@ function CadastrarUsuario() {
               type="submit"
               className="form-button primary-button full-width"
             >
-              Cadastrar usuário
+              Cadastrar Usuário
             </button>
           </div>
         </form>
