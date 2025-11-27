@@ -167,28 +167,29 @@ body,
   box-shadow: none;
 }
 
-.tabela-usuarios td button:active {
-  transform: translateY(1px); /* Efeito de clique */
+.tabela-usuarios td button:hover {
+  transform: scale(1.25); /* Cresce suavemente */
+  opacity: 0.8; /* Fica levemente mais suave */
 }
 
 /* 🎨 ESTILOS ESPECÍFICOS DE COR */
 
+/* 🎨 EDITAR – apenas ícone azul */
 .btn-editar {
-  color: #3498db; /* Cor azul moderna para edição */
+  color: #1d7eea !important; /* Azul bonito */
 }
 
 .btn-editar:hover {
-  background-color: #3498db1a; /* Fundo azul muito sutil (transparente) */
-  color: #217dbb; /* Escurece o ícone no hover */
+  opacity: 0.7;
 }
 
-.layout-content .btn-deletar {
-  color: #8b1000; /* Cor vermelha moderna para deleção */
+/* 🎨 DELETAR – apenas ícone vermelho */
+.btn-deletar {
+  color: #d63031 !important; /* Vermelho moderno */
 }
 
-.layout-content .btn-deletar:hover {
-  background-color: #e32d1d1a; /* Fundo vermelho muito sutil (transparente) */
-  color: #cf6b60; /* Escurece o ícone no hover */
+.btn-deletar:hover {
+  opacity: 0.7;
 }
 
 .alerta-erro {
@@ -246,4 +247,11 @@ body,
 .filtro-select:focus {
   border-color: #0066ff;
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
+}
+
+.tabela-usuarios td button {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0;
 }
