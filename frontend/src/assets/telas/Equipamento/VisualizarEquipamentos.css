@@ -74,7 +74,7 @@ body,
 }
 
 .tabela-equipamentos tr {
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 /* --------------------------------------------------------------------
@@ -156,7 +156,7 @@ body,
 
 .tabela-equipamentos th,
 .tabela-equipamentos td {
-  border: none !important; 
+  border: none !important;
 }
 
 .tabela-equipamentos tr:nth-child(even) {
@@ -242,4 +242,39 @@ body,
   margin-bottom: 15px;
   text-align: center;
   font-weight: bold;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-input {
+  flex: 2;
+  padding: 8px 10px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filtro-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.filtro-input:focus,
+.filtro-select:focus {
+  border-color: #0066ff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
