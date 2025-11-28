@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
-import "../../telas/Ordens/VisualizarOrdens.css?v=1.0.9";
+import "../../telas/Ordens/VisualizarOrdens.css";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
