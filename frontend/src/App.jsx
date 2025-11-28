@@ -19,6 +19,7 @@ import EditarUsuario from "./assets/telas/Usuario/EditarUsuario";
 import EditarSetor from "./assets/telas/Setor/EditarSetor";
 import EditarEquipamento from "./assets/telas/Equipamento/EditarEquipamento";
 import PreencherOS from "./assets/telas/Ordens/PreencherOS";
+import Ordem from "./assets/telas/Ordens/Ordem";
 
 function App() {
   useTokenExpiration();
@@ -36,6 +37,8 @@ function App() {
         <Route path="/ordens/visualizar" element={<VisualizarOrdens />} />
         <Route path="/ordens/minhasos" element={<MinhasOrdens />} />
         <Route path="preencher-os/:id" element={<PreencherOS />} />
+        <Route path="/ordens/:id" element={<Ordem />} />
+
 
         {/* Usuários */}
         <Route path="/usuario/cadastrar" element={<CadastrarUsuario />} />
