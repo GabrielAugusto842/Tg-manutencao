@@ -25,86 +25,98 @@ body,
    3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
    ==================================================================== */
 
-.visualizar-ordens-page {
+.layout-content.visualizar-minhas-ordens-page {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 0px;
 }
 
 .tabela-wrapper {
   overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: calc(
-    100vh - 140px
-  ); /* Altura máxima para permitir rolagem vertical */
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
+
+  /* 🔵 Fundo levemente transparente, combinando com o sidebar */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+
+  /* 🔲 Borda suave estilo “cartão moderno” */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* 🔳 Cantos suaves */
+  border-radius: 12px;
+
+  /* 🌫 Sombra leve para dar profundidade e flutuação */
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);
+
+  /* Espaço interno bonito */
+  padding: 5px;
 }
 
 /* ====================================================================
    4. ESTILOS BASE DA TABELA
    ==================================================================== */
 
-.tabela-ordens {
-  table-layout: fixed;
+.layout-content .tabela-minhas-ordens {
   width: 100%;
-  min-width: 1000px;
   border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(240, 240, 240);
+  background: transparent;
+  border: none;
 }
 
-.tabela-ordens thead {
-  background-color: #84a8e5;
-  /* IMPLEMENTAÇÃO DA LINHA FIXA */
+.layout-content .tabela-minhas-ordens thead {
   position: sticky;
-  top: 0; /* Gruda no topo do container de rolagem */
-  z-index: 10; /* Garante que fique acima das linhas do corpo */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+  top: 0;
+  background-color: #6d8fcc;
+  z-index: 5;
 }
 
 /* --------------------------------------------------------------------
    5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
    -------------------------------------------------------------------- */
 
-.tabela-ordens thead {
+.layout-content .tabela-minhas-ordens tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.layout-content .tabela-minhas-ordens thead {
   background-color: #84a8e5;
 }
 
-.tabela-ordens th {
-  background-color: #84a8e5;
-  color: #ffffff;
+.layout-content .tabela-minhas-ordens th {
+  background: linear-gradient(to bottom, #6f9fde, #4e7fba);
+  color: white;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
-  padding: 12px 10px;
+  padding: 20px 12px;
 }
 
-.tabela-ordens th:nth-child(1) {
-  width: 10%;
+.tabela-minhas-ordens th:nth-child(1) {
+  width: 8%;
 } /* Máquina */
-.tabela-ordens th:nth-child(2) {
+.tabela-minhas-ordens th:nth-child(2) {
   width: 10%;
 } /* Setor */
-.tabela-ordens th:nth-child(3) {
-  width: 25%;
+.tabela-minhas-ordens th:nth-child(3) {
+  width: 15%;
 } /* Descrição */
-.tabela-ordens th:nth-child(4) {
-  width: 10%;
+.tabela-minhas-ordens th:nth-child(4) {
+  width: 15%;
 } /* Data Início */
-.tabela-ordens th:nth-child(5) {
-  width: 10%;
+.tabela-minhas-ordens th:nth-child(5) {
+  width: 15%;
 } /* Data Término */
-.tabela-ordens th:nth-child(6) {
+.tabela-minhas-ordens th:nth-child(6) {
   width: 8%;
 } /* Custo */
-.tabela-ordens th:nth-child(7) {
+.tabela-minhas-ordens th:nth-child(7) {
   width: 10%;
 } /* Usuário */
-.tabela-ordens th:nth-child(8) {
+.tabela-minhas-ordens th:nth-child(8) {
   width: 10%;
 } /* Status */
-.tabela-ordens th:nth-child(9) {
+.tabela-minhas-ordens th:nth-child(9) {
   width: 7%;
 } /* Ações */
 
@@ -112,20 +124,25 @@ body,
    6. CÉLULAS E INTERAÇÃO
    -------------------------------------------------------------------- */
 
-.tabela-ordens td {
+.layout-content .tabela-minhas-ordens td {
   border: 1px solid #dcdcdc;
-  padding: 12px 10px;
+  padding: 25px 10px;
   text-align: center;
   vertical-align: middle;
   font-size: 1em;
   word-wrap: break-word;
 }
 
-.tabela-ordens tr:nth-child(even) {
+.layout-content .tabela-minhas-ordens th,
+.layout-content .tabela-minhas-ordens td {
+  border: none !important;
+}
+
+.tabela-minhas-ordens tr:nth-child(even) {
   background-color: #f7f7f7; /* Zebrado leve */
 }
 
-.tabela-ordens tr:hover {
+.tabela-minhas-ordens tr:hover {
   background-color: #c9e2ff; /* Destaque ao passar o mouse */
   border-color: #a0c9f8;
 }
@@ -134,160 +151,31 @@ body,
    7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
    -------------------------------------------------------------------- */
 
-.tabela-ordens td:last-child {
+.tabela-minhas-ordens td:last-child {
+  white-space: normal;
   display: flex;
-  gap: 10px;
+  gap: 15px;
   justify-content: center;
   align-items: center;
-  padding: 17px;
-  border-color: #dcdcdc;
-  height: 100%;
+  padding: 18px; /* Padding reduzido para ícones */
+
+  /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+  border-bottom: none;
+  border-right: none;
+
+  border-left: none; /* Já estava */
 }
 
-/* ====================================================================
-   1. RESET E BASE GERAL
-   ==================================================================== */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* --------------------------------------------------------------------
-   2. LAYOUT PRINCIPAL (GARANTINDO TELA CHEIA E OVERFLOW ESCONDIDO)
-   -------------------------------------------------------------------- */
-body,
-#root,
-.app-container-principal {
-  height: 100vh;
-  width: 100vw;
-  display: flex; /* Define o layout como flexível */
-  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
-}
-
-/* ====================================================================
-   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
-   ==================================================================== */
-
-.visualizar-ordens-page {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-.tabela-wrapper {
-  overflow-x: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: calc(
-    100vh - 140px
-  ); /* Altura máxima para permitir rolagem vertical */
-  overflow-y: auto;
-}
-
-/* ====================================================================
-   4. ESTILOS BASE DA TABELA
-   ==================================================================== */
-
-.tabela-ordens {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 1000px;
-  border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: rgb(240, 240, 240);
-}
-
-.tabela-ordens thead {
-  background-color: #84a8e5;
-  /* IMPLEMENTAÇÃO DA LINHA FIXA */
-  position: sticky;
-  top: 0; /* Gruda no topo do container de rolagem */
-  z-index: 10; /* Garante que fique acima das linhas do corpo */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
-}
-
-/* --------------------------------------------------------------------
-   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
-   -------------------------------------------------------------------- */
-
-.tabela-ordens thead {
-  background-color: #84a8e5;
-}
-
-.tabela-ordens th {
-  background-color: #84a8e5;
-  color: #ffffff;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 0.9em;
-  padding: 12px 10px;
-}
-
-.tabela-ordens th:nth-child(1) {
-  width: 14%;
-} /* Máquina */
-.tabela-ordens th:nth-child(2) {
-  width: 10%;
-} /* Setor */
-.tabela-ordens th:nth-child(3) {
-  width: 10%;
-} /* Descrição */
-.tabela-ordens th:nth-child(4) {
-  width: 10%;
-} /* Data Início */
-.tabela-ordens th:nth-child(5) {
-  width: 8%;
-} /* Data Término */
-.tabela-ordens th:nth-child(6) {
-  width: 8%;
-} /* Custo */
-
-/* --------------------------------------------------------------------
-   6. CÉLULAS E INTERAÇÃO
-   -------------------------------------------------------------------- */
-
-.tabela-ordens td {
-  border: 1px solid #dcdcdc;
-  padding: 12px 10px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1em;
-  word-wrap: break-word;
-}
-
-.tabela-ordens tr:nth-child(even) {
-  background-color: #f7f7f7; /* Zebrado leve */
-}
-
-.tabela-ordens tr:hover {
-  background-color: #c9e2ff; /* Destaque ao passar o mouse */
-  border-color: #a0c9f8;
-}
-
-/* --------------------------------------------------------------------
-   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
-   -------------------------------------------------------------------- */
-
-.tabela-ordens td:last-child {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.tabela-ordens td button {
+.layout-content .tabela-minhas-ordens td button {
   width: 80px;
-  padding: 8px 10px;
-  font-size: 0.85em;
+  padding: 6px 8px;
+  font-size: 1.5em;
   font-weight: 600;
   border: none;
-  background: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
+  box-shadow: none;
 }
 
 .btn-aceitar {
@@ -296,46 +184,37 @@ body,
 }
 
 .btn-editar {
-  background-color: #fbab34;
-  color: white;
+  color: #1d7eea !important; /* Azul bonito */
 }
 
 .btn-editar:hover {
-  background-color: #e59427;
+  opacity: 0.7;
 }
 
+/* 🎨 DELETAR – apenas ícone vermelho */
 .btn-deletar {
-  background-color: #f34254;
-  color: white;
+  color: #d63031 !important; /* Vermelho moderno */
 }
 
 .btn-deletar:hover {
-  background-color: #d82b3d;
+  opacity: 0.7;
 }
 
-.btn-preencher {
-  background-color: #ff8c00 !important;
-  color: white;
+.layout-content .btn-preencher {
+  background: none !important;
   border: none;
-  padding: 8px 18px; /* altura menor, largura maior */
-  border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9em;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #ff8c00; /* cor padrão */
+  padding: 9px;
+  font-size: 1.4em;
 
-  width: 120px; /* aumenta a largura */
-  height: 36px; /* diminui a altura */
-
-  transition: transform 0.2s, background-color 0.2s;
+  transition: transform 0.2s, color 0.2s;
 }
 
 .btn-preencher:hover {
-  background-color: #e67a00;
-  transform: scale(1.05);
+  color: #e67a00; /* tom mais escuro ao passar o mouse */
+  transform: scale(1.15); /* efeito bonito */
 }
 
 .alerta-erro {
@@ -360,47 +239,122 @@ body,
   font-weight: bold;
 }
 
-.btn-aceitar {
-  background-color: #41ff01;
-  color: white;
+/* ====================================================================
+   9. ESTILOS DOS FILTROS (mesmo padrão do Visualizar Usuário)
+   ==================================================================== */
+.filtros-container {
+  width: 50%;
+  display: flex;
+  flex-wrap: nowrap; /* impede que quebre linha */
+  gap: 12px;
+  align-items: center;
+
+  background: #ffffff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* Faz ocupar a largura toda */
+  justify-content: space-between;
 }
 
-.btn-editar {
-  background-color: #fbab34;
-  color: white;
+/* 🔍 INPUTS */
+.filtro-input {
+  /* 🔄 CORREÇÃO: Permite que o input de busca (Buscar máquina...) se expanda */
+  flex: 1.4; /* Dá mais peso para ser o maior */
+  min-width: 140px;
+  padding: 0px 10px;
+
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+
+  font-size: 14px;
+  background-color: #fff;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.filtro-input:focus {
+  border-color: #4e7fba;
+  box-shadow: 0 0 0 2px rgba(78, 127, 186, 0.25);
 }
 
-.btn-editar:hover {
-  background-color: #e59427;
+/* 🟦 SELECT DE STATUS */
+.filtro-select {
+  /* 🔄 CORREÇÃO: Dá peso 1, expandindo-o menos que o input principal */
+  flex: 0.8;
+  min-width: 120px;
+  padding: 8px 10px;
+
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+
+  font-size: 14px;
+  background-color: #fff;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-deletar {
-  background-color: #f34254;
-  color: white;
+.filtro-select:focus {
+  border-color: #4e7fba;
+  box-shadow: 0 0 0 2px rgba(78, 127, 186, 0.25);
 }
 
-.btn-deletar:hover {
-  background-color: #d82b3d;
+/* 🗓 DATE INPUTS */
+/* ====================================================================
+   PERÍODO DE DATAS – SEÇÃO SEPARADA
+   ==================================================================== */
+
+.filtro-periodo-container {
+  display: flex;
+  flex-direction: column; /* mantém título em cima */
+  gap: 6px;
+
+  flex: 1.4; /* faz ocupar espaço equivalente ao input principal */
+  min-width: 200px;
+
+  background: #ffffff;
+  padding: 0px 8px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.alerta-erro {
-  padding: 10px;
-  background-color: #ffe0e6;
-  color: #cc0033;
-  border: 1px solid #ffb3c0;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: bold;
+.filtro-periodo-titulo {
+  font-size: 14px;
+  font-weight: normal; /* remove o bold */
+  color: #2c4a70;
+  text-shadow: none; /* garante sem efeitos */
 }
 
-.alerta-sucesso {
-  padding: 10px;
-  background-color: #e6ffe0;
-  color: #008000;
-  border: 1px solid #b3ffc0;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: bold;
+.filtro-periodo-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.filtro-data {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+
+  text-shadow: none;
+  box-shadow: none;
+  outline: none;
+  transition: none; /* remove animações */
+}
+
+.filtro-data:focus {
+  border-color: #ccd3dd; /* borda normal */
+  box-shadow: none; /* sem brilho azul */
+  outline: none;
+}
+
+.filtros-linha {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
 }

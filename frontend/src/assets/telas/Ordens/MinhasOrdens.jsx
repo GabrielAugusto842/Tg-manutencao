@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/MinhasOrdens.css";
-import { FaEdit } from "react-icons/fa";
+import { FaClipboardCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";
@@ -13,8 +13,12 @@ function VisualizarOrdensContent({ user }) {
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const navigate = useNavigate();
 
-  const [filtroMaquina, setFiltroMaquina] = useState("");
+  // 🔍 FILTROS
+  const [filtroBuscaMaquina, setFiltroBuscaMaquina] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
+
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
 
   const corStatus = (status) => {
     switch (status) {
@@ -47,7 +51,6 @@ function VisualizarOrdensContent({ user }) {
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
-      console.log("Dados da rota minhasOS:", dados);
       setOrdens(dados);
     } catch (e) {
       console.error(e);
@@ -59,9 +62,7 @@ function VisualizarOrdensContent({ user }) {
 
   function formatarDataBrasil(dataString) {
     if (!dataString) return "-";
-
     const data = new Date(dataString);
-
     return data.toLocaleString("pt-BR", {
       timeZone: "America/Sao_Paulo",
       year: "numeric",
@@ -80,61 +81,86 @@ function VisualizarOrdensContent({ user }) {
     navigate(`/preencher-os/${id}`);
   };
 
-  // ===== FILTROS =====
+  // =============================
+  // 🔎 FILTROS
+  // =============================
   const ordensFiltradas = ordens.filter((o) => {
-    return (
-      (filtroMaquina === "" || o.nome_maquina === filtroMaquina) &&
-      (filtroStatus === "" || o.status === filtroStatus)
-    );
+    // Filtra por texto digitado
+    if (
+      !o.nome_maquina.toLowerCase().includes(filtroBuscaMaquina.toLowerCase())
+    )
+      return false;
+
+    // Filtra por status (se selecionado)
+    if (filtroStatus && o.status !== filtroStatus) return false;
+
+    // Filtra por período (apenas se AMBAS as datas forem preenchidas)
+    const dataAbertura = o.data_abertura ? new Date(o.data_abertura) : null;
+
+    const inicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
+    const fim = dataFim ? new Date(dataFim + "T23:59:59") : null;
+
+    // ❌ Apenas 1 data preenchida → NÃO filtra por período
+    if ((dataInicio && !dataFim) || (!dataInicio && dataFim)) {
+      return true;
+    }
+
+    // ✔ Ambas as datas preenchidas → agora sim filtra
+    if (dataInicio && dataFim) {
+      const dentroDoPeriodo =
+        (!inicio || dataAbertura >= inicio) && (!fim || dataAbertura <= fim);
+
+      if (!dentroDoPeriodo) return false;
+    }
+
+    return true;
   });
 
   return (
-    <div className="visualizar-ordens-page">
-      {/* FILTROS - IGUAL AO VISUALIZAR ORDENS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginBottom: "15px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <label htmlFor="filtroMaquina">Filtrar por Máquina:</label>
+    <div className="visualizar-minhas-ordens-page">
+      {/* FILTROS */}
+      <div className="filtros-linha">
+        <div className="filtros-container">
+          {/* BUSCAR POR MÁQUINA */}
+          <input
+            type="text"
+            placeholder="Buscar máquina..."
+            className="filtro-input"
+            value={filtroBuscaMaquina}
+            onChange={(e) => setFiltroBuscaMaquina(e.target.value)}
+          />
+
+          {/* SELECT STATUS */}
           <select
-            id="filtroMaquina"
-            value={filtroMaquina}
-            onChange={(e) => setFiltroMaquina(e.target.value)}
-            style={{ marginLeft: "5px" }}
+            className="filtro-select"
+            value={filtroStatus}
+            onChange={(e) => setFiltroStatus(e.target.value)}
           >
-            <option value="">Todas</option>
-            {Array.from(new Set(ordens.map((o) => o.nome_maquina))).map(
-              (maquina, i) => (
-                <option key={i} value={maquina}>
-                  {maquina}
-                </option>
-              )
-            )}
+            <option value="">Status (Todos)</option>
+            <option value="Aberto">Aberto</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Finalizado">Finalizado</option>
           </select>
         </div>
 
-        <div>
-          <label htmlFor="filtroStatus">Filtrar por Status:</label>
-          <select
-            id="filtroStatus"
-            value={filtroStatus}
-            onChange={(e) => setFiltroStatus(e.target.value)}
-            style={{ marginLeft: "5px" }}
-          >
-            <option value="">Todos</option>
-            {Array.from(new Set(ordens.map((o) => o.status))).map(
-              (status, i) => (
-                <option key={i} value={status}>
-                  {status}
-                </option>
-              )
-            )}
-          </select>
+        <div className="filtro-periodo-container">
+          <label className="filtro-periodo-titulo">Buscar por período</label>
+
+          <div className="filtro-periodo-inputs">
+            <input
+              type="date"
+              className="filtro-data"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+            />
+
+            <input
+              type="date"
+              className="filtro-data"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -161,14 +187,14 @@ function VisualizarOrdensContent({ user }) {
       )}
 
       {/* SEM ORDENS */}
-      {!carregando && ordens.length === 0 && (
-        <p>Nenhuma Ordem encontrada para este manutentor.</p>
+      {!carregando && ordensFiltradas.length === 0 && (
+        <p>Nenhuma Ordem encontrada.</p>
       )}
 
       {/* TABELA */}
       {!carregando && ordensFiltradas.length > 0 && (
         <div className="tabela-wrapper">
-          <table className="tabela-ordens">
+          <table className="tabela-minhas-ordens">
             <thead>
               <tr>
                 <th>Máquina</th>
@@ -204,8 +230,9 @@ function VisualizarOrdensContent({ user }) {
                       <button
                         className="btn-preencher"
                         onClick={() => handlePreencher(ordem.id_ord_serv)}
+                        title="Preencher O.S"
                       >
-                        Preencher O.S
+                        <FaClipboardCheck size={20} />
                       </button>
                     )}
                   </td>
