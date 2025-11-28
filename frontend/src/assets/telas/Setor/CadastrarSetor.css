@@ -15,12 +15,12 @@ body {
   /* Remova o !important, agora a especificidade deve ser suficiente */
   max-width: 1000;
   padding: 40px;
-  margin: 0px auto;
+  margin: 15px auto;
 
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(30px);
   /* Mantenha todos os outros estilos aqui */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .layout-content .form-group {
@@ -35,7 +35,7 @@ body {
 .layout-content.form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px; /* Espaço entre os elementos da linha */
+  gap: 40px; /* Espaço entre os elementos da linha */
   margin-bottom: 20px; /* Espaço após a linha */
 }
 
@@ -69,6 +69,19 @@ body {
   padding: 12px;
   font-size: 16px; /* Ajustar o padding para os campos ficarem mais compactos */
 }
+
+.layout-content .form-group textarea {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.2s ease-in-out;
+  padding: 20px; /* Aumenta o espaçamento interno */
+  font-size: 16px;
+  resize: vertical; /* Permite ajustar altura */
+}
+
 
 .layout-content .form-group input:focus,
 .layout-content .form-group select:focus {
@@ -141,3 +154,4 @@ body {
     width: 100%; /* Meia largura vira largura total em mobile */
   }
 }
+
