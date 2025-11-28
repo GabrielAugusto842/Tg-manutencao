@@ -168,9 +168,9 @@ body,
 
 .layout-content .tabela-minhas-ordens td button {
   width: 80px;
-  padding: 6px 8px;
+  padding: 10px 10px;
   font-size: 1.5em;
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   cursor: pointer;
   border-radius: 6px;
@@ -206,15 +206,15 @@ body,
   cursor: pointer;
 
   color: #ff8c00; /* cor padrão */
-  padding: 9px;
-  font-size: 1.4em;
+  padding: 15px !important;
+  font-size: 2em !important;
 
   transition: transform 0.2s, color 0.2s;
 }
 
 .btn-preencher:hover {
   color: #e67a00; /* tom mais escuro ao passar o mouse */
-  transform: scale(1.15); /* efeito bonito */
+  transform: scale(1.2); /* efeito bonito */
 }
 
 .alerta-erro {
@@ -243,10 +243,12 @@ body,
    9. ESTILOS DOS FILTROS (mesmo padrão do Visualizar Usuário)
    ==================================================================== */
 .filtros-container {
+  flex: 1;
   width: 50%;
   display: flex;
   flex-wrap: nowrap; /* impede que quebre linha */
   gap: 12px;
+  height: 50px;
   align-items: center;
 
   background: #ffffff;
@@ -262,9 +264,9 @@ body,
 /* 🔍 INPUTS */
 .filtro-input {
   /* 🔄 CORREÇÃO: Permite que o input de busca (Buscar máquina...) se expanda */
-  flex: 1.4; /* Dá mais peso para ser o maior */
+  flex: 2; /* Dá mais peso para ser o maior */
   min-width: 140px;
-  padding: 0px 10px;
+  padding: 8px 10px;
 
   border: 1px solid #ccd3dd;
   border-radius: 8px;
@@ -282,7 +284,7 @@ body,
 /* 🟦 SELECT DE STATUS */
 .filtro-select {
   /* 🔄 CORREÇÃO: Dá peso 1, expandindo-o menos que o input principal */
-  flex: 0.8;
+  flex: 1;
   min-width: 120px;
   padding: 8px 10px;
 
@@ -310,11 +312,11 @@ body,
   flex-direction: column; /* mantém título em cima */
   gap: 6px;
 
-  flex: 1.4; /* faz ocupar espaço equivalente ao input principal */
+  flex: 1; /* faz ocupar espaço equivalente ao input principal */
   min-width: 200px;
 
   background: #ffffff;
-  padding: 0px 8px;
+  padding: 2px 10px;
   border-radius: 12px;
   border: 1px solid #dfe3e9;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
@@ -322,14 +324,15 @@ body,
 
 .filtro-periodo-titulo {
   font-size: 14px;
-  font-weight: normal; /* remove o bold */
-  color: #2c4a70;
-  text-shadow: none; /* garante sem efeitos */
+  font-weight: 500;
+  white-space: nowrap;
+  align-items: center; /* garante sem efeitos */
 }
 
 .filtro-periodo-inputs {
   display: flex;
   gap: 10px;
+  flex: 1;
 }
 
 .filtro-data {
@@ -356,5 +359,6 @@ body,
   width: 100%;
   display: flex;
   gap: 20px;
-  align-items: stretch;
+  align-items: flex-start;
+  margin-bottom: 8px;
 }

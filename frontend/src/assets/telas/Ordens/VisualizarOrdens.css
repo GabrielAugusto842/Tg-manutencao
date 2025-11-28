@@ -27,16 +27,30 @@ body,
 
 .visualizar-ordens-page {
   width: 100%;
-  padding: 20px;
   box-sizing: border-box;
+  padding: 0px;
 }
 
 .tabela-wrapper {
   overflow-x: auto;
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
-  max-height: calc(100vh - 140px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+
+  /* 🔵 Fundo levemente transparente, combinando com o sidebar */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+
+  /* 🔲 Borda suave estilo “cartão moderno” */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* 🔳 Cantos suaves */
+  border-radius: 12px;
+
+  /* 🌫 Sombra leve para dar profundidade e flutuação */
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);
+
+  /* Espaço interno bonito */
+  padding: 5px;
 }
 
 /* ====================================================================
@@ -45,30 +59,42 @@ body,
 
 .tabela-ordens {
   width: 100%;
-  min-width: 1000px;
   border-collapse: collapse;
-  background-color: rgb(240, 240, 240);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  table-layout: fixed;
+  background: transparent;
+  border: none;
 }
 
 /* Cabeçalho fixo */
 .tabela-ordens thead {
   background-color: #84a8e5;
+  /* IMPLEMENTAÇÃO DA LINHA FIXA */
   position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  top: 0; /* Gruda no topo do container de rolagem */
+  z-index: 10; /* Garante que fique acima das linhas do corpo */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+}
+
+.tabela-ordens tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 /* Cabeçalho */
 .tabela-ordens th {
   background-color: #84a8e5;
-  color: white;
+  color: #ffffff;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
-  padding: 12px 10px;
+  padding: 20px 12px;
+}
+
+.tabela-ordens thead {
+  background-color: #84a8e5;
+}
+
+.tabela-ordens thead th {
+  background: linear-gradient(to bottom, #6f9fde, #4e7fba);
+  color: white;
 }
 
 /* Largura das colunas */
@@ -76,19 +102,19 @@ body,
   width: 12%;
 }
 .tabela-ordens th:nth-child(2) {
-  width: 11%;
+  width: 12%;
 }
 .tabela-ordens th:nth-child(3) {
-  width: 20%;
+  width: 22%;
 }
 .tabela-ordens th:nth-child(4) {
-  width: 9%;
+  width: 10%;
 }
 .tabela-ordens th:nth-child(5) {
-  width: 9%;
+  width: 10%;
 }
 .tabela-ordens th:nth-child(6) {
-  width: 9%;
+  width: 10%;
 }
 .tabela-ordens th:nth-child(7) {
   width: 10%;
@@ -97,7 +123,9 @@ body,
   width: 10%;
 }
 .tabela-ordens th:nth-child(9) {
-  width: 15%;
+  width: 40px !important; /* largura bem pequena */
+  text-align: center;
+  padding: 10px;
 }
 
 /* ====================================================================
@@ -113,46 +141,58 @@ body,
   word-wrap: break-word;
 }
 
-.tabela-ordens td:empty {
-  border-bottom: none !important;
-}
-
-.tabela-ordens tr td:nth-last-child(1):not(.acoes-coluna-icones) {
-  display: table-cell !important;
-  border-right: none !important;
+.tabela-ordens th,
+.tabela-ordens td {
+  border: none !important;
 }
 
 .tabela-ordens tr:nth-child(even) {
-  background-color: #f7f7f7;
+  background-color: #f7f7f7; /* Zebrado leve */
 }
 
 .tabela-ordens tr:hover {
-  background-color: #c9e2ff;
+  background-color: #c9e2ff; /* Destaque ao passar o mouse */
   border-color: #a0c9f8;
 }
 
-/* ====================================================================
-   6. COLUNA DE AÇÕES + BOTÕES
-   ==================================================================== */
-
 .tabela-ordens td:last-child {
+  /* Mantenha display: flex, gap, justify-content: center, etc. */
+  white-space: normal;
   display: flex;
+  gap: 0px;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
+  padding: 15px; /* Padding reduzido para ícones */
+
+  /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+  border-bottom: none;
+  border-right: none;
+
+  border-left: none; /* Já estava */
 }
 
 .tabela-ordens td button {
   width: 80px;
-  padding: 12px 10px;
-  font-size: 0.85em;
+  padding: 6px 8px;
+  font-size: 1.5em;
   font-weight: 600;
   border: none;
   cursor: pointer;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+
+.tabela-ordens td button:hover {
+  transform: scale(1.25); /* Cresce suavemente */
+  opacity: 0.8; /* Fica levemente mais suave */
+}
+
+.tabela-ordens td button {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0;
 }
 
 /* Botões */
@@ -162,21 +202,20 @@ body,
 }
 
 .btn-editar {
-  background-color: #fbab34;
-  color: white;
+  color: #1d7eea !important; /* Azul bonito */
 }
 
 .btn-editar:hover {
-  background-color: #e59427;
+  opacity: 0.7;
 }
 
+/* 🎨 DELETAR – apenas ícone vermelho */
 .btn-deletar {
-  background-color: #f34254;
-  color: white;
+  color: #d63031 !important; /* Vermelho moderno */
 }
 
 .btn-deletar:hover {
-  background-color: #d82b3d;
+  opacity: 0.7;
 }
 
 /* ====================================================================
@@ -203,4 +242,125 @@ body,
   margin-bottom: 15px;
   text-align: center;
   font-weight: bold;
+}
+
+.filtros-container {
+  flex: 1;
+  width: 50%;
+  display: flex;
+  flex-wrap: nowrap; /* impede que quebre linha */
+  gap: 12px;
+  height: 50px;
+  align-items: center;
+
+  background: #ffffff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* Faz ocupar a largura toda */
+  justify-content: space-between;
+}
+
+/* 🔍 INPUTS */
+.filtro-input {
+  /* 🔄 CORREÇÃO: Permite que o input de busca (Buscar máquina...) se expanda */
+  flex: 2; /* Dá mais peso para ser o maior */
+  min-width: 140px;
+  padding: 8px 10px;
+
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+
+  font-size: 14px;
+  background-color: #fff;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.filtro-input:focus {
+  border-color: #4e7fba;
+  box-shadow: 0 0 0 2px rgba(78, 127, 186, 0.25);
+}
+
+/* 🟦 SELECT DE STATUS */
+.filtro-select {
+  /* 🔄 CORREÇÃO: Dá peso 1, expandindo-o menos que o input principal */
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 10px;
+
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+
+  font-size: 14px;
+  background-color: #fff;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtro-select:focus {
+  border-color: #4e7fba;
+  box-shadow: 0 0 0 2px rgba(78, 127, 186, 0.25);
+}
+
+/* 🗓 DATE INPUTS */
+/* ====================================================================
+   PERÍODO DE DATAS – SEÇÃO SEPARADA
+   ==================================================================== */
+
+.filtro-periodo-container {
+  display: flex;
+  flex-direction: column; /* mantém título em cima */
+  gap: 6px;
+
+  flex: 1; /* faz ocupar espaço equivalente ao input principal */
+  min-width: 200px;
+
+  background: #ffffff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid #dfe3e9;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.filtro-periodo-titulo {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  align-items: center; /* garante sem efeitos */
+}
+
+.filtro-periodo-inputs {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+.filtro-data {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ccd3dd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+
+  text-shadow: none;
+  box-shadow: none;
+  outline: none;
+  transition: none; /* remove animações */
+}
+
+.filtro-data:focus {
+  border-color: #ccd3dd; /* borda normal */
+  box-shadow: none; /* sem brilho azul */
+  outline: none;
+}
+
+.filtros-linha {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 8px;
 }

@@ -16,8 +16,12 @@ function VisualizarOrdensContent({ user }) {
   const dadosUsuario = JSON.parse(localStorage.getItem("user"));
   const usuarioLogadoId = dadosUsuario?.id_usuario;
 
-  const [filtroMaquina, setFiltroMaquina] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState("");
+  // 🔍 FILTROS (iguais ao Minhas OS)
+  const [filtroBuscaMaquina, setFiltroBuscaMaquina] = useState("");
+  const [filtroStatusNovo, setFiltroStatusNovo] = useState("");
+
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
 
   const corStatus = (status) => {
     switch (status) {
@@ -138,68 +142,95 @@ function VisualizarOrdensContent({ user }) {
 
   // Aplica filtros
   const ordensFiltradas = ordens.filter((o) => {
-    return (
-      (filtroMaquina === "" || o.nomeMaquina === filtroMaquina) &&
-      (filtroStatus === "" || o.status === filtroStatus)
-    );
+    // ------------------------------
+    // Buscar por nome da máquina (texto)
+    // ------------------------------
+    if (
+      !o.nomeMaquina?.toLowerCase().includes(filtroBuscaMaquina.toLowerCase())
+    )
+      return false;
+
+    // ------------------------------
+    // Filtrar por status se selecionado
+    // ------------------------------
+    if (filtroStatusNovo && o.status !== filtroStatusNovo) return false;
+
+    // ------------------------------
+    // FILTRAR POR PERÍODO
+    // ------------------------------
+    const dataAbertura = o.dataAbertura ? new Date(o.dataAbertura) : null;
+
+    const inicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
+    const fim = dataFim ? new Date(dataFim + "T23:59:59") : null;
+
+    // Apenas uma data preenchida → ignora filtro
+    if ((dataInicio && !dataFim) || (!dataInicio && dataFim)) return true;
+
+    // Se ambas preenchidas → filtra
+    if (dataInicio && dataFim) {
+      const dentroDoPeriodo =
+        (!inicio || dataAbertura >= inicio) && (!fim || dataAbertura <= fim);
+
+      if (!dentroDoPeriodo) return false;
+    }
+
+    return true;
   });
 
   if (carregando) return <div className="container">Carregando ordens...</div>;
 
   return (
     <div className="visualizar-ordens-page">
+      {/* FILTROS */}
+      <div className="filtros-linha">
+        <div className="filtros-container">
+          {/* BUSCAR POR MÁQUINA */}
+          <input
+            type="text"
+            placeholder="Buscar máquina..."
+            className="filtro-input"
+            value={filtroBuscaMaquina}
+            onChange={(e) => setFiltroBuscaMaquina(e.target.value)}
+          />
+
+          {/* SELECT STATUS */}
+          <select
+            className="filtro-select"
+            value={filtroStatusNovo}
+            onChange={(e) => setFiltroStatusNovo(e.target.value)}
+          >
+            <option value="">Status (Todos)</option>
+            <option value="Aberto">Aberto</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+        </div>
+
+        <div className="filtro-periodo-container">
+          <label className="filtro-periodo-titulo">Buscar por período</label>
+
+          <div className="filtro-periodo-inputs">
+            <input
+              type="date"
+              className="filtro-data"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+            />
+
+            <input
+              type="date"
+              className="filtro-data"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
-
-      {/* FILTROS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginBottom: "15px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <label htmlFor="filtroMaquina">Filtrar por Máquina:</label>
-          <select
-            id="filtroMaquina"
-            value={filtroMaquina}
-            onChange={(e) => setFiltroMaquina(e.target.value)}
-            style={{ marginLeft: "5px" }}
-          >
-            <option value="">Todas</option>
-            {Array.from(new Set(ordens.map((o) => o.nomeMaquina))).map(
-              (maquina, i) => (
-                <option key={i} value={maquina}>
-                  {maquina}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="filtroStatus">Filtrar por Status:</label>
-          <select
-            id="filtroStatus"
-            value={filtroStatus}
-            onChange={(e) => setFiltroStatus(e.target.value)}
-            style={{ marginLeft: "5px" }}
-          >
-            <option value="">Todos</option>
-            {Array.from(new Set(ordens.map((o) => o.status))).map(
-              (status, i) => (
-                <option key={i} value={status}>
-                  {status}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-      </div>
 
       {ordensFiltradas.length === 0 ? (
         <p>Nenhuma ordem de serviço encontrada.</p>
