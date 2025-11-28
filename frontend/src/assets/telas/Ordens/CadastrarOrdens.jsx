@@ -93,27 +93,14 @@ function CadastrarOrdemServico() {
 
   return (
     <Layout title="Cadastro de Ordem de Serviço">
-      <div className="form-container" style={{ marginTop: "20px" }}>
+      <div
+        className="form-container-cadastrar-ordens"
+        style={{ marginTop: "20px" }}
+      >
         <form onSubmit={handleSubmit}>
-          {/* Setor */}
-          <div className="form-group full-width">
-            <label htmlFor="idSetor">Setor:</label>
-            <select
-              id="idSetor"
-              value={idSetor}
-              onChange={(e) => setIdSetor(e.target.value)}
-            >
-              <option value="">Todos os Setores</option>
-              {setores.map((setor, i) => (
-                <option key={setor.idSetor || i} value={setor.idSetor}>
-                  {setor.nomeSetor}
-                </option>
-              ))}
-            </select>
-          </div>
 
           {/* Máquina */}
-          <div className="form-group full-width">
+          <div className="form-group-cadastro-ordens full-width">
             <label htmlFor="idMaquina">
               Máquina:<span className="required">*</span>
             </label>
@@ -135,8 +122,26 @@ function CadastrarOrdemServico() {
               ))}
             </select>
           </div>
+
+          {/* Setor */}
+          <div className="form-group-cadastro-ordens full-width">
+            <label htmlFor="idSetor">Setor:</label>
+            <select
+              id="idSetor"
+              value={idSetor}
+              onChange={(e) => setIdSetor(e.target.value)}
+            >
+              <option value="">Todos os Setores</option>
+              {setores.map((setor, i) => (
+                <option key={setor.idSetor || i} value={setor.idSetor}>
+                  {setor.nomeSetor}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Máquina parada */}
-          <div className="form-group full-width">
+          <div className="form-group-cadastro-ordens full-width">
             <label>Máquina está parada?</label>
             <div style={{ display: "flex", gap: "20px", marginTop: "5px" }}>
               <label>
@@ -163,7 +168,7 @@ function CadastrarOrdemServico() {
           </div>
 
           {/* Descrição */}
-          <div className="form-group full-width">
+          <div className="form-group-cadastro-ordens full-width">
             <label htmlFor="descricao">
               Descrição do Problema:<span className="required">*</span>
             </label>
@@ -177,7 +182,7 @@ function CadastrarOrdemServico() {
             />
           </div>
 
-          <div className="form-group full-width" style={{ marginTop: "30px" }}>
+          <div className="form-group-cadastro-ordens full-width" style={{ marginTop: "30px" }}>
             <button
               type="submit"
               className="form-button primary-button full-width"
