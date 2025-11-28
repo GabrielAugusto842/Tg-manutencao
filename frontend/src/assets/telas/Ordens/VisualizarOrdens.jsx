@@ -43,6 +43,8 @@ function VisualizarOrdensContent({ user }) {
   const podeExcluirGM = cargoUsuario === "Gerente de Manutenção";
   const podeAceitar = cargoUsuario === "Manutentor";
 
+  const eManutentor = cargoUsuario === "Manutentor";
+
   function formatarDataBrasil(dataString) {
     if (!dataString) return "-";
 
@@ -194,16 +196,18 @@ function VisualizarOrdensContent({ user }) {
           />
 
           {/* SELECT STATUS */}
-          <select
-            className="filtro-select"
-            value={filtroStatusNovo}
-            onChange={(e) => setFiltroStatusNovo(e.target.value)}
-          >
-            <option value="">Status (Todos)</option>
-            <option value="Aberto">Aberto</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Finalizado">Finalizado</option>
-          </select>
+          {!eManutentor && (
+            <select
+              className="filtro-select"
+              value={filtroStatusNovo}
+              onChange={(e) => setFiltroStatusNovo(e.target.value)}
+            >
+              <option value="">Status (Todos)</option>
+              <option value="Aberto">Aberto</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Finalizado">Finalizado</option>
+            </select>
+          )}
         </div>
 
         <div className="filtro-periodo-container">
