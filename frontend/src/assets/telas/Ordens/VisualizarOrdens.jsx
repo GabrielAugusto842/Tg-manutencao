@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css?v=1.0.9";
-import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaCheckCircle, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";
@@ -123,6 +123,14 @@ function VisualizarOrdensContent({ user }) {
   const handleEditar = (id) => {
     alert(`Editar ordem ${id}`);
   };
+
+  const handleVisualizar = (id) => {
+  // Abre uma nova aba para a rota de detalhes
+  window.open(`/ordens/${id}`, "_blank");
+};
+
+
+  
 
   const handleExcluir = async (id) => {
     if (!window.confirm(`Deseja excluir a ordem ${id}?`)) return;
@@ -283,6 +291,15 @@ function VisualizarOrdensContent({ user }) {
                           <FaCheckCircle size={20} color="green" />
                         </button>
                       )}
+
+                      <button 
+  onClick={() => handleVisualizar(ordem.idOrdServ)} 
+  title="Visualizar"
+  className="btn-visualizar"
+>
+  <FaEye size={20} color="#1d7eea" />
+</button>
+
 
                       {podeEditarGM && (
                         <button

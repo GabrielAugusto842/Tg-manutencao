@@ -364,3 +364,16 @@ body,
   align-items: flex-start;
   margin-bottom: 8px;
 }
+
+.btn-visualizar {
+  background: none !important;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-visualizar:hover {
+  transform: scale(1.25);
+  opacity: 0.8;
+}
