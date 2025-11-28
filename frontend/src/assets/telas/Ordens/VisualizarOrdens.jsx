@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
-import "../../telas/Ordens/VisualizarOrdens.css";
+import "../../telas/Ordens/VisualizarOrdens.css?v=1.0.9";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -46,19 +46,32 @@ function VisualizarOrdensContent({ user }) {
   const eManutentor = cargoUsuario === "Manutentor";
 
   function formatarDataBrasil(dataString) {
-    if (!dataString) return "-";
+  if (!dataString) return "-";
 
-    const data = new Date(dataString);
+  const data = new Date(dataString);
+  
+  const dataFormatada = data.toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  
+  const horaFormatada = data.toLocaleTimeString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-    return data.toLocaleString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+  return (
+    <div className="data-hora">
+      <div className="data">{dataFormatada}</div>
+      <div className="hora">{horaFormatada}</div>
+    </div>
+  );
+}
+
+
 
   // Busca ordens do backend
   const buscarOrdens = async () => {
@@ -123,6 +136,14 @@ function VisualizarOrdensContent({ user }) {
   const handleEditar = (id) => {
     alert(`Editar ordem ${id}`);
   };
+
+  const handleVisualizar = (id) => {
+  // Abre uma nova aba para a rota de detalhes
+  window.open(`/ordens/${id}`, "_blank");
+};
+
+
+  
 
   const handleExcluir = async (id) => {
     if (!window.confirm(`Deseja excluir a ordem ${id}?`)) return;
@@ -283,6 +304,19 @@ function VisualizarOrdensContent({ user }) {
                           <FaCheckCircle size={20} color="green" />
                         </button>
                       )}
+
+  {/* 👁 Visualizar → somente em andamento ou finalizada */}
+{(ordem.status === "Em andamento" || ordem.status === "Finalizado") && (
+  <button
+    onClick={() => handleVisualizar(ordem.idOrdServ)}
+    title="Visualizar"
+    className="btn-visualizar"
+  >
+    <FaEye size={20} color="#1d7eea" />
+  </button>
+)}
+
+
 
                       {podeEditarGM && (
                         <button
