@@ -34,25 +34,27 @@ function CadastrarOrdemServico() {
     carregarDados();
   }, []);
 
-  useEffect(() => {
-    if (idSetor) {
-      const filtradas = maquinas.filter(
-        (maquina) => String(maquina.idSetor) === String(idSetor)
-      );
-      setMaquinasFiltradas(filtradas);
+useEffect(() => {
+  if (idSetor) {
+    const filtradas = maquinas.filter(
+      (maquina) => String(maquina.idSetor) === String(idSetor)
+    );
+    setMaquinasFiltradas(filtradas);
 
-      if (
-        !filtradas.find(
-          (m) => String(m.idMaquina || m.id_maquina) === String(idMaquina)
-        )
-      ) {
-        setIdMaquina("");
-      }
-    } else {
-      setMaquinasFiltradas(maquinas);
+    if (
+      !filtradas.find(
+        (m) => String(m.idMaquina || m.id_maquina) === String(idMaquina)
+      )
+    ) {
       setIdMaquina("");
     }
-  }, [idSetor, maquinas, idMaquina]);
+  } else {
+    setMaquinasFiltradas(maquinas);
+    // Remover reset de idMaquina
+    // setIdMaquina("");
+  }
+}, [idSetor, maquinas, idMaquina]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
