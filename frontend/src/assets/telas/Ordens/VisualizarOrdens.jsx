@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
-import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";

@@ -39,5 +39,7 @@ app.use("/api/setores", setorRoutes);
 app.use("/api/maquina", maquinaRoutes);
 app.use("/api/os", ordServRoutes);
 
+
+
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => console.log(`Servidor rodando porta ${PORT}`));

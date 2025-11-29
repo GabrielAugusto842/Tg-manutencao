@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { EstadoRepository } from "../repositories/EstadoRepository";
 
 export class EstadoController {
+    static getAllEstados(arg0: string, getAllEstados: any) {
+      throw new Error("Method not implemented.");
+    }
     private estadoRepo = new EstadoRepository();
     getAllEstados = async (req: Request, res: Response): Promise<Response> => {
         try {
