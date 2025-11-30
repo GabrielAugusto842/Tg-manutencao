@@ -1,0 +1,61 @@
+/* =======================================
+   1. ESTILO DA PÁGINA E FILTROS (Relatorios.css)
+   ======================================= */
+
+/* Container Principal da Página de Relatórios */
+.relatorios-page-container {
+  padding: 0 20px; /* Garante algum respiro */
+}
+
+/* Header principal (título "Relatórios") e a área de filtros */
+.relatorios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  /* Linha suave abaixo do título */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Título Secundário (Relatório Geral de Indicadores) */
+.relatorio-display-area .dashboard-titulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937; /* Cinza bem escuro */
+  margin-bottom: 30px;
+}
+
+/* Container de Filtros (Data Inicial e Data Final) */
+.relatorios-filtros-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 40px; /* Dá mais espaço entre os filtros e o dashboard */
+  padding: 15px;
+  background: #f9fafb; /* Fundo suave para a área de filtro */
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.filtro-grupo label {
+  display: block;
+  font-size: 1rem;
+  color: #6b7280; /* Cinza médio */
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.filtro-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 0; /* Para remover o arredondamento */
+  font-size: 1rem;
+  color: #1f2937;
+
+  /* 🛠️ AJUSTE PARA CONTROLAR A APARÊNCIA DO TEXTO */
+  font-family: inherit; /* Garante que a fonte seja a mesma do corpo do site */
+  font-weight: 400; /* Define o texto como normal (400) */
+  text-shadow: none; /* Remove qualquer sombra de texto herdada ou padrão */
+
+  transition: border-color 0.2s;
+}

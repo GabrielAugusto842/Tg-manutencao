@@ -1,8 +1,4 @@
-
-import dotenv from 'dotenv';
-dotenv.config();
-import mysql from 'mysql2/promise'
-
+import mysql from 'mysql2/promise';
 
 // Função auxiliar para garantir que a variável existe
 function getEnvVar(key: string): string {

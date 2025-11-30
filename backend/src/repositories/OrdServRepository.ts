@@ -5,6 +5,7 @@ import { db } from "../config/db";
 import { getCurrentDateTime } from "../utils/dateUtils";
 
 export class OrdServRepository {
+  private db = db;
   //ao chamar a classe, deve passar o estado
   //É implementado para pegar o id do estado com base no código 1 "aberto"
   constructor(private estadoRepo: EstadoRepository) {}
@@ -278,5 +279,26 @@ export class OrdServRepository {
       [idOrdServ]
     );
     return result.affectedRows > 0;
+  }
+
+  async getDashboardData() {
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+
+    const sql = `
+      SELECT 
+        id_estado,
+        MONTH(data_abertura) AS mes,
+        YEAR(data_abertura) AS ano,
+        COUNT(*) AS total
+      FROM ordem_servico
+      WHERE YEAR(data_abertura) = ?
+        AND (MONTH(data_abertura) = ? OR YEAR(data_abertura) = ?)
+      GROUP BY id_estado, mes, ano
+  `;
+
+    const [rows] = await this.db.query(sql, [anoAtual, mesAtual, anoAtual]);
+
+    return rows;
   }
 }

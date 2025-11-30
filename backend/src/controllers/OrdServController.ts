@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { OrdServRepository } from "../repositories/OrdServRepository";
+import { db } from "../config/db";
 
 export class OrdServController {
   constructor(private ordServRepo: OrdServRepository) {}
@@ -196,6 +197,54 @@ export class OrdServController {
       return res
         .status(500)
         .json({ error: "Erro ao buscar as ordens do manutentor" });
+    }
+  };
+  getDashboardData = async (req: Request, res: Response) => {
+    try {
+      const mesAtual = new Date().getMonth() + 1;
+      const anoAtual = new Date().getFullYear();
+
+      // Pega o id do manutentor da query de forma segura
+      const idUsuario =
+        req.query.id_usuario !== undefined
+          ? Number(req.query.id_usuario)
+          : null;
+
+      // Monta query base
+      let sql = `
+      SELECT 
+        SUM(CASE WHEN e.status = 'Aberto' THEN 1 ELSE 0 END) AS abertas,
+        SUM(CASE WHEN e.status = 'Em andamento' THEN 1 ELSE 0 END) AS andamento,
+        SUM(CASE WHEN e.status = 'Finalizado' THEN 1 ELSE 0 END) AS finalizadas
+      FROM ordem_servico os
+      JOIN estado e ON os.id_estado = e.id_estado
+      WHERE MONTH(os.data_abertura) = ? AND YEAR(os.data_abertura) = ?
+    `;
+
+      const params: any[] = [mesAtual, anoAtual];
+
+      // Se for Manutentor, adiciona o filtro de usuário, aplicando-o a todos os status
+      // Se for outro cargo (idUsuario é null), a query retorna todos os resultados do mês.
+      if (idUsuario) {
+        // O filtro id_usuario será aplicado a todas as OS contadas (Abertas, Em Andamento, Finalizadas)
+        sql += " AND os.id_usuario = ?";
+        params.push(idUsuario);
+      }
+
+      console.log("SQL do dashboard: ", sql);
+      console.log("Parâmetros da query: ", params);
+
+      const [rows] = await db.query(sql, params);
+
+      const totais =
+        Array.isArray(rows) && rows.length > 0
+          ? rows[0]
+          : { abertas: 0, andamento: 0, finalizadas: 0 };
+
+      res.json(totais);
+    } catch (error) {
+      console.error("Erro ao carregar dados do dashboard:", error);
+      res.status(500).json({ error: "Erro ao carregar dados do dashboard" });
     }
   };
 }
