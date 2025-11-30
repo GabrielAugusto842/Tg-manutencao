@@ -255,3 +255,51 @@ body,
   border: none !important;
   padding: 0;
 }
+
+/* ====================================================================
+   8. EXPORT PDF E IMPRESSÃO
+   ==================================================================== */
+
+/* IMPRIMIR */
+@media print {
+  /* some TUDO */
+  body * {
+    visibility: hidden;
+  }
+
+  @media print {
+  header {
+    display: none !important;
+  }
+}
+  /* mostra só a área desejada */
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+
+  /* posiciona no topo da página impressa */
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* remove elementos indesejados */
+  .no-print, header, nav, .filtros, .menu-lateral {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* remove qualquer rolagem interna */
+  * {
+    overflow: visible !important;
+  }
+}

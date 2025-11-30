@@ -24,6 +24,23 @@ function VisualizarOrdensContent({ user }) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
+    useEffect(() => {
+      const previousTitle = document.title;
+      const filtrosAtivos = [];
+      if (filtroBuscaMaquina.trim() !== "") filtrosAtivos.push(`Nome: ${filtroBuscaMaquina}`);
+      if (filtroStatusNovo.trim() !== "") filtrosAtivos.push(`Cargo: ${filtroStatusNovo}`);
+      if (dataInicio.trim() !== "") filtrosAtivos.push(`Setor: ${dataInicio}`);
+      if (dataFim.trim() !== "") filtrosAtivos.push(`Setor: ${dataFim}`);
+      if (filtrosAtivos.length === 0) {
+        document.title = "Maintenance Manager - Todas as Ordens";
+      } else {
+        document.title = `Maintenance Manager - Ordens filtradas (${filtrosAtivos.join(" | ")})`;
+      }
+      return () => {
+        document.title = previousTitle;
+      };
+    }, [filtroBuscaMaquina, filtroStatusNovo, dataInicio. dataFim]);
+
   const corStatus = (status) => {
     switch (status) {
       case "Aberto":
@@ -199,9 +216,9 @@ function VisualizarOrdensContent({ user }) {
   if (carregando) return <div className="container">Carregando ordens...</div>;
 
   return (
-    <div className="visualizar-ordens-page">
+    <div className="visualizar-ordens-page" id="print-area">
       {/* FILTROS */}
-      <div className="filtros-linha">
+      <div className="filtros-linha no-print">
         <div className="filtros-container">
           {/* BUSCAR POR MÁQUINA */}
           <input
@@ -247,7 +264,11 @@ function VisualizarOrdensContent({ user }) {
           </div>
         </div>
       </div>
-
+      <div className="tabela-wrapper no-print">
+        <button onClick={() => window.print()} > 
+          📄📥 Exportar para PDF
+        </button>
+      </div>          
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>
@@ -268,7 +289,7 @@ function VisualizarOrdensContent({ user }) {
                 <th>Data Término</th>
                 <th>Usuário</th>
                 <th>Status</th>
-                {!eOperador && <th>Ações</th>}
+                {!eOperador && <th class="no-print">Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -291,7 +312,7 @@ function VisualizarOrdensContent({ user }) {
                   </td>
 
                   {!eOperador && (
-                    <td className="acoes-coluna-icones">
+                    <td className="acoes-coluna-icones no-print">
                       {podeAceitar && ordem.status === "Aberto" && (
                         <button
                           onClick={() => handleAceitar(ordem.idOrdServ)}

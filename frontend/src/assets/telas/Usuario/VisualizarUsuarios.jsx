@@ -22,6 +22,22 @@ function VisualizarUsuariosContent({ navigate }) {
   const [opcoesCargo, setOpcoesCargo] = useState([]);
   const [opcoesSetor, setOpcoesSetor] = useState([]);
 
+  useEffect(() => {
+    const previousTitle = document.title;
+    const filtrosAtivos = [];
+    if (filtroBusca.trim() !== "") filtrosAtivos.push(`Nome: ${filtroBusca}`);
+    if (filtroCargo.trim() !== "") filtrosAtivos.push(`Cargo: ${filtroCargo}`);
+    if (filtroSetor.trim() !== "") filtrosAtivos.push(`Setor: ${filtroSetor}`);
+    if (filtrosAtivos.length === 0) {
+      document.title = "Maintenance Manager - Todos os Usuários";
+    } else {
+      document.title = `Maintenance Manager - Usuários filtrados (${filtrosAtivos.join(" | ")})`;
+    }
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [filtroBusca, filtroCargo, filtroSetor]);
+
   // ==========================
   //  BUSCAR USUÁRIOS
   // ==========================
@@ -120,8 +136,9 @@ function VisualizarUsuariosContent({ navigate }) {
   // ==========================
   if (carregando) return <p>Carregando usuários...</p>;
 
+  /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
   return (
-    <div className="visualizar-usuarios-page">
+    <div className="visualizar-usuarios-page" id="print-area">
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
@@ -131,7 +148,7 @@ function VisualizarUsuariosContent({ navigate }) {
       {/* ===================== */}
       {/* 🔍 ÁREA DE FILTROS   */}
       {/* ===================== */}
-      <div className="filtros-container">
+      <div className="filtros-container no-print">
         <input
           type="text"
           placeholder="Buscar nome ou e-mail..."
@@ -141,7 +158,7 @@ function VisualizarUsuariosContent({ navigate }) {
         />
 
         <select
-          className="filtro-select"
+          className="filtro-select no-print"
           value={filtroCargo}
           onChange={(e) => setFiltroCargo(e.target.value)}
         >
@@ -154,7 +171,7 @@ function VisualizarUsuariosContent({ navigate }) {
         </select>
 
         <select
-          className="filtro-select"
+          className="filtro-select no-print"
           value={filtroSetor}
           onChange={(e) => setFiltroSetor(e.target.value)}
         >
@@ -165,7 +182,15 @@ function VisualizarUsuariosContent({ navigate }) {
             </option>
           ))}
         </select>
+
       </div>
+
+      <div className="no-print" style={{ padding: "5px" }}>
+        <button onClick={() => window.print()} >
+          📄📥 Exportar PDF
+        </button>
+      </div>
+
 
       {/* ===================== */}
       {/* 📋 TABELA DE USUÁRIOS */}
@@ -178,7 +203,7 @@ function VisualizarUsuariosContent({ navigate }) {
               <th>Email</th>
               <th>Cargo</th>
               <th>Setor</th>
-              <th>Ações</th>
+              <th class="no-print">Ações</th>
             </tr>
           </thead>
 
@@ -200,7 +225,7 @@ function VisualizarUsuariosContent({ navigate }) {
                   <td>{u.cargo}</td>
                   <td>{u.setor}</td>
 
-                  <td className="acoes-coluna-icones">
+                  <td className="acoes-coluna-icones no-print">
                     <button
                       className="btn-editar"
                       onClick={() => handleEditar(u.id_usuario)}
