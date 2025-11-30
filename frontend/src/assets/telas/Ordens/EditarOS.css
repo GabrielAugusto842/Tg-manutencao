@@ -18,17 +18,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 colunas */
-  gap: 20px;
-}
-
-/* Para campos que devem ocupar a largura inteira */
-.full-width {
-  grid-column: span 2;
-}
-
 /* Formulário organizado em coluna */
 .edicao-os-form {
   display: flex;
@@ -45,7 +34,7 @@
   color: #414852;
 }
 
-/* Inputs */
+/* Inputs e Textareas */
 .edicao-os-form input,
 .edicao-os-form select,
 .edicao-os-form textarea {
@@ -58,12 +47,17 @@
   transition: all 0.25s ease;
 }
 
-/* Foco no campo */
 .edicao-os-form input:focus,
 .edicao-os-form select:focus,
 .edicao-os-form textarea:focus {
   border-color: #0066ff;
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
+}
+
+/* Textarea específico */
+.edicao-os-form textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
 /* Botão */
@@ -118,4 +112,27 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+.aviso {
+  font-size: 12px;
+  color: #f44336; /* Cor vermelha para o aviso */
+  margin-top: 5px;
+}
+
+/* Cor do label desabilitado */
+label[style*="color: #9e9e9e"] {
+  color: #9e9e9e;
+}
+
+/* Cor do status baseado no estado da O.S. */
+.status-aberta {
+  color: #0084ff; /* Cor laranja para O.S. aberta */
+}
+
+.status-em-andamento {
+  color: #ff9500; /* Cor verde para O.S. em andamento */
+}
+
+.status-finalizada {
+  color: #44ff00; /* Cor azul para O.S. finalizada */
 }

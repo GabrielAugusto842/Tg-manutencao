@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/VisualizarOrdens.css";
-import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
-
+import { FaEdit, FaTrash, FaEye, FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3002/api/os";
@@ -17,29 +16,32 @@ function VisualizarOrdensContent({ user }) {
   const dadosUsuario = JSON.parse(localStorage.getItem("user"));
   const usuarioLogadoId = dadosUsuario?.id_usuario;
 
-  // 🔍 FILTROS (iguais ao Minhas OS)
   const [filtroBuscaMaquina, setFiltroBuscaMaquina] = useState("");
   const [filtroStatusNovo, setFiltroStatusNovo] = useState("");
-
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
-    useEffect(() => {
-      const previousTitle = document.title;
-      const filtrosAtivos = [];
-      if (filtroBuscaMaquina.trim() !== "") filtrosAtivos.push(`Nome: ${filtroBuscaMaquina}`);
-      if (filtroStatusNovo.trim() !== "") filtrosAtivos.push(`Cargo: ${filtroStatusNovo}`);
-      if (dataInicio.trim() !== "") filtrosAtivos.push(`Setor: ${dataInicio}`);
-      if (dataFim.trim() !== "") filtrosAtivos.push(`Setor: ${dataFim}`);
-      if (filtrosAtivos.length === 0) {
-        document.title = "Maintenance Manager - Todas as Ordens";
-      } else {
-        document.title = `Maintenance Manager - Ordens filtradas (${filtrosAtivos.join(" | ")})`;
-      }
-      return () => {
-        document.title = previousTitle;
-      };
-    }, [filtroBuscaMaquina, filtroStatusNovo, dataInicio. dataFim]);
+  useEffect(() => {
+    const previousTitle = document.title;
+    const filtrosAtivos = [];
+    if (filtroBuscaMaquina.trim() !== "")
+      filtrosAtivos.push(`Máquina: ${filtroBuscaMaquina}`);
+    if (filtroStatusNovo.trim() !== "")
+      filtrosAtivos.push(`Status: ${filtroStatusNovo}`);
+    if (dataInicio.trim() !== "") filtrosAtivos.push(`Início: ${dataInicio}`);
+    if (dataFim.trim() !== "") filtrosAtivos.push(`Fim: ${dataFim}`);
+
+    document.title =
+      filtrosAtivos.length === 0
+        ? "Maintenance Manager - Todas as Ordens"
+        : `Maintenance Manager - Ordens filtradas (${filtrosAtivos.join(
+            " | "
+          )})`;
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [filtroBuscaMaquina, filtroStatusNovo, dataInicio, dataFim]);
 
   const corStatus = (status) => {
     switch (status) {
@@ -56,40 +58,29 @@ function VisualizarOrdensContent({ user }) {
 
   const cargoUsuario = user?.cargo;
   const eOperador = cargoUsuario === "Operador";
-
   const podeEditarGM = cargoUsuario === "Gerente de Manutenção";
   const podeExcluirGM = cargoUsuario === "Gerente de Manutenção";
   const podeAceitar = cargoUsuario === "Manutentor";
 
-  const eManutentor = cargoUsuario === "Manutentor";
-
   function formatarDataBrasil(dataString) {
     if (!dataString) return "-";
-
     const data = new Date(dataString);
-
     const dataFormatada = data.toLocaleDateString("pt-BR", {
       timeZone: "America/Sao_Paulo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
     });
-
     const horaFormatada = data.toLocaleTimeString("pt-BR", {
       timeZone: "America/Sao_Paulo",
       hour: "2-digit",
       minute: "2-digit",
     });
-
     return (
       <div className="data-hora">
-        <div className="data">{dataFormatada}</div>
+        <div className="data">{dataFormatada}</div>{" "}
         <div className="hora">{horaFormatada}</div>
       </div>
     );
   }
 
-  // Busca ordens do backend
   const buscarOrdens = async () => {
     try {
       setCarregando(true);
@@ -102,7 +93,6 @@ function VisualizarOrdensContent({ user }) {
       const resposta = await fetch(url, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
       if (!resposta.ok) throw new Error("Erro ao buscar ordens");
 
       const dados = await resposta.json();
@@ -120,16 +110,11 @@ function VisualizarOrdensContent({ user }) {
     if (user) buscarOrdens();
   }, [user]);
 
-  // Ações
   const handleAceitar = async (id) => {
-    const confirmar = window.confirm(
-      "Tem certeza que deseja aceitar esta O.S?"
-    );
-    if (!confirmar) return; // Sai se o usuário clicar em "Cancelar"
+    if (!window.confirm("Tem certeza que deseja aceitar esta O.S?")) return;
 
     try {
       setCarregando(true);
-
       const resposta = await fetch(`${API_URL}/aceitar/${id}`, {
         method: "PUT",
         headers: {
@@ -138,9 +123,7 @@ function VisualizarOrdensContent({ user }) {
         },
         body: JSON.stringify({ idUsuario: usuarioLogadoId }),
       });
-
       if (!resposta.ok) throw new Error("Erro ao aceitar O.S");
-
       navigate("/ordens/minhasos");
     } catch (e) {
       setErro(e.message);
@@ -149,12 +132,15 @@ function VisualizarOrdensContent({ user }) {
     }
   };
 
-  const handleEditar = (id) => {
-    alert(`Editar ordem ${id}`);
+  const handleEditar = (idOrdServ) => {
+    if (!podeEditarGM) {
+      alert("Você não tem permissão para editar esta O.S.");
+      return;
+    }
+    navigate(`/ordens/editar/${idOrdServ}`);
   };
 
   const handleVisualizar = (id) => {
-    // Abre uma nova aba para a rota de detalhes
     window.open(`/ordens/${id}`, "_blank");
   };
 
@@ -168,7 +154,7 @@ function VisualizarOrdensContent({ user }) {
       });
       if (!resposta.ok) throw new Error("Erro ao excluir a ordem");
       setMensagemSucesso(`Ordem ${id} excluída com sucesso!`);
-      setOrdens((prev) => prev.filter((o) => o.id_ord_serv !== id));
+      setOrdens((prev) => prev.filter((o) => o.idOrdServ !== id));
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -176,39 +162,22 @@ function VisualizarOrdensContent({ user }) {
     }
   };
 
-  // Aplica filtros
   const ordensFiltradas = ordens.filter((o) => {
-    // ------------------------------
-    // Buscar por nome da máquina (texto)
-    // ------------------------------
     if (
       !o.nomeMaquina?.toLowerCase().includes(filtroBuscaMaquina.toLowerCase())
     )
       return false;
-
-    // ------------------------------
-    // Filtrar por status se selecionado
-    // ------------------------------
     if (filtroStatusNovo && o.status !== filtroStatusNovo) return false;
 
-    // ------------------------------
-    // FILTRAR POR PERÍODO
-    // ------------------------------
     const dataAbertura = o.dataAbertura ? new Date(o.dataAbertura) : null;
-
     const inicio = dataInicio ? new Date(dataInicio + "T00:00:00") : null;
     const fim = dataFim ? new Date(dataFim + "T23:59:59") : null;
 
-    // Apenas uma data preenchida → ignora filtro
     if ((dataInicio && !dataFim) || (!dataInicio && dataFim)) return true;
-
-    // Se ambas preenchidas → filtra
-    if (dataInicio && dataFim) {
-      const dentroDoPeriodo =
-        (!inicio || dataAbertura >= inicio) && (!fim || dataAbertura <= fim);
-
-      if (!dentroDoPeriodo) return false;
-    }
+    if (dataInicio && dataFim)
+      return (
+        (!inicio || dataAbertura >= inicio) && (!fim || dataAbertura <= fim)
+      );
 
     return true;
   });
@@ -217,10 +186,8 @@ function VisualizarOrdensContent({ user }) {
 
   return (
     <div className="visualizar-ordens-page" id="print-area">
-      {/* FILTROS */}
       <div className="filtros-linha no-print">
         <div className="filtros-container">
-          {/* BUSCAR POR MÁQUINA */}
           <input
             type="text"
             placeholder="Buscar máquina..."
@@ -228,9 +195,7 @@ function VisualizarOrdensContent({ user }) {
             value={filtroBuscaMaquina}
             onChange={(e) => setFiltroBuscaMaquina(e.target.value)}
           />
-
-          {/* SELECT STATUS */}
-          {!eManutentor && (
+          {!["Manutentor"].includes(cargoUsuario) && (
             <select
               className="filtro-select"
               value={filtroStatusNovo}
@@ -243,10 +208,8 @@ function VisualizarOrdensContent({ user }) {
             </select>
           )}
         </div>
-
         <div className="filtro-periodo-container">
           <label className="filtro-periodo-titulo">Buscar por período</label>
-
           <div className="filtro-periodo-inputs">
             <input
               type="date"
@@ -254,7 +217,6 @@ function VisualizarOrdensContent({ user }) {
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
             />
-
             <input
               type="date"
               className="filtro-data"
@@ -264,11 +226,11 @@ function VisualizarOrdensContent({ user }) {
           </div>
         </div>
       </div>
+
       <div className="tabela-wrapper no-print">
-        <button onClick={() => window.print()} > 
-          📄📥 Exportar para PDF
-        </button>
-      </div>          
+        <button onClick={() => window.print()}>📄📥 Exportar para PDF</button>
+      </div>
+
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>
@@ -289,7 +251,7 @@ function VisualizarOrdensContent({ user }) {
                 <th>Data Término</th>
                 <th>Usuário</th>
                 <th>Status</th>
-                {!eOperador && <th class="no-print">Ações</th>}
+                {!eOperador && <th className="no-print">Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -310,7 +272,6 @@ function VisualizarOrdensContent({ user }) {
                   >
                     {ordem.status}
                   </td>
-
                   {!eOperador && (
                     <td className="acoes-coluna-icones no-print">
                       {podeAceitar && ordem.status === "Aberto" && (
@@ -321,8 +282,6 @@ function VisualizarOrdensContent({ user }) {
                           <FaCheckCircle size={20} color="green" />
                         </button>
                       )}
-
-                      {/* 👁 Visualizar → somente em andamento ou finalizada */}
                       {(ordem.status === "Em andamento" ||
                         ordem.status === "Finalizado") && (
                         <button
@@ -333,7 +292,6 @@ function VisualizarOrdensContent({ user }) {
                           <FaEye size={20} color="#1d7eea" />
                         </button>
                       )}
-
                       {podeEditarGM && (
                         <button
                           onClick={() => handleEditar(ordem.idOrdServ)}
