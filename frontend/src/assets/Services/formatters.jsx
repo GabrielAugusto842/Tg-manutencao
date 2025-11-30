@@ -1,18 +1,10 @@
-/**
- * src/Services/formatters.js
- * Arquivo de utilitários para formatação de valores e lógica de cores de KPIs.
- */
-
 // --- CONSTANTES DE METAS ---
-export const MTTR_META_HORAS = 4.0; // Meta de 4.0 horas para MTTR
-export const MTBF_META_HORAS = 200.0; // Meta de 200.0 horas para MTBF
+export const MTTR_META_HORAS = 4.0;
+export const MTBF_META_HORAS = 200.0;
 
-/**
- * Converte horas decimais (ex: 13.75) para formato Hh Mm (ex: 13h 45min).
- * @param {number} hours - Tempo em horas decimais.
- * @returns {string} - Tempo formatado (ex: "13h 45min").
- */
+//Converte horas decimais para o formato de horas e minutos.
 export function formatHoras(hours) {
+  // Verifica se o valor das horas é inválido ou negativo
   if (
     hours === null ||
     typeof hours === "undefined" ||
@@ -21,64 +13,62 @@ export function formatHoras(hours) {
   )
     return "0h 0min";
 
-  const totalMinutes = Math.round(hours * 60);
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
+  const totalMinutes = Math.round(hours * 60); // Converte as horas decimais para minutos
+  const h = Math.floor(totalMinutes / 60); // Calcula as horas inteiras
+  const m = totalMinutes % 60; // Calcula os minutos restantes
 
-  return `${h}h ${m.toString().padStart(2, "0")}min`;
+  return `${h}h ${m.toString().padStart(2, "0")}min`; // Retorna no formato "Xh YYmin"
 }
 
-/**
- * Formata um número para percentual, garantindo 2 casas decimais.
- * @param {number} value - Valor percentual (ex: 98.5).
- * @returns {string} - Valor formatado com '%' (ex: "98.50%").
- */
+//Formata um número para percentual com 2 casas decimais.
 export function formatPercentual(value) {
+  // Verifica se o valor é inválido ou NaN
   if (value === null || typeof value === "undefined" || isNaN(value))
     return "0.00%";
-  return `${parseFloat(value).toFixed(2)}%`;
+
+  return `${parseFloat(value).toFixed(2)}%`; // Formata o valor com 2 casas decimais e adiciona o símbolo de porcentagem
 }
 
 /**
- * Define a cor para o MTTR (MTTR deve ser baixo, então abaixo da meta é VERDE).
- * @param {number} mttrValue - Valor atual do MTTR.
- * @param {number} meta - Meta do MTTR (em horas).
- * @returns {string} - Código de cor CSS.
- */
+ Define a cor para o MTTR com base no valor atual em comparação com a meta.
+  MTTR deve ser baixo, então valores abaixo ou iguais à meta são VERDES.  */
+
 export function getMttrColor(mttrValue, meta = MTTR_META_HORAS) {
+  // Verifica se o valor do MTTR é inválido
   if (
     mttrValue === null ||
     typeof mttrValue === "undefined" ||
     isNaN(mttrValue)
   )
-    return "#6c757d"; // Cinza padrão
+    return "#6c757d";
 
-  // Verde (Sucesso): Valor abaixo ou igual à meta
+  // Se o valor do MTTR é menor ou igual à meta, a cor será verde (sucesso)
   if (mttrValue <= meta) {
-    return "#28a745";
+    return "#0ebc0eff";
   }
-  // Vermelho (Alerta): Valor acima da meta
-  return "#dc3545";
+
+  // Se o valor do MTTR for maior que a meta, a cor será vermelha (alerta)
+  return "#cc1818ff";
 }
 
 /**
- * Define a cor para o MTBF (MTBF deve ser alto, então acima da meta é VERDE).
- * @param {number} mtbfValue - Valor atual do MTBF.
- * @param {number} meta - Meta do MTBF (em horas).
- * @returns {string} - Código de cor CSS.
- */
+ * Define a cor para o MTBF com base no valor atual em comparação com a meta.
+ * MTBF deve ser alto, então valores acima ou iguais à meta são VERDES.*/
+
 export function getMtbfColor(mtbfValue, meta = MTBF_META_HORAS) {
+  // Verifica se o valor do MTBF é inválido
   if (
     mtbfValue === null ||
     typeof mtbfValue === "undefined" ||
     isNaN(mtbfValue)
   )
-    return "#6c757d"; // Cinza padrão
+    return "#6c757d"; // Retorna cinza padrão se o valor for inválido
 
-  // Verde (Sucesso): Valor acima ou igual à meta
+  // Se o valor do MTBF é maior ou igual à meta, a cor será verde (sucesso)
   if (mtbfValue >= meta) {
-    return "#28a745";
+    return "#0ebc0eff";
   }
-  // Vermelho (Alerta): Valor abaixo da meta
-  return "#dc3545";
+
+  // Se o valor do MTBF for menor que a meta, a cor será vermelha (alerta)
+  return "#cc1818ff";
 }
