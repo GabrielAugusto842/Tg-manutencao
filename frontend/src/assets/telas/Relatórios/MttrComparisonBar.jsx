@@ -12,7 +12,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
 
   // Define cores
   const corAtual = getMttrColor(valorAtual, valorMeta); // Vermelho se estiver fora da meta
-  const corMeta = "#10b981"; // Verde fixo para meta
+  const corMeta = "#0ebc0eff"; // Verde fixo para meta
 
   return (
     <div style={{ marginTop: "15px", padding: "0 5px" }}>

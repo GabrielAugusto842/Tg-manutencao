@@ -21,19 +21,22 @@ function VisualizarEquipamentosContent() {
   // 🔎 Opções de setores
   const [opcoesSetor, setOpcoesSetor] = useState([]);
 
-   useEffect(() => {
+  useEffect(() => {
     const previousTitle = document.title;
 
     const filtrosAtivos = [];
 
     if (filtroNome.trim() !== "") filtrosAtivos.push(`Nome: ${filtroNome}`);
-    if (filtroSerie.trim() !== "") filtrosAtivos.push(`Nº Série: ${filtroSerie}`);
+    if (filtroSerie.trim() !== "")
+      filtrosAtivos.push(`Nº Série: ${filtroSerie}`);
     if (filtroSetor.trim() !== "") filtrosAtivos.push(`Setor: ${filtroSetor}`);
 
     if (filtrosAtivos.length === 0) {
       document.title = "Maintenance Manager - Todos os equipamentos";
     } else {
-      document.title = `Maintenance Manager - Equipamentos filtrados (${filtrosAtivos.join(" | ")})`;
+      document.title = `Maintenance Manager - Equipamentos filtrados (${filtrosAtivos.join(
+        " | "
+      )})`;
     }
 
     return () => {
@@ -48,7 +51,7 @@ function VisualizarEquipamentosContent() {
 
       const response = await api.get("/maquina");
       setEquipamentos(response.data);
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setErro("Erro ao carregar máquinas.");
     } finally {
@@ -85,7 +88,7 @@ function VisualizarEquipamentosContent() {
       await api.delete(`/maquina/${id}`);
       setEquipamentos((prev) => prev.filter((e) => e.idMaquina !== id));
       setMensagemSucesso(`Máquina "${equipamento.nome}" deletada.`);
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setErro("Erro ao excluir máquina.");
     }
@@ -97,7 +100,9 @@ function VisualizarEquipamentosContent() {
     <div className="visualizar-equipamentos-page" id="print-area">
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
-      {mensagemSucesso && <div className="alerta-sucesso">{mensagemSucesso}</div>}
+      {mensagemSucesso && (
+        <div className="alerta-sucesso">{mensagemSucesso}</div>
+      )}
 
       {/* ===================== */}
       {/* 🔍 ÁREA DE FILTROS   */}
@@ -133,12 +138,13 @@ function VisualizarEquipamentosContent() {
         </select>
       </div>
 
-      <div className="no-print" style={{ padding: "5px" }}>
-        <button onClick={() => window.print()} >
-          📄📥 Exportar PDF
+      <div className="botao-pdf-wrapper no-print">
+        {" "}
+        <button onClick={() => window.print()} className="botao-pdf">
+           📥 EXPORTAR PDF {" "}
         </button>
+        {" "}
       </div>
-
 
       {/* ===================== */}
       {/* 📋 TABELA            */}
@@ -164,7 +170,9 @@ function VisualizarEquipamentosContent() {
               .filter((m) => {
                 return (
                   m.nome.toLowerCase().includes(filtroNome.toLowerCase()) &&
-                  m.numeroSerie.toLowerCase().includes(filtroSerie.toLowerCase()) &&
+                  m.numeroSerie
+                    .toLowerCase()
+                    .includes(filtroSerie.toLowerCase()) &&
                   (filtroSetor ? m.setor === filtroSetor : true)
                 );
               })

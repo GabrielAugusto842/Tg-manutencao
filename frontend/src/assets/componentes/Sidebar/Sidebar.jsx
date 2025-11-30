@@ -1,41 +1,44 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import "./Sidebar.css";
 import {
   FaHome,
+  FaClipboardList,
   FaUsers,
   FaTools,
   FaFileAlt,
-  FaChartLine,
   FaAngleDown,
   FaAngleUp,
+  FaChartLine,
 } from "react-icons/fa";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../logo-company1.png";
-import "./Sidebar.css";
 
 function Sidebar({ user }) {
   const [openMenu, setOpenMenu] = useState(null);
   const navigate = useNavigate();
 
-  // Função para alternar a visibilidade dos menus (Abrir os submenus)
   const toggleMenu = (menuName) => {
     setOpenMenu(openMenu === menuName ? null : menuName);
   };
 
   const cargoUsuario = user?.cargo;
 
-  // Definindo permissões com base no cargo
   const podeGerenciarUsuarios = cargoUsuario === "Administrador";
   const podeGerenciarEquipamentos = cargoUsuario === "Administrador";
   const podeCadastrarSetor = cargoUsuario === "Administrador";
+
   const podeCadastrarOrdem = cargoUsuario === "Operador";
-  const podeVerTodasOrdens =
-    cargoUsuario === "Gerente de Manutenção" ||
-    cargoUsuario === "Operador" ||
-    cargoUsuario === "Manutentor";
+
+const podeVerTodasOrdens =
+  cargoUsuario === "Gerente de Manutenção" ||
+  cargoUsuario === "Operador" ||
+  cargoUsuario === "Manutentor";
+
   const podeVerRelatorios = cargoUsuario === "Gerente de Manutenção";
+
   const podeVerMinhasOrdens = cargoUsuario === "Manutentor";
 
-  // Exibição de estado de carregamento caso não exista o usuário
   if (!user) {
     return (
       <div className="sidebar loading">
@@ -47,18 +50,16 @@ function Sidebar({ user }) {
   return (
     <div className="sidebar">
       <div className="menu">
-        {/* Menu Página Inicial */}
         <div className="menu-item" onClick={() => navigate("/home")}>
           <FaHome className="icon" />
-          <span>Início</span>
+          <span translate="no"> Home </span>
         </div>
 
-        {/* Menu Ordens de Serviço */}
         {(podeVerTodasOrdens || podeVerMinhasOrdens || podeCadastrarOrdem) && (
           <>
             <div
               className={`menu-item ${
-                openMenu === "Ordens de Serviço" ? "active" : ""
+                openMenu == "Ordens de Serviço" ? "active" : ""
               }`}
               onClick={() => toggleMenu("Ordens de Serviço")}
             >
@@ -92,11 +93,11 @@ function Sidebar({ user }) {
           </>
         )}
 
-        {/* Menu Usuários */}
+        {/* Usuário */}
         {podeGerenciarUsuarios && (
           <>
             <div
-              className={`menu-item ${openMenu === "usuario" ? "active" : ""}`}
+              className={`menu-item ${openMenu == "usuario" ? "active" : ""}`}
               onClick={() => toggleMenu("usuario")}
             >
               <FaUsers className="icon" />
@@ -116,12 +117,12 @@ function Sidebar({ user }) {
           </>
         )}
 
-        {/* Menu Equipamentos */}
+        {/* Equipamentos */}
         {podeGerenciarEquipamentos && (
           <>
             <div
               className={`menu-item ${
-                openMenu === "equipamentos" ? "active" : ""
+                openMenu == "equipamentos" ? "active" : ""
               }`}
               onClick={() => toggleMenu("equipamentos")}
             >
@@ -142,11 +143,11 @@ function Sidebar({ user }) {
           </>
         )}
 
-        {/* Menu Setores */}
+        {/* Setores */}
         {podeCadastrarSetor && (
           <>
             <div
-              className={`menu-item ${openMenu === "setor" ? "active" : ""}`}
+              className={`menu-item ${openMenu == "setor" ? "active" : ""}`}
               onClick={() => toggleMenu("setor")}
             >
               <FaTools className="icon" />
@@ -166,7 +167,7 @@ function Sidebar({ user }) {
           </>
         )}
 
-        {/* Menu Relatórios */}
+        {/* Relatórios */}
         {podeVerRelatorios && (
           <div className="menu-item" onClick={() => navigate("/relatorios")}>
             <FaFileAlt className="icon" />
@@ -174,8 +175,6 @@ function Sidebar({ user }) {
           </div>
         )}
       </div>
-
-      {/* Logo */}
       <div className="logo">
         <img src={logo} alt="Logo" />
       </div>

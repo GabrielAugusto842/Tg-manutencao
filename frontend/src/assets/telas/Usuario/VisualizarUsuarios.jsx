@@ -31,7 +31,9 @@ function VisualizarUsuariosContent({ navigate }) {
     if (filtrosAtivos.length === 0) {
       document.title = "Maintenance Manager - Todos os Usuários";
     } else {
-      document.title = `Maintenance Manager - Usuários filtrados (${filtrosAtivos.join(" | ")})`;
+      document.title = `Maintenance Manager - Usuários filtrados (${filtrosAtivos.join(
+        " | "
+      )})`;
     }
     return () => {
       document.title = previousTitle;
@@ -182,15 +184,17 @@ function VisualizarUsuariosContent({ navigate }) {
             </option>
           ))}
         </select>
-
       </div>
 
-      <div className="no-print" style={{ padding: "5px" }}>
-        <button onClick={() => window.print()} >
-          📄📥 Exportar PDF
-        </button>
+      <div className="botao-pdf-wrapper no-print">
+        {" "}
+        <button
+          onClick={() => window.print()}
+          className="botao-pdf-usuario" /* Classe para o estilo ultra-compacto */
+        >
+          📥 EXPORTAR PDF{" "}
+        </button>{" "}
       </div>
-
 
       {/* ===================== */}
       {/* 📋 TABELA DE USUÁRIOS */}

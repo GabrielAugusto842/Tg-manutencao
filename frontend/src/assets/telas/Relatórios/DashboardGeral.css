@@ -4,61 +4,70 @@
 .dashboard-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 26px; /* Mantido o 26px do primeiro bloco */
-  margin-bottom: 35px; /* Mantido o 35px do primeiro bloco */
+  gap: 26px; /* Espaço entre os cards */
+  margin-bottom: 35px; /* Espaço abaixo da grade */
+
+  /* Fundo simples, sem efeito de desfoque */
+  background: rgba(255, 255, 255, 0.15); /* Fundo translúcido, sem desfoque */
+  border-radius: 12px; /* Bordas arredondadas */
+  padding: 15px; /* Espaço interno */
+  backdrop-filter: none; /* Removido efeito de desfoque */
+  -webkit-backdrop-filter: none; /* Removido efeito de desfoque */
 }
 
 /* =======================================
-   2. CARD BASE E HOVER (UNIFICADO)
+   2. CARD BASE E HOVER (VIDRO FOSCO)
    ======================================= */
 .kpi-card {
-  background: #ffffff;
-  border-radius: 12px; /* Mantido o 12px da versão mais clean */
-  padding: 22px; /* Mantido o 22px da versão mais clean */
+  background: rgba(255, 255, 255, 0.9); /* Fundo translúcido sem desfoque */
+  border-radius: 12px; /* Bordas arredondadas */
+  padding: 22px; /* Espaço interno */
   border: none;
   position: relative;
   display: flex;
   flex-direction: column;
 
-  /* Sombra clean */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  /* Remover desfoque do fundo */
+  backdrop-filter: none; /* Remover efeito de desfoque no fundo */
+  -webkit-backdrop-filter: none; /* Remover efeito de desfoque no fundo */
 
-  /* Destaque sutil no hover */
-  transition: all 0.2s ease;
+  /* Sombra clean */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  transition: all 0.3s ease;
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px); /* Movimento suave */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Sombra mais forte no hover */
+  transform: translateY(-5px); /* Movimento mais forte */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais forte no hover */
 }
 
-/* REMOVEMOS: A lógica de Faixa Colorida Superior (.kpi-card::before)
-   e utilizamos a Borda Lateral (border-left) abaixo para o destaque. */
-
 /* =======================================
-   3. TIPOGRAFIA GERAL DO CARD (UNIFICADO)
+   3. TIPOGRAFIA GERAL DO CARD (SEM EFEITOS NAS LETRAS)
    ======================================= */
 .card-titulo {
   font-size: 0.85rem;
-  color: #4b5563; /* Cinza escuro clean */
+  color: #0f0f0f; /* Cor de texto para contraste */
   margin-bottom: 15px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none; /* Removido o "uppercase" */
+  letter-spacing: normal; /* Sem espaçamento extra entre as letras */
+  text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
 .valor-indicador {
-  font-size: 2.4rem; /* Tamanho padrão para valor fora da rosca */
+  font-size: 2.4rem; /* Tamanho para valor fora da rosca */
   font-weight: 800;
-  color: #1c1f23; /* Cinza bem escuro */
+  color: #000000; /* Preto para maior contraste */
   line-height: 1.2;
   display: block;
+  text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
 .card-meta {
   font-size: 0.85rem;
-  color: #707789;
+  color: #000000; /* Cinza claro */
   margin-top: 6px;
+  text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
 /* =======================================
@@ -67,7 +76,7 @@
 .kpi-grafico-wrapper {
   position: relative;
   width: 100%;
-  height: 130px; /* Mantido o 130px do primeiro bloco para o wrapper */
+  height: 130px; /* Tamanho ajustado para o gráfico */
   margin-bottom: 8px;
 }
 
@@ -85,12 +94,14 @@
   font-weight: 800;
   line-height: 1.1;
   display: block;
+  text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
 .kpi-valor-centralizado .card-meta-pequena {
   font-size: 0.75rem;
-  color: #9da3a6; /* Cinza sutil */
+  color: #000000; /* Cinza sutil */
   margin-top: 2px;
+  text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
 /* =======================================
@@ -109,43 +120,39 @@
 }
 
 /* Cores de Destaque Lateral (Sugestão de Cores Melhores) */
-/* (Você pode substituir #002fff por cores semânticas como #ef4444 para MTTR e #10b981 para MTBF) */
 .kpi-card.mttr {
-  border-left: 4px solid #0095ff; /* Vermelho (Ruim) */
-}
-.kpi-card.mtbf {
-  border-left: 4px solid #0095ff; /* Verde (Bom) */
-}
-.kpi-card.disponibilidade {
-  border-left: 4px solid #0095ff; /* Azul (Neutro/Bom) */
-}
-.kpi-card.os {
-  border-left: 4px solid #0095ff; /* Laranja (Atenção/Contagem) */
+  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para MTTR */
 }
 
-/* ====================================================================
-   7. EXPORT PDF E IMPRESSÃO
-   ==================================================================== */
+.kpi-card.mtbf {
+  border-left: 4px solid rgba(16, 185, 129, 0.6); /* Verde para MTBF */
+}
+
+.kpi-card.disponibilidade {
+  border-left: 4px solid rgba(59, 130, 246, 0.6); /* Azul para Disponibilidade */
+}
+
+.kpi-card.os {
+  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para O.S. */
+}
+
+/* =======================================
+   7. EXPORT PDF E IMPRESSÃO
+   ======================================= */
 
 /* IMPRIMIR */
 @media print {
-  /* some TUDO */
   body * {
     visibility: hidden;
   }
 
-  @media print {
-    header {
-      display: none !important;
-    }
-  }
-  /* mostra só a área desejada */
+  /* Exibir apenas a área de impressão */
   #print-area,
   #print-area * {
     visibility: visible;
   }
 
-  /* posiciona no topo da página impressa */
+  /* Posiciona a área de impressão no topo */
   #print-area {
     position: absolute;
     left: 0;
@@ -153,14 +160,13 @@
     width: 100%;
   }
 
-  /* remove elementos indesejados */
+  /* Remove elementos indesejados */
   .no-print,
   header,
   nav,
   .filtros,
   .menu-lateral {
     display: none !important;
-    visibility: hidden !important;
   }
 }
 
@@ -171,19 +177,21 @@
     overflow: visible !important;
   }
 
-  /* remove qualquer rolagem interna */
+  /* Remove qualquer rolagem interna */
   * {
     overflow: visible !important;
   }
 }
 
 @media print {
-  /* Força quebra de linha */
   .pula-linha-export {
     display: block !important;
   }
 }
 
+/* =======================================
+   6. PROGRESS BAR (EXCLUSIVO PARA OS CARDS)
+   ======================================= */
 .kpi-progress-wrapper {
   width: 100%;
   margin-top: 10px;
@@ -191,7 +199,7 @@
 
 .kpi-progress-bar-background {
   width: 100%;
-  height: 13px; /* 🛑 ALTERADO PARA 12PX para corresponder ao MTTR */
+  height: 12px; /* Altura da barra */
   background: #e0e0e0;
   border-radius: 2px;
   overflow: hidden;
@@ -213,5 +221,51 @@
 }
 
 .kpi-card.mtbf .kpi-progress-wrapper {
-  margin-top: 38px; /* Antes estava 10px, abaixamos 5px */
+  margin-top: 38px; /* Ajustado para o MTBF */
+}
+
+/* =======================================
+   ESTILO DO BOTÃO EXTRAI PDF (ULTRA COMPACTO)
+   ======================================= */
+.botao-pdf-compacto {
+  /* Posição para o Canto Superior Direito */
+  position: absolute !important;
+  top: 250px !important; /* Move para cima */
+  right: 80px !important; /* Move para a direita */
+  z-index: 10 !important;
+  /* Aparência Ultra Compacta */
+  background-color: #f3f4f6 !important;
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important; /* Fonte MÍNIMA */
+  padding: 3px 6px !important; /* Espaçamento MÍNIMO */
+  border-radius: 3px !important; /* Bordas MÍNIMAS */
+  border: 1px solid #d1d5db !important;
+
+  /* Garante que ele não ocupe espaço desnecessário */
+  height: auto !important;
+  width: auto !important;
+
+  /* Outras propriedades */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.botao-pdf-compacto:hover {
+  background-color: #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.botao-pdf-compacto:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
+.botao-pdf-compacto span {
+  font-size: 0.7rem !important;
 }

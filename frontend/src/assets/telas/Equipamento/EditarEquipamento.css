@@ -1,13 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 /* Fonte aplicada somente nesta tela */
-.edicao-os-container,
-.edicao-os-container * {
+.edicao-equipamento-container,
+.edicao-equipamento-container * {
   font-family: "Poppins", sans-serif;
 }
 
 /* Card principal */
-.edicao-os-container {
+.edicao-equipamento-container {
   max-width: 700px;
   margin: 20px auto;
   padding: 32px;
@@ -30,14 +30,14 @@
 }
 
 /* Formulário organizado em coluna */
-.edicao-os-form {
+.edicao-equipamento-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 /* Label */
-.edicao-os-form label {
+.edicao-equipamento-form label {
   display: flex;
   flex-direction: column;
   font-size: 14px;
@@ -46,9 +46,9 @@
 }
 
 /* Inputs */
-.edicao-os-form input,
-.edicao-os-form select,
-.edicao-os-form textarea {
+.edicao-equipamento-form input,
+.edicao-equipamento-form select,
+.edicao-equipamento-form textarea {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -59,15 +59,15 @@
 }
 
 /* Foco no campo */
-.edicao-os-form input:focus,
-.edicao-os-form select:focus,
-.edicao-os-form textarea:focus {
+.edicao-equipamento-form input:focus,
+.edicao-equipamento-form select:focus,
+.edicao-equipamento-form textarea:focus {
   border-color: #0066ff;
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
 
 /* Botão */
-.edicao-os-form button[type="submit"] {
+.edicao-equipamento-form button[type="submit"] {
   padding: 14px 20px;
   background: linear-gradient(135deg, #0066ff, #3787ff);
   color: white;
@@ -79,12 +79,12 @@
   transition: all 0.25s ease;
 }
 
-.edicao-os-form button[type="submit"]:hover {
+.edicao-equipamento-form button[type="submit"]:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 102, 255, 0.35);
 }
 
-.edicao-os-form button[type="submit"]:active {
+.edicao-equipamento-form button[type="submit"]:active {
   transform: scale(0.98);
 }
 

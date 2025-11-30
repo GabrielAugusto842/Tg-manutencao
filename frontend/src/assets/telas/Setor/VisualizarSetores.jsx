@@ -12,20 +12,19 @@ function VisualizarSetoresContent() {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [filtroNome, setFiltroNome] = useState(""); // 🔍 NOVO FILTRO
- useEffect(() => {
-  const previousTitle = document.title; // salva o título atual (do Layout)
-  if (filtroNome.trim() === "") {
-    document.title = "Maintenance Manager - Todos os Setores";
-  } else {
-    document.title = `Maintenance Manager - Setores filtrados: ${filtroNome}`;
-  }
-  return () => {
-    document.title = previousTitle; // restaura quando sair da página
-  };
-}, [filtroNome]);
+  useEffect(() => {
+    const previousTitle = document.title; // salva o título atual (do Layout)
+    if (filtroNome.trim() === "") {
+      document.title = "Maintenance Manager - Todos os Setores";
+    } else {
+      document.title = `Maintenance Manager - Setores filtrados: ${filtroNome}`;
+    }
+    return () => {
+      document.title = previousTitle; // restaura quando sair da página
+    };
+  }, [filtroNome]);
 
   const navigate = useNavigate();
-
 
   const buscarSetores = async () => {
     try {
@@ -114,7 +113,7 @@ function VisualizarSetoresContent() {
 
   /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
   return (
-    <div id="print-area"> 
+    <div id="print-area">
       <div className="visualizar-setores-page no-print">
         {/* 🔍 CAMPO DE PESQUISA */}
         <div className="filtros-container">
@@ -132,11 +131,14 @@ function VisualizarSetoresContent() {
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
 
-
-      <div className="no-print" style={{ padding: "5px" }}>
-        <button onClick={() => window.print()} >
-          📄📥 Exportar PDF
-        </button>
+      <div className="botao-pdf-wrapper no-print">
+        {" "}
+        <button
+          onClick={() => window.print()}
+          className="botao-pdf-setor" /* Classe para o estilo ultra-compacto */
+        >
+          📥 EXPORTAR PDF{" "}
+        </button>{" "}
       </div>
 
       {setoresFiltrados.length === 0 ? (
@@ -191,4 +193,3 @@ export default function VisualizarSetores() {
     </Layout>
   );
 }
-
