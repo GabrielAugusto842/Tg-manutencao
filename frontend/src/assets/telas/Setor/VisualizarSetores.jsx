@@ -12,7 +12,15 @@ function VisualizarSetoresContent() {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [filtroNome, setFiltroNome] = useState(""); // 🔍 NOVO FILTRO
+  useEffect(() => { // EFEITO PARA MUDAR O TITULO CONFORME A PESQUISA, FACILITA PARA O PRINT
+    if (filtroNome.trim() === "") {
+      document.title = "Todos os Setores - Maintenance Manager";
+    } else {
+      document.title = `Setores filtrados: ${filtroNome}`;
+    }
+  }, [filtroNome]);
   const navigate = useNavigate();
+
 
   const buscarSetores = async () => {
     try {
@@ -99,23 +107,34 @@ function VisualizarSetoresContent() {
     return <p>Carregando Setores...</p>;
   }
 
+  /* PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
   return (
-    <div className="visualizar-setores-page">
-      {/* 🔍 CAMPO DE PESQUISA */}
-      <div className="filtros-container">
-        <input
-          type="text"
-          placeholder="Pesquisar pelo nome do setor..."
-          className="input-filtro"
-          value={filtroNome}
-          onChange={(e) => setFiltroNome(e.target.value)}
-        />
+    <div id="print-area"> 
+      <div className="visualizar-setores-page no-print">
+        {/* 🔍 CAMPO DE PESQUISA */}
+        <div className="filtros-container">
+          <input
+            type="text"
+            placeholder="Pesquisar pelo nome do setor..."
+            className="input-filtro"
+            value={filtroNome}
+            onChange={(e) => setFiltroNome(e.target.value)}
+          />
+        </div>
       </div>
-
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
+
+
+      <div className="tabela-wrapper no-print">
+        <p>Exportar PDF</p>
+
+        <button onClick={() => window.print()} > 
+          Imprimir somente o escopo
+        </button>
+      </div>
 
       {setoresFiltrados.length === 0 ? (
         <p>Nenhum setor encontrado.</p>
@@ -126,7 +145,7 @@ function VisualizarSetoresContent() {
               <tr>
                 <th>Nome do Setor</th>
                 <th>Descrição</th>
-                <th>Ações</th>
+                <th class="no-print">Ações</th>
               </tr>
             </thead>
 
@@ -135,7 +154,7 @@ function VisualizarSetoresContent() {
                 <tr key={setor.idSetor}>
                   <td>{setor.nomeSetor}</td>
                   <td>{setor.descricao}</td>
-                  <td className="acoes-coluna-icones">
+                  <td className="acoes-coluna-icones no-print">
                     <button
                       className="btn-editar"
                       onClick={() => handleEditar(setor.idSetor)}
@@ -169,3 +188,4 @@ export default function VisualizarSetores() {
     </Layout>
   );
 }
+

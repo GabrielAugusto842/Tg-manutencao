@@ -247,6 +247,7 @@ CREATE TABLE `setor` (
 LOCK TABLES `setor` WRITE;
 /*!40000 ALTER TABLE `setor` DISABLE KEYS */;
 INSERT INTO `setor` VALUES (1,'Produção','Responsável pela fabricação de produtos e prestação de serviços.'),(3,'Manutenção','Responsável por reparar, trocar, consertar, lubrificar e monitorar o funcionamento das máquinas e seus componentes.');
+/*!DAR UMA ENCHIDA NO SETOR PARA TESTAR - ;INSERT INTO `setor` VALUES (4,'Produçãoo','Responsável pela fabricação de produtos e prestação de serviços.'),(5,'Compras','Realiza aquisição de materiais e negociações com fornecedores.'),(6,'Logística','Gerencia estoque, transporte e distribuição de produtos.'),(7,'TI','Responsável pelo suporte técnico e infraestrutura de tecnologia.'),(8,'Marketing','Cuida da imagem da empresa e estratégias de divulgação.'),(9,'Vendas','Realiza negociações e atendimento comercial.'),(10,'Jurídico','Responsável por assuntos legais e contratuais.'),(11,'Manutenção','Mantém equipamentos e instalações funcionando corretamente.'),(12,'Qualidade','Garante padrões e controles de qualidade nos processos.'),(13,'Engenharia','Desenvolve projetos técnicos e melhorias estruturais.'),(14,'Pesquisa e Desenvolvimento','Cria novos produtos e melhora os existentes.'),(15,'Atendimento ao Cliente','Resolve dúvidas e problemas de clientes.'),(16,'Auditoria','Fiscaliza e revisa processos internos.'),(17,'Segurança do Trabalho','Cuida das normas de segurança e prevenção de acidentes.'),(18,'Expedição','Separa e envia pedidos aos clientes.'),(19,'Almoxarifado','Gerencia estoque interno e materiais.'),(20,'Planejamento','Organiza metas, cronogramas e estratégias da empresa.'),(21,'Contabilidade','Registra e controla todas as movimentações financeiras.'),(22,'Suprimentos','Gerencia materiais essenciais e consumo interno.'),(23,'Faturamento','Emite notas fiscais e controla receitas.'),(24,'Relações Públicas','Gerencia comunicação com parceiros e público externo.');*/;
 /*!40000 ALTER TABLE `setor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -279,7 +280,11 @@ CREATE TABLE `usuario` (
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
 INSERT INTO `usuario` VALUES (1,'Usuario','usuario@email.com','$2b$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',1,1),(2,'Gabriel','gabriel@gmail.com','$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',2,3),(3,'Vinicius','vinicius@fatec.com','$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',2,1);
+/*!INSERIR UM USUARIO ADM NOVO PARA TESTAR INSERT INTO `usuario` VALUES (4,'Admin','admin@email.com','$2b$10$GEkZ8LN3gR3MhZWc40qS5.rN6YOZp2ap/nobZy6UJEXwTcaZnOTda',3,3);*/;
+
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+
+
 UNLOCK TABLES;
 
 --
@@ -328,3 +333,4 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-11-22 20:25:47
+
