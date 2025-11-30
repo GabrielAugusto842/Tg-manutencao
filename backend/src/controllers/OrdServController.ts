@@ -78,7 +78,9 @@ export class OrdServController {
       const descricao = req.body.descricao;
       const solucao = req.body.solucao;
       const custo = req.body.custo;
-      const idUsuario = req.body.idUsuario;
+      const manutentor = req.body.idUsuario; // Verificando o campo correto
+
+      console.log("Dados recebidos para atualização:", req.body); // Adicionando log para verificar os dados recebidos
 
       if (!descricao) {
         return res
@@ -91,8 +93,9 @@ export class OrdServController {
         descricao,
         solucao || null,
         custo || null,
-        idUsuario || null
+        manutentor || null // Passando o idUsuario corretamente para o repo
       );
+
       if (!updated) {
         return res
           .status(404)

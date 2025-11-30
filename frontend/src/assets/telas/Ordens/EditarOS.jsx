@@ -61,32 +61,36 @@ function EditarOS() {
   }, [buscarOrdemServico]);
 
   // Função para salvar a O.S.
-  const handleSalvar = async (e) => {
-    e.preventDefault();
+  // Função para salvar a O.S.
+ const handleSalvar = async (e) => {
+  e.preventDefault();
 
-    // Verifica se o custo está vazio, caso sim, define como null
-    const custoTratado =
-      dadosFormulario.custo === "" ? null : Number(dadosFormulario.custo);
+  // Verifica e trata o custo
+  const custoTratado = dadosFormulario.custo === "" ? null : Number(dadosFormulario.custo);
 
-    const dadosAtualizados = {
-      descricao: dadosFormulario.descricao,
-      manutentor: dadosFormulario.manutentor, // ID do manutentor
-      solucao: dadosFormulario.solucao,
-      custo: custoTratado, // Envia custo como null ou valor numérico
-    };
-
-    // Exibe os dados no console para checar antes de enviar
-    console.log("Dados enviados para o backend:", dadosAtualizados);
-
-    try {
-      await api.put(`/os/${id}`, dadosAtualizados);
-      alert("Ordem de serviço atualizada com sucesso!");
-      navigate("/ordens");
-    } catch (error) {
-      console.error("Falha na atualização:", error);
-      alert("Falha ao atualizar ordem de serviço.");
-    }
+  // Prepara os dados para o envio, com o campo `idUsuario` como número
+  const dadosAtualizados = {
+    descricao: dadosFormulario.descricao,
+    idUsuario: Number(dadosFormulario.manutentor),  // Ajustado para "idUsuario"
+    solucao: dadosFormulario.solucao,
+    custo: custoTratado,
   };
+
+  // Log dos dados que serão enviados
+  console.log("Dados enviados para o backend:", dadosAtualizados);
+
+  try {
+    // Envia os dados ao backend via PUT
+    await api.put(`/os/${id}`, dadosAtualizados);
+    alert("Ordem de serviço atualizada com sucesso!");
+    navigate(`/ordens/visualizar/`); // Redireciona para a página de visualização
+  } catch (error) {
+    console.error("Falha na atualização:", error);
+    alert("Falha ao atualizar ordem de serviço.");
+  }
+};
+
+
 
   // Exibe um carregamento ou mensagem de erro
   if (loading) return <p>Carregando dados da O.S...</p>;

@@ -125,20 +125,20 @@ export class OrdServRepository {
     descricao: string,
     solucao: string | null,
     custo: number | null,
-    idUsuario: number | null
+    manutentor: number | null // Passando o campo correto "manutentor"
   ): Promise<boolean> {
-    //Primeiramente, busca a OS no banco
+    // Primeiramente, busca a OS no banco
     const os = await this.findById(idOrdServ);
     if (!os) {
       throw new Error("Ordem de serviço não encontrada!");
     }
 
-    //Depois, busca o id de cada estado (Aberto, Em andamento e Finalizado) pelo código
+    // Depois, busca os estados
     const estadoAberto = await this.estadoRepo.getByCodigo(1);
     const estadoAndamento = await this.estadoRepo.getByCodigo(2);
     const estadoFinalizado = await this.estadoRepo.getByCodigo(3);
     if (!estadoAberto || !estadoAndamento || !estadoFinalizado) {
-      throw new Error("Estado de OS não configurados no sistema");
+      throw new Error("Estados de OS não configurados no sistema");
     }
 
     // Monta dinamicamente a query com os campos fornecidos
@@ -150,9 +150,9 @@ export class OrdServRepository {
         fields.push("descricao = ?");
         values.push(descricao);
       }
-      if (idUsuario !== undefined) {
+      if (manutentor !== undefined) {
         fields.push("id_usuario = ?");
-        values.push(idUsuario);
+        values.push(manutentor); // Atualizando o campo id_usuario com o valor correto
         const idEstado = estadoAndamento.getIdEstado;
         fields.push("id_estado = ?");
         values.push(idEstado);
@@ -168,9 +168,9 @@ export class OrdServRepository {
         fields.push("descricao = ?");
         values.push(descricao);
       }
-      if (idUsuario !== undefined) {
+      if (manutentor !== undefined) {
         fields.push("id_usuario = ?");
-        values.push(idUsuario);
+        values.push(manutentor); // Atualizando o campo id_usuario
       }
     } else if (os.getIdEstado == estadoFinalizado.getIdEstado) {
       if (solucao !== undefined) {
@@ -185,14 +185,17 @@ export class OrdServRepository {
     } else {
       throw new Error("Estado passado não consta no sistema!");
     }
+
     if (fields.length === 0) {
       console.log("Nada para atualizar");
-      return false; // nada para atualizar
+      return false; // Nada para atualizar
     }
+
     values.push(idOrdServ);
     const sql = `UPDATE ordem_servico SET ${fields.join(
       ", "
     )} WHERE id_ord_serv = ?`;
+    console.log("SQL da atualização: ", sql); // Log da query para verificar
     const [result]: any = await db.execute(sql, values);
     return result.affectedRows > 0;
   }
