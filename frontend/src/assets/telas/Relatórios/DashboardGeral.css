@@ -1,0 +1,118 @@
+/* =======================================
+   1. LAYOUT GERAL E GRID
+   ======================================= */
+.dashboard-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px; /* Mantido o 26px do primeiro bloco */
+    margin-bottom: 35px; /* Mantido o 35px do primeiro bloco */
+}
+
+/* =======================================
+   2. CARD BASE E HOVER (UNIFICADO)
+   ======================================= */
+.kpi-card {
+    background: #ffffff;
+    border-radius: 12px; /* Mantido o 12px da versão mais clean */
+    padding: 22px; /* Mantido o 22px da versão mais clean */
+    border: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    /* Sombra clean */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    /* Destaque sutil no hover */
+    transition: all 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px); /* Movimento suave */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Sombra mais forte no hover */
+}
+
+/* REMOVEMOS: A lógica de Faixa Colorida Superior (.kpi-card::before)
+   e utilizamos a Borda Lateral (border-left) abaixo para o destaque. */
+
+
+/* =======================================
+   3. TIPOGRAFIA GERAL DO CARD (UNIFICADO)
+   ======================================= */
+.card-titulo {
+    font-size: 0.85rem;
+    color: #4b5563; /* Cinza escuro clean */
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.valor-indicador {
+    font-size: 2.4rem; /* Tamanho padrão para valor fora da rosca */
+    font-weight: 800;
+    color: #1c1f23; /* Cinza bem escuro */
+    line-height: 1.2;
+    display: block;
+}
+
+.card-meta {
+    font-size: 0.85rem;
+    color: #707789;
+    margin-top: 6px;
+}
+
+/* =======================================
+   4. GRÁFICO DE ROSCA E VALOR CENTRALIZADO
+   ======================================= */
+.kpi-grafico-wrapper {
+    position: relative;
+    width: 100%;
+    height: 130px; /* Mantido o 130px do primeiro bloco para o wrapper */
+    margin-bottom: 8px;
+}
+
+.kpi-valor-centralizado {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+.kpi-valor-centralizado .valor-indicador {
+    font-size: 1.7rem; /* Tamanho ajustado para caber na rosca */
+    font-weight: 800;
+    line-height: 1.1;
+    display: block;
+}
+
+.kpi-valor-centralizado .card-meta-pequena {
+    font-size: 0.75rem;
+    color: #9da3a6; /* Cinza sutil */
+    margin-top: 2px;
+}
+
+/* =======================================
+   5. ESTILOS ESPECÍFICOS E DESTAQUE LATERAL
+   ======================================= */
+
+/* Estilo para O.S. Concluídas (Big Number) */
+.kpi-card.os-concluidas .valor-indicador {
+    font-size: 3rem; 
+    color: #3b82f6; /* Azul institucional */
+    margin-top: 15px;
+}
+
+.kpi-card.os-concluidas .kpi-valor-principal {
+    margin-top: 20px;
+}
+
+/* Cores de Destaque Lateral (Sugestão de Cores Melhores) */
+/* (Você pode substituir #002fff por cores semânticas como #ef4444 para MTTR e #10b981 para MTBF) */
+.kpi-card.mttr { border-left: 4px solid #0095ff; /* Vermelho (Ruim) */ }
+.kpi-card.mtbf { border-left: 4px solid #0095ff; /* Verde (Bom) */ }
+.kpi-card.disponibilidade { border-left: 4px solid #0095ff; /* Azul (Neutro/Bom) */ }
+.kpi-card.os { border-left: 4px solid #0095ff; /* Laranja (Atenção/Contagem) */ }
+
