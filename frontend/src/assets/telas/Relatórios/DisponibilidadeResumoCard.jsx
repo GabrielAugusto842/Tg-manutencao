@@ -1,12 +1,10 @@
-// src/componentes/Relatorios/DisponibilidadeResumoCard.jsx (AJUSTADO PARA idSetor)
-
 import React, { useState, useEffect } from "react";
-import { formatPercentual } from "../../Services/formatters";
-import "./DashboardGeral.css"; // Estilos compartilhados
+import "./DashboardGeral.css";
+import DashboardDisponibilidade from "./DashboardDisponibilidade.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
+const DISPONIBILIDADE_META = 95.0;
 
-// 🎯 1. RECEBE idSetor NAS PROPS
 export default function DisponibilidadeResumoCard({
   dataInicial,
   dataFinal,
@@ -17,7 +15,6 @@ export default function DisponibilidadeResumoCard({
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    // Função de retry com backoff exponencial (mantida inalterada)
     const fetchWithRetry = async (url, options, retries = 3) => {
       for (let i = 0; i < retries; i++) {
         try {
@@ -44,24 +41,21 @@ export default function DisponibilidadeResumoCard({
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
-
-        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
         const headers = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }; // Chamando o endpoint: /disponibilidade-geral
+        };
 
         const resposta = await fetchWithRetry(
           `${API_URL}/disponibilidade-geral${query}`,
           { headers }
         );
-
         if (!resposta.ok)
           throw new Error("Erro ao buscar Disponibilidade geral");
-        const dados = await resposta.json(); // O backend retorna o valor em decimal (ex: 98.5)
 
+        const dados = await resposta.json();
         setDisponibilidade(dados?.disponibilidade ?? 0);
       } catch (e) {
         console.error("Erro ao buscar Disponibilidade:", e);
@@ -70,30 +64,39 @@ export default function DisponibilidadeResumoCard({
         setCarregando(false);
       }
     };
-    buscarDisponibilidade(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+
+    buscarDisponibilidade();
   }, [dataInicial, dataFinal, idSetor]);
 
   if (carregando)
     return (
       <div className="kpi-card loading">Carregando Disponibilidade...</div>
     );
-  if (erro) return <div className="kpi-card error">Erro: {erro}</div>; // A cor pode ser condicional se você tiver uma meta, usaremos 95% como boa prática.
-
-  const corPrincipal = disponibilidade >= 95.0 ? "#28a745" : "#ffc107"; // Verde se >= 95%, Amarelo se < 95%
+  if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
     <div className="kpi-card disponibilidade">
-      <h4 className="card-titulo">Disponibilidade Geral (%)</h4>{" "}
-      <div className="kpi-content centralizado">
-        {" "}
-        <div className="kpi-valor-principal">
-          {" "}
-          <span className="valor-indicador" style={{ color: corPrincipal }}>
-            {formatPercentual(disponibilidade)}{" "}
-          </span>
-          <p className="card-meta">Tempo Operacional / Tempo Total</p>{" "}
-        </div>{" "}
-      </div>{" "}
+      <h4 className="card-titulo">Disponibilidade Geral (%)</h4>
+
+      {/* Rosca */}
+      <div className="kpi-content kpi-disponibilidade-visual">
+        <DashboardDisponibilidade valor={disponibilidade} />
+      </div>
+
+      {/* Meta abaixo da rosca */}
+      <p
+        className="card-meta"
+        style={{ textAlign: "center", marginTop: "8px" }}
+      >
+        Meta: {DISPONIBILIDADE_META}%
+      </p>
+
+      <p
+        className="card-meta"
+        style={{ textAlign: "center", marginTop: "4px" }}
+      >
+        Tempo Operacional / Tempo Total
+      </p>
     </div>
   );
 }
