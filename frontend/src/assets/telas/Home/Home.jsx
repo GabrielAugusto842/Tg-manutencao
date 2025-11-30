@@ -58,13 +58,18 @@ function Home() {
 
   return (
     <Layout title="Bem vindo ao Maintenance Manager">
-      <div className="home-container">
+      <div className="home-container" id="print-area">
         <h2 className="tituloSecao">
           {usuario.cargo.toUpperCase() === "MANUTENTOR"
             ? `Minhas Ordens de ${mesFormatado}`
             : `Ordens de serviços gerais - ${mesFormatado}`}{" "}
         </h2>
-
+        <div className="tabela-wrapper no-print">
+          <button onClick={() => window.print()} > 
+            📄📥 Exportar para PDF
+          </button>
+        </div>     
+        <br/>
         <div className="cards-container">
           <div className="card card-abertas">
             <h3>Abertas</h3>

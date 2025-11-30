@@ -21,6 +21,26 @@ function VisualizarEquipamentosContent() {
   // 🔎 Opções de setores
   const [opcoesSetor, setOpcoesSetor] = useState([]);
 
+   useEffect(() => {
+    const previousTitle = document.title;
+
+    const filtrosAtivos = [];
+
+    if (filtroNome.trim() !== "") filtrosAtivos.push(`Nome: ${filtroNome}`);
+    if (filtroSerie.trim() !== "") filtrosAtivos.push(`Nº Série: ${filtroSerie}`);
+    if (filtroSetor.trim() !== "") filtrosAtivos.push(`Setor: ${filtroSetor}`);
+
+    if (filtrosAtivos.length === 0) {
+      document.title = "Maintenance Manager - Todos os equipamentos";
+    } else {
+      document.title = `Maintenance Manager - Equipamentos filtrados (${filtrosAtivos.join(" | ")})`;
+    }
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [filtroNome, filtroSerie, filtroSetor]);
+
   const buscarEquipamentos = async () => {
     try {
       setCarregando(true);
@@ -74,7 +94,7 @@ function VisualizarEquipamentosContent() {
   if (carregando) return <p>Carregando máquinas...</p>;
 
   return (
-    <div className="visualizar-equipamentos-page">
+    <div className="visualizar-equipamentos-page" id="print-area">
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && <div className="alerta-sucesso">{mensagemSucesso}</div>}
@@ -82,7 +102,7 @@ function VisualizarEquipamentosContent() {
       {/* ===================== */}
       {/* 🔍 ÁREA DE FILTROS   */}
       {/* ===================== */}
-      <div className="filtros-container">
+      <div className="filtros-container no-print">
         <input
           type="text"
           placeholder="Buscar por nome..."
@@ -113,6 +133,13 @@ function VisualizarEquipamentosContent() {
         </select>
       </div>
 
+      <div className="no-print" style={{ padding: "5px" }}>
+        <button onClick={() => window.print()} >
+          📄📥 Exportar PDF
+        </button>
+      </div>
+
+
       {/* ===================== */}
       {/* 📋 TABELA            */}
       {/* ===================== */}
@@ -128,7 +155,7 @@ function VisualizarEquipamentosContent() {
               <th>Prod/Hora</th>
               <th>Dispon/Mês</th>
               <th>Setor</th>
-              <th>Ações</th>
+              <th class="no-print">Ações</th>
             </tr>
           </thead>
 
@@ -152,7 +179,7 @@ function VisualizarEquipamentosContent() {
                   <td>{maquina.disponibilidadeMes}</td>
                   <td>{maquina.setor}</td>
 
-                  <td className="acoes-coluna-icones">
+                  <td className="acoes-coluna-icones no-print">
                     <button
                       className="btn-editar"
                       onClick={() =>

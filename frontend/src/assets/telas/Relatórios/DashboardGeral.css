@@ -116,3 +116,58 @@
 .kpi-card.disponibilidade { border-left: 4px solid #0095ff; /* Azul (Neutro/Bom) */ }
 .kpi-card.os { border-left: 4px solid #0095ff; /* Laranja (Atenção/Contagem) */ }
 
+/* ====================================================================
+   7. EXPORT PDF E IMPRESSÃO
+   ==================================================================== */
+
+/* IMPRIMIR */
+@media print {
+  /* some TUDO */
+  body * {
+    visibility: hidden;
+  }
+
+  @media print {
+  header {
+    display: none !important;
+  }
+}
+  /* mostra só a área desejada */
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+
+  /* posiciona no topo da página impressa */
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* remove elementos indesejados */
+  .no-print, header, nav, .filtros, .menu-lateral {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* remove qualquer rolagem interna */
+  * {
+    overflow: visible !important;
+  }
+}
+
+@media print {
+
+  /* Força quebra de linha */
+  .pula-linha-export {
+    display: block !important;
+  }
+}

@@ -12,13 +12,18 @@ function VisualizarSetoresContent() {
   const [erro, setErro] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [filtroNome, setFiltroNome] = useState(""); // 🔍 NOVO FILTRO
-  useEffect(() => { // EFEITO PARA MUDAR O TITULO CONFORME A PESQUISA, FACILITA PARA O PRINT
-    if (filtroNome.trim() === "") {
-      document.title = "Todos os Setores - Maintenance Manager";
-    } else {
-      document.title = `Setores filtrados: ${filtroNome}`;
-    }
-  }, [filtroNome]);
+ useEffect(() => {
+  const previousTitle = document.title; // salva o título atual (do Layout)
+  if (filtroNome.trim() === "") {
+    document.title = "Maintenance Manager - Todos os Setores";
+  } else {
+    document.title = `Maintenance Manager - Setores filtrados: ${filtroNome}`;
+  }
+  return () => {
+    document.title = previousTitle; // restaura quando sair da página
+  };
+}, [filtroNome]);
+
   const navigate = useNavigate();
 
 
@@ -107,7 +112,7 @@ function VisualizarSetoresContent() {
     return <p>Carregando Setores...</p>;
   }
 
-  /* PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
+  /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
   return (
     <div id="print-area"> 
       <div className="visualizar-setores-page no-print">
@@ -128,11 +133,9 @@ function VisualizarSetoresContent() {
       )}
 
 
-      <div className="tabela-wrapper no-print">
-        <p>Exportar PDF</p>
-
-        <button onClick={() => window.print()} > 
-          Imprimir somente o escopo
+      <div className="no-print" style={{ padding: "5px" }}>
+        <button onClick={() => window.print()} >
+          📄📥 Exportar PDF
         </button>
       </div>
 

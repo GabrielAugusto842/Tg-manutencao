@@ -54,7 +54,7 @@ export default function Ordem() {
   }
 
   return (
-    <div className="ordem-body">
+    <div className="ordem-body" id="print-area">
       {carregando ? (
         <div className="ordem-loading">Carregando dados da O.S...</div>
       ) : erro ? (
@@ -165,6 +165,11 @@ export default function Ordem() {
                   : "Não informado"}
               </span>
             </div>
+          </div>
+          <div className="no-print" style={{ padding: "5px" }}>
+            <button onClick={() => window.print()} >
+              📄📥 Exportar PDF
+            </button>
           </div>
         </div>
       )}
