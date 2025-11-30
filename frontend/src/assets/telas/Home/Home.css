@@ -1,3 +1,4 @@
+/* Estilos gerais da home */
 .home-container {
   padding: 30px;
   font-family: "Inter", sans-serif;
@@ -30,7 +31,10 @@
   font-size: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: linear-gradient(135deg, #1e90ff 0%, #3aa0ff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .card:hover {
@@ -44,6 +48,20 @@
   font-weight: 700;
 }
 
+/* Cards de tipo diferentes para Administrador */
+.card-usuarios {
+  background: linear-gradient(135deg, #00bcd4 0%, #008ba3 100%);
+}
+
+.card-maquinas {
+  background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+}
+
+.card-setores {
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+}
+
+/* Cards para Manutentor */
 .card-abertas {
   background: linear-gradient(135deg, #1e90ff 0%, #3aa0ff 100%);
 }
@@ -56,57 +74,22 @@
   background: linear-gradient(135deg, #32cd32 0%, #6ee36e 100%);
 }
 
+/* Ícones nos cards */
+.card-icon {
+  font-size: 50px; /* Ajuste o tamanho do ícone */
+  margin-bottom: 10px;
+}
+
+.card .card-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .cards-container {
     flex-direction: column;
   }
 }
-
-/* ====================================================================
-   2. EXPORT PDF E IMPRESSÃO
-   ==================================================================== */
-
-/* IMPRIMIR */
-@media print {
-  /* some TUDO */
-  body * {
-    visibility: hidden;
-  }
-
-  @media print {
-  header {
-    display: none !important;
-  }
-}
-  /* mostra só a área desejada */
-  #print-area, #print-area * {
-    visibility: visible;
-  }
-
-  /* posiciona no topo da página impressa */
-  #print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-
-  /* remove elementos indesejados */
-  .no-print, header, nav, .filtros, .menu-lateral {
-    display: none !important;
-    visibility: hidden !important;
-  }
-}
-
-@media print {
-  html, body {
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  /* remove qualquer rolagem interna */
-  * {
-    overflow: visible !important;
-  }
-}
+ 
