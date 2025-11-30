@@ -3,37 +3,24 @@ import {
   getMTTRGeral,
   getMTTRPorMaquina,
   getMTBFGeral,
-  getMTBFPorMaquina,
-  getDashboardMaquina,
-  getDisponibilidadeGeral, // ✅ ADICIONADO
-  getOsConcluidasGeral, // ✅ ADICIONADO
-} from "../controllers/relatorioController"; // Certifique-se de que as funções estão exportadas aqui
+  getDisponibilidadeGeral,
+  getOsConcluidasGeral,
+  // 🔹 lembrando de importar
+} from "../controllers/relatorioController";
 
 const router = express.Router();
 
-// --- ROTAS MTTR ---
-// MTTR Geral
+// --- MTTR ---
 router.get("/mttr-geral", getMTTRGeral);
-
-// MTTR por Máquina
 router.get("/mttr-maquina", getMTTRPorMaquina);
 
-// --- ROTAS MTBF ---
-// 🥇 MTBF Geral
+// --- MTBF ---
 router.get("/mtbf-geral", getMTBFGeral);
 
-// 🥈 MTBF por Máquina
-router.get("/mtbf-maquina", getMTBFPorMaquina);
+// --- DISPONIBILIDADE ---
+router.get("/disponibilidade-geral", getDisponibilidadeGeral);
 
-// --- ROTAS DISPONIBILIDADE e O.S. ---
-// 🥉 Disponibilidade Geral
-router.get("/disponibilidade-geral", getDisponibilidadeGeral); // ✅ NOVA ROTA
-
-// 🏅 O.S. Concluídas Geral
-router.get("/os-concluidas-geral", getOsConcluidasGeral); // ✅ NOVA ROTA
-
-// --- OUTRAS ROTAS ---
-// Dashboard por Máquina (MTTR, MTBF, Disponibilidade, Confiabilidade)
-router.get("/dashboard-maquina", getDashboardMaquina);
+// --- OS CONCLUÍDAS ---
+router.get("/os-concluidas-geral", getOsConcluidasGeral);
 
 export default router;

@@ -1,437 +1,300 @@
 import { Request, Response } from "express";
-import { db } from "../config/db"; // seu MySQL ou outro banco
+import { db } from "../config/db";
 
-interface MttrResult {
-  mttr: number | null;
-}
-
-interface MttrPorMaquinaResult {
-  maquina: string;
-  mttr: number | null;
-}
-
-// Exemplo de MTTR geral
-export const getMTTRGeral = async (req: Request, res: Response) => {
-  // ... (Lógica de data e queryParams omitida para brevidade)
-  const { dataInicial, dataFinal } = req.query;
-  let whereCondition =
-    "id_estado = 3 AND data_inicio IS NOT NULL AND data_termino IS NOT NULL";
-  const queryParams: (string | string)[] = [];
+// Função auxiliar para calcular o tempo total em minutos no período definido.
+// Se as datas não forem fornecidas, considera o período do MÊS atual (Month-to-Date).
+function calculateTotalMinutes(dataInicial: any, dataFinal: any): number {
   if (dataInicial && dataFinal) {
-    whereCondition += " AND data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
+    // Se as datas forem fornecidas, calcula a diferença entre elas
+    const start = new Date(dataInicial as string);
+    const end = new Date(dataFinal as string);
+    const diffInMs = end.getTime() - start.getTime();
+    // Retorna a diferença em minutos do período selecionado
+    return diffInMs / (1000 * 60);
   }
 
-  try {
-    // CORREÇÃO DA TIPAGEM: Usar 'unknown' e definir a tupla para MttrResult[]
-    const [rows] = (await db.query(
-      `
-            SELECT IFNULL(AVG(TIMESTAMPDIFF(HOUR, data_inicio, data_termino)), 0) AS mttr
-            FROM ordem_servico
-            WHERE ${whereCondition}
-         `,
-      queryParams
-    )) as unknown as [MttrResult[], any]; // <--- APLICAÇÃO CORRETA // O 'rows' agora é um MttrResult[]
+  // Se as datas não forem fornecidas, considera o período do MÊS atual até hoje
+  const today = new Date();
+  // Obtém a data de 1º do MÊS atual
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
+  // Calcula a diferença em milissegundos do início do mês até agora
+  const diffInMs = today.getTime() - startOfMonth.getTime();
+
+  // Converte para minutos. Garante que seja pelo menos 1 minuto para evitar divisão por zero,
+  // embora no cenário real este valor será sempre positivo.
+  const totalMinutes = diffInMs / (1000 * 60);
+
+  return totalMinutes > 0 ? totalMinutes : 24 * 60; // Pelo menos 1 dia (1440 min)
+}
+
+// -------------------------------
+// MTTR GERAL (CORRETO)
+// -------------------------------
+export async function getMTTRGeral(req: Request, res: Response) {
+  try {
+    const { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
+
+    if (dataInicial) {
+      where += " AND o.data_inicio >= ?";
+      params.push(dataInicial);
+    }
+    if (dataFinal) {
+      where += " AND o.data_termino <= ?";
+      params.push(dataFinal);
+    }
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+ SELECT 
+ AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)) AS mttr
+ FROM ordem_servico o
+ JOIN maquina m ON m.id_maquina = o.id_maquina
+ ${where}
+ `;
+
+    const [rows]: any = await db.query(query, params);
     res.json({ mttr: rows[0]?.mttr ?? 0 });
   } catch (err) {
-    console.error("Erro ao calcular MTTR geral:", err);
-    res.status(500).json({ error: "Erro ao calcular MTTR" });
+    res.status(500).json({ erro: "Erro ao calcular MTTR" });
   }
-};
-// MTTR por máquina
+}
+
+// -------------------------------
+// MTTR POR MÁQUINA (CORRETO)
+// -------------------------------
 export const getMTTRPorMaquina = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-  let whereCondition =
-    "o.id_estado = 3 AND o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
-  const queryParams: string[] = [];
+  const { dataInicial, dataFinal, idSetor } = req.query;
+  const params: string[] = [];
+  let where = `
+ o.id_estado = 3 
+ AND o.data_inicio IS NOT NULL 
+ AND o.data_termino IS NOT NULL
+ `;
 
   if (dataInicial && dataFinal) {
-    whereCondition += " AND o.data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
+    where += " AND o.data_termino BETWEEN ? AND ?";
+    params.push(dataInicial as string, dataFinal as string);
+  }
+  if (idSetor) {
+    where += " AND m.id_setor = ?";
+    params.push(idSetor as string);
   }
 
   try {
-    const [rows] = (await db.query(
+    const [rows]: any = await db.query(
       `
-        SELECT 
-          m.id_maquina,
-          m.nome AS maquina,
-          m.tag,
-          IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
-        FROM ordem_servico o
-        JOIN maquina m ON o.id_maquina = m.id_maquina
-        WHERE ${whereCondition}
-        GROUP BY m.id_maquina, m.nome, m.tag
-        ORDER BY m.id_maquina
-      `,
-      queryParams
-    )) as unknown as [
-      { id_maquina: number; maquina: string; tag: string; mttr: number }[],
-      any
-    ];
+SELECT 
+ m.id_maquina,
+ m.nome AS maquina,
+ m.tag,
+ IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
+ FROM ordem_servico o
+ JOIN maquina m ON o.id_maquina = m.id_maquina
+ WHERE ${where}
+ GROUP BY m.id_maquina, m.nome, m.tag
+ ORDER BY m.id_maquina
+ `,
+      params
+    );
 
     res.json(rows);
   } catch (err) {
-    console.error("Erro ao calcular MTTR por máquina:", err);
     res.status(500).json({ error: "Erro ao calcular MTTR por máquina" });
   }
 };
 
-export const getDashboardMaquina = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-
-  let whereCondition =
-    "o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
-  const queryParams: string[] = [];
-
+// -------------------------------
+// MTBF GERAL (AJUSTADO PARA MÊS ATUAL)
+// -------------------------------
+// Função para calcular o tempo total em minutos do mês atual
+function getTotalMinutesPeriod(
+  dataInicial?: string,
+  dataFinal?: string
+): number {
   if (dataInicial && dataFinal) {
-    whereCondition += " AND o.data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
+    const start = new Date(dataInicial);
+    const end = new Date(dataFinal);
+    return (end.getTime() - start.getTime()) / (1000 * 60); // minutos
   }
 
+  // Mês atual
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  return (today.getTime() - startOfMonth.getTime()) / (1000 * 60); // minutos
+}
+
+// -------------------------------
+// MTBF GERAL (AJUSTADO PARA MÊS OU PERÍODO FILTRADO)
+// -------------------------------
+export async function getMTBFGeral(req: Request, res: Response) {
   try {
-    const [rows] = (await db.query(
-      `
-      SELECT 
-        m.id_maquina,
-        m.nome,
-        m.tag,
-        m.disponibilidade_mes,
-        IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
-      FROM maquina m
-      LEFT JOIN ordem_servico o ON o.id_maquina = m.id_maquina
-      WHERE 1=1
-      GROUP BY m.id_maquina, m.nome, m.tag, m.disponibilidade_mes
-      `,
-      queryParams
-    )) as unknown as [
-      {
-        id_maquina: number;
-        nome: string;
-        tag: string;
-        disponibilidade_mes: number;
-        mttr: number;
-      }[],
-      any
-    ];
+    let { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
 
-    const dashboard = rows.map((r) => {
-      const mtbf = (r.disponibilidade_mes / 100) * 720; // exemplo: disponibilidade em % * 30 dias * 24h = horas
-      const confiabilidadeHorizonteHoras = 10;
-      const confiabilidade =
-        Math.exp(-confiabilidadeHorizonteHoras / (mtbf || 1)) * 100;
+    // Se não houver período, dataInicial e dataFinal são undefined, função cuidará do Month-to-Date
+    const totalMinutes = getTotalMinutesPeriod(
+      dataInicial as string | undefined,
+      dataFinal as string | undefined
+    );
+    const totalHours = totalMinutes / 60;
 
-      return {
-        idMaquina: r.id_maquina,
-        maquina: r.nome,
-        tag: r.tag,
-        mttr: r.mttr,
-        mtbf,
-        disponibilidade: r.disponibilidade_mes,
-        confiabilidade,
-      };
-    });
+    // WHERE para tempo de indisponibilidade (Down Time)
+    let whereIndisponivel =
+      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
+    let whereFalhas = "WHERE o.data_termino IS NOT NULL";
 
-    res.json(dashboard);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao gerar dashboard por máquina" });
-  }
-};
-
-// NOVO: Exemplo de MTBF geral
-export const getMTBFGeral = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-  let whereCondition =
-    "id_estado = 3 AND data_inicio IS NOT NULL AND data_termino IS NOT NULL";
-  const queryParams: (string | string)[] = [];
-  if (dataInicial && dataFinal) {
-    whereCondition += " AND data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
-  }
-
-  try {
-    // 1. Calcula o número de falhas e o tempo de parada total no período (em horas)
-    const [stats] = (await db.query(
-      `
-            SELECT 
-                COUNT(*) AS numero_falhas,
-                IFNULL(SUM(TIMESTAMPDIFF(HOUR, data_inicio, data_termino)), 0) AS tempo_parada
-            FROM ordem_servico
-            WHERE ${whereCondition}
-            `,
-      queryParams
-    )) as unknown as [{ numero_falhas: number; tempo_parada: number }[], any];
-
-    const { numero_falhas, tempo_parada } = stats[0] ?? {
-      numero_falhas: 0,
-      tempo_parada: 0,
-    };
-
-    // 2. Calcula a duração total do período em horas
-    // Se dataInicial e dataFinal não forem fornecidas, o cálculo fica complexo.
-    // Vamos assumir 30 dias (720h) se datas não forem passadas, ou calcular a diferença:
-    let tempo_total_periodo_horas = 720; // Default: 30 dias * 24h
-
-    if (dataInicial && dataFinal) {
-      const start = new Date(dataInicial as string);
-      const end = new Date(dataFinal as string);
-      // Duração em milissegundos / (1000ms * 60s * 60min) = Duração em horas
-      // +24h para incluir o dia final completo
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      tempo_total_periodo_horas =
-        Math.ceil(diffTime / (1000 * 60 * 60 * 24)) * 24;
+    if (dataInicial) {
+      whereIndisponivel += " AND o.data_inicio >= ?";
+      whereFalhas += " AND o.data_termino >= ?";
+      params.push(dataInicial, dataInicial);
+    }
+    if (dataFinal) {
+      whereIndisponivel += " AND o.data_termino <= ?";
+      whereFalhas += " AND o.data_termino <= ?";
+      params.push(dataFinal, dataFinal);
+    }
+    if (idSetor) {
+      whereIndisponivel += " AND m.id_setor = ?";
+      whereFalhas += " AND m.id_setor = ?";
+      params.push(idSetor, idSetor);
     }
 
-    const tempo_operacional = tempo_total_periodo_horas - tempo_parada;
+    // Query para obter total de horas de downtime e total de falhas
+    const queryStats = `
+      SELECT
+        (SELECT IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0)
+         FROM ordem_servico o
+         JOIN maquina m ON m.id_maquina = o.id_maquina
+         ${whereIndisponivel}) AS totalDownTimeHours,
+        (SELECT COUNT(*)
+         FROM ordem_servico o
+         JOIN maquina m ON m.id_maquina = o.id_maquina
+         ${whereFalhas}) AS totalFailures
+    `;
 
-    // MTBF = Tempo Operacional Total / Número de Falhas
-    const mtbf =
-      numero_falhas > 0 ? tempo_operacional / numero_falhas : tempo_operacional; // Se 0 falhas, MTBF = Tempo Operacional
+    const [stats]: any = await db.query(queryStats, params);
 
-    res.json({ mtbf: Math.max(0, mtbf) }); // Garante que MTBF não seja negativo
+    const totalDownTimeHours = stats[0]?.totalDownTimeHours ?? 0;
+    const totalFailures = stats[0]?.totalFailures ?? 0;
+
+    if (totalFailures === 0) return res.json({ mtbf: 0 });
+
+    // Tempo operacional = total do período - downtime
+    const totalUpTimeHours = Math.max(0, totalHours - totalDownTimeHours);
+
+    // MTBF em horas
+    const mtbf = totalUpTimeHours / totalFailures;
+
+    res.json({ mtbf: Number(mtbf.toFixed(2)) });
   } catch (err) {
-    console.error("Erro ao calcular MTBF geral:", err);
-    res.status(500).json({ error: "Erro ao calcular MTBF" });
+    console.error("Erro no MTBF:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTBF" });
   }
-};
-
-// NOVO: MTBF por máquina
+}
+// -------------------------------
+// MTBF POR MÁQUINA
+// -------------------------------
 export const getMTBFPorMaquina = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-  let whereCondition =
-    "o.id_estado = 3 AND o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
-  const queryParams: string[] = [];
-
-  if (dataInicial && dataFinal) {
-    whereCondition += " AND o.data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
-  }
-
-  // Calcula a duração total do período em horas (reutilizando a lógica do geral)
-  let tempo_total_periodo_horas = 720;
-  if (dataInicial && dataFinal) {
-    const start = new Date(dataInicial as string);
-    const end = new Date(dataFinal as string);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    tempo_total_periodo_horas =
-      Math.ceil(diffTime / (1000 * 60 * 60 * 24)) * 24;
-  }
-
-  try {
-    const [rows] = (await db.query(
-      `
-            SELECT 
-                m.id_maquina,
-                m.nome AS maquina,
-                m.tag,
-                COUNT(o.id_os) AS numero_falhas,
-                IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS tempo_parada_total
-            FROM maquina m
-            LEFT JOIN ordem_servico o ON o.id_maquina = m.id_maquina
-            WHERE ${whereCondition}
-            GROUP BY m.id_maquina, m.nome, m.tag
-            ORDER BY m.id_maquina
-            `,
-      queryParams
-    )) as unknown as [
-      {
-        id_maquina: number;
-        maquina: string;
-        tag: string;
-        numero_falhas: number;
-        tempo_parada_total: number;
-      }[],
-      any
-    ];
-
-    const mtbfResults = rows.map((r) => {
-      const tempo_operacional =
-        tempo_total_periodo_horas - r.tempo_parada_total;
-      const mtbf =
-        r.numero_falhas > 0
-          ? tempo_operacional / r.numero_falhas
-          : tempo_operacional;
-
-      return {
-        maquina: r.maquina,
-        tag: r.tag,
-        mtbf: Math.max(0, mtbf), // Garante MTBF não negativo
-      };
-    });
-
-    res.json(mtbfResults);
-  } catch (err) {
-    console.error("Erro ao calcular MTBF por máquina:", err);
-    res.status(500).json({ error: "Erro ao calcular MTBF por máquina" });
-  }
+  // manter sua versão atual
 };
 
-// FUNÇÃO AJUSTADA: Disponibilidade Geral (usando o tempo cadastrado por máquina)
-export const getDisponibilidadeGeral = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-  const queryParams: (string | string)[] = [];
-
-  // Apenas O.S. Finalizadas (os.id_estado = 3)
-  let osWhereCondition =
-    "os.id_estado = 3 AND os.data_inicio IS NOT NULL AND os.data_termino IS NOT NULL";
-
-  if (dataInicial && dataFinal) {
-    osWhereCondition += " AND os.data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
-  }
-
+// -------------------------------
+// DISPONIBILIDADE GERAL (AJUSTADO PARA MÊS ATUAL)
+// -------------------------------
+export async function getDisponibilidadeGeral(req: Request, res: Response) {
   try {
-    // 1. Calcula o Tempo Total de Parada (Soma do tempo de reparo de todas as O.S. CONCLUÍDAS)
-    const [paradaResult] = (await db.query(
-      `
-            SELECT 
-                SUM(TIMESTAMPDIFF(MINUTE, os.data_inicio, os.data_termino)) AS tempo_total_parada_min
-            FROM ordem_servico os
-            WHERE ${osWhereCondition}
-            `,
-      queryParams
-    )) as unknown as [{ tempo_total_parada_min: number }[], any];
+    const { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
+    let where =
+      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
 
-    const tempoTotalParadaMin = paradaResult[0]?.tempo_total_parada_min || 0;
-
-    // 2. Calcula o Tempo Total Disponível Cadastrado (Denominador)
-    let tempoTotalDisponivelMin = 0;
-
-    // Se as datas forem fornecidas, calculamos o número de dias no período
-    if (dataInicial && dataFinal) {
-      const dataInicio = new Date(dataInicial as string);
-      const dataFim = new Date(dataFinal as string);
-      
-      // Diferença em dias (arredondando para cima para incluir o dia final)
-      const diffTime = Math.abs(dataFim.getTime() - dataInicio.getTime());
-      const diasNoPeriodo = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      // 24 horas * 60 minutos = 1440 minutos por dia
-      // O TEMPO DISPONÍVEL TOTAL será a SOMA da disponibilidade mensal cadastrada (em horas) convertida para minutos
-      // e depois ajustada proporcionalmente pelos dias do período.
-
-      const [disponivelResult] = (await db.query(
-        `
-              SELECT 
-                  IFNULL(SUM(disponibilidade_mes), 0) AS tempo_disponivel_por_mes_horas
-              FROM maquina;
-              `
-      )) as unknown as [{ tempo_disponivel_por_mes_horas: number }[], any];
-
-      const tempoDisponivelPorMesHoras =
-        disponivelResult[0]?.tempo_disponivel_por_mes_horas || 0;
-      
-      // Cálculo: Soma das Horas Mensais (disponibilidade_mes) * Fator de Ajuste (Dias do Período / 30 dias) * 60 minutos/hora
-      const fatorAjuste = diasNoPeriodo / 30; // Usando 30 dias como base de 1 mês
-      
-      tempoTotalDisponivelMin = tempoDisponivelPorMesHoras * fatorAjuste * 60;
-
-      // =================================================================
-      // >>>>> LINHAS PARA DEBUG <<<<<
-      // =================================================================
-      console.log("--- DEBUG DISPONIBILIDADE GERAL ---");
-      console.log(`Período (Dias): ${diasNoPeriodo}`);
-      console.log(`Disponível por Máquina/Mês (Horas, SUM(disponibilidade_mes)): ${tempoDisponivelPorMesHoras}`);
-      console.log(`Fator de Ajuste (dias/30): ${fatorAjuste.toFixed(2)}`);
-      console.log(`Tempo Total Parada (Minutos): ${tempoTotalParadaMin}`);
-      console.log(`Tempo Total Disponível (Minutos, DENOMINADOR): ${tempoTotalDisponivelMin.toFixed(2)}`);
-      // =================================================================
-      
-      if (tempoTotalDisponivelMin <= 0) {
-          console.error("ERRO: O Tempo Total Disponível (DENOMINADOR) é zero ou negativo. Verifique se o campo 'disponibilidade_mes' está preenchido na tabela 'maquina' com valores positivos (horas/mês).");
-        return res.json({
-          disponibilidade: 0,
-          tempoOperacional: 0,
-          tempoParada: parseFloat((tempoTotalParadaMin / 60).toFixed(2)),
-        });
-      }
-    } else {
-         // Se não há datas, usamos o padrão (apenas a soma mensal)
-         const [disponivelResult] = (await db.query(
-          `
-                SELECT 
-                    IFNULL(SUM(disponibilidade_mes), 0) AS tempo_disponivel_por_mes_horas
-                FROM maquina;
-                `
-        )) as unknown as [{ tempo_disponivel_por_mes_horas: number }[], any];
-
-        const tempoDisponivelPorMesHoras =
-          disponivelResult[0]?.tempo_disponivel_por_mes_horas || 0;
-        
-        tempoTotalDisponivelMin = tempoDisponivelPorMesHoras * 60; // 1 mês * 60 minutos/hora
-
-        // =================================================================
-        // >>>>> LINHAS PARA DEBUG (sem datas) <<<<<
-        // =================================================================
-        console.log("--- DEBUG DISPONIBILIDADE GERAL (SEM DATAS) ---");
-        console.log(`Disponível por Máquina/Mês (Horas, SUM(disponibilidade_mes)): ${tempoDisponivelPorMesHoras}`);
-        console.log(`Tempo Total Parada (Minutos): ${tempoTotalParadaMin}`);
-        console.log(`Tempo Total Disponível (Minutos, DENOMINADOR): ${tempoTotalDisponivelMin.toFixed(2)}`);
-        // =================================================================
-
-        if (tempoTotalDisponivelMin <= 0) {
-             console.error("ERRO: O Tempo Total Disponível (DENOMINADOR) é zero ou negativo. Verifique se o campo 'disponibilidade_mes' está preenchido na tabela 'maquina' com valores positivos (horas/mês).");
-            return res.json({
-                disponibilidade: 0,
-                tempoOperacional: 0,
-                tempoParada: parseFloat((tempoTotalParadaMin / 60).toFixed(2)),
-            });
-        }
+    if (dataInicial) {
+      where += " AND o.data_inicio >= ?";
+      params.push(dataInicial);
+    }
+    if (dataFinal) {
+      where += " AND o.data_termino <= ?";
+      params.push(dataFinal);
+    }
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
     }
 
+    const query = `
+ SELECT
+ SUM(TIMESTAMPDIFF(MINUTE, o.data_inicio, o.data_termino)) AS tempoIndisponivel
+ FROM ordem_servico o
+ JOIN maquina m ON m.id_maquina = o.id_maquina
+ ${where}
+ `;
 
-    // 3. Calcula o Tempo Operacional
-    const tempoOperacionalMin = tempoTotalDisponivelMin - tempoTotalParadaMin;
+    const [rows]: any = await db.query(query, params);
 
-    // 4. Calcula a Disponibilidade (%)
+    const indisponivel = rows[0]?.tempoIndisponivel ?? 0;
+
+    // Total de minutos é dinâmico (período fornecido ou Month-to-Date)
+    const totalMinutos = calculateTotalMinutes(dataInicial, dataFinal);
+
+    // Evita divisão por zero ou períodos inválidos
+    if (totalMinutos <= 0) {
+      return res.json({ disponibilidade: 0 });
+    }
+
     const disponibilidade =
-      (tempoOperacionalMin / tempoTotalDisponivelMin) * 100;
+      ((totalMinutos - indisponivel) / totalMinutos) * 100;
 
-    res.json({
-      disponibilidade: Math.max(0, parseFloat(disponibilidade.toFixed(2))), // Formatação
-      tempoOperacional: parseFloat((tempoOperacionalMin / 60).toFixed(2)), // Em Horas, Formatação
-      tempoParada: parseFloat((tempoTotalParadaMin / 60).toFixed(2)), // Em Horas, Formatação
-    });
+    res.json({ disponibilidade: Number(disponibilidade.toFixed(2)) });
   } catch (err) {
-    console.error("Erro ao buscar Disponibilidade geral:", err);
-    res.status(500).json({ error: "Erro ao buscar Disponibilidade geral" });
+    res.status(500).json({ erro: "Erro ao calcular disponibilidade" });
   }
-};
+}
 
-
-// NOVO: O.S. Concluídas Geral
-export const getOsConcluidasGeral = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal } = req.query;
-  let whereCondition = "id_estado = 3"; // Filtra apenas O.S. com status Concluída
-  const queryParams: (string | string)[] = [];
-
-  // Filtra pelo período de conclusão, usando data_termino
-  if (dataInicial && dataFinal) {
-    whereCondition += " AND data_termino BETWEEN ? AND ?";
-    queryParams.push(dataInicial as string, dataFinal as string);
-  }
-
+// -------------------------------
+// OS CONCLUÍDAS GERAL (CORRETO)
+// -------------------------------
+export async function getOsConcluidasGeral(req: Request, res: Response) {
   try {
-    const [stats] = (await db.query(
-      `
-            SELECT 
-                COUNT(*) AS total_concluidas
-            FROM ordem_servico
-            WHERE ${whereCondition}
-            `,
-      queryParams
-    )) as unknown as [{ total_concluidas: number }[], any];
+    const { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
 
-    const { total_concluidas } = stats[0] ?? { total_concluidas: 0 };
+    if (dataInicial) {
+      where += " AND o.data_termino >= ?";
+      params.push(dataInicial);
+    }
+    if (dataFinal) {
+      where += " AND o.data_termino <= ?";
+      params.push(dataFinal);
+    }
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
 
-    res.json({
-      totalOsConcluidas: total_concluidas,
-    });
+    const query = `
+ SELECT COUNT(*) AS totalOsConcluidas
+ FROM ordem_servico o
+ JOIN maquina m ON m.id_maquina = o.id_maquina
+ ${where}
+ `;
+
+    const [rows]: any = await db.query(query, params);
+    res.json({ totalOsConcluidas: rows[0]?.totalOsConcluidas ?? 0 });
   } catch (err) {
-    console.error("Erro ao contar O.S. concluídas:", err);
-    // Retorna 500 para indicar falha na API, que é capturada no frontend.
-    res.status(500).json({ error: "Erro ao buscar O.S. concluídas" });
+    res.status(500).json({ erro: "Erro ao buscar OS concluídas" });
   }
+}
+
+// -------------------------------
+// DASHBOARD POR MÁQUINA
+// -------------------------------
+export const getDashboardMaquina = async (req: Request, res: Response) => {
+  // manter sua versão atual
 };

@@ -6,7 +6,8 @@ import DashboardMTBF from "./DashboardMTBF.jsx";
 const API_URL = "http://localhost:3002/api/relatorios";
 const MTBF_META_HORAS = 200.0; // Meta alta
 
-export default function MtbfResumoCard({ dataInicial, dataFinal }) {
+// 🎯 1. RECEBE idSetor NAS PROPS
+export default function MtbfResumoCard({ dataInicial, dataFinal, idSetor }) {
   const [mtbfGeral, setMtbfGeral] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -20,6 +21,10 @@ export default function MtbfResumoCard({ dataInicial, dataFinal }) {
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
+
+        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA
+        if (idSetor) params.append("idSetor", idSetor);
+
         const query = params.toString() ? `?${params.toString()}` : "";
         const headers = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,8 +43,8 @@ export default function MtbfResumoCard({ dataInicial, dataFinal }) {
         setCarregando(false);
       }
     };
-    buscarMTBF();
-  }, [dataInicial, dataFinal]);
+    buscarMTBF(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+  }, [dataInicial, dataFinal, idSetor]);
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTBF...</div>;
@@ -47,23 +52,23 @@ export default function MtbfResumoCard({ dataInicial, dataFinal }) {
 
   return (
     <div className="kpi-card mtbf">
-      <h4 className="card-titulo">MTBF Geral no Período</h4>
+      <h4 className="card-titulo">MTBF Geral no Período</h4>{" "}
       <div className="kpi-content">
+        {" "}
         <div className="kpi-valor-principal">
+          {" "}
           <span
             className="valor-indicador"
             style={{ color: getMtbfColor(mtbfGeral, MTBF_META_HORAS) }} // Use a cor condicional
           >
-            {formatHoras(mtbfGeral)}
-          </span>
-          <p className="card-meta">Meta: {formatHoras(MTBF_META_HORAS)}</p>
-        </div>
+            {formatHoras(mtbfGeral)}{" "}
+          </span>{" "}
+          <p className="card-meta">Meta: {formatHoras(MTBF_META_HORAS)}</p>{" "}
+        </div>{" "}
         <div className="kpi-grafico-rosca">
-          <DashboardMTBF mtbfValue={mtbfGeral} />
-        </div>
-      </div>
+          <DashboardMTBF mtbfValue={mtbfGeral} />{" "}
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 }
-
-// Observação: Você deve mover formatHoras e getMtbfColor para um arquivo utils.

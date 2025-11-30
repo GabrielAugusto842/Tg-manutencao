@@ -1,4 +1,4 @@
-// src/componentes/Relatorios/DisponibilidadeResumoCard.jsx
+// src/componentes/Relatorios/DisponibilidadeResumoCard.jsx (AJUSTADO PARA idSetor)
 
 import React, { useState, useEffect } from "react";
 import { formatPercentual } from "../../Services/formatters";
@@ -6,13 +6,18 @@ import "./DashboardGeral.css"; // Estilos compartilhados
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function DisponibilidadeResumoCard({ dataInicial, dataFinal }) {
+// 🎯 1. RECEBE idSetor NAS PROPS
+export default function DisponibilidadeResumoCard({
+  dataInicial,
+  dataFinal,
+  idSetor,
+}) {
   const [disponibilidade, setDisponibilidade] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    // Função de retry com backoff exponencial
+    // Função de retry com backoff exponencial (mantida inalterada)
     const fetchWithRetry = async (url, options, retries = 3) => {
       for (let i = 0; i < retries; i++) {
         try {
@@ -39,6 +44,10 @@ export default function DisponibilidadeResumoCard({ dataInicial, dataFinal }) {
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
+
+        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA
+        if (idSetor) params.append("idSetor", idSetor);
+
         const query = params.toString() ? `?${params.toString()}` : "";
         const headers = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -61,8 +70,8 @@ export default function DisponibilidadeResumoCard({ dataInicial, dataFinal }) {
         setCarregando(false);
       }
     };
-    buscarDisponibilidade();
-  }, [dataInicial, dataFinal]);
+    buscarDisponibilidade(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+  }, [dataInicial, dataFinal, idSetor]);
 
   if (carregando)
     return (
@@ -74,20 +83,17 @@ export default function DisponibilidadeResumoCard({ dataInicial, dataFinal }) {
 
   return (
     <div className="kpi-card disponibilidade">
-       <h4 className="card-titulo">Disponibilidade Geral (%)</h4>{" "}
+      <h4 className="card-titulo">Disponibilidade Geral (%)</h4>{" "}
       <div className="kpi-content centralizado">
-    {" "}
-        <div className="kpi-valor-principal">
-         {" "}
-          <span className="valor-indicador" style={{ color: corPrincipal }}>
-             {formatPercentual(disponibilidade)}{" "}
-          </span>
-           <p className="card-meta">Tempo Operacional / Tempo Total</p>
-          {" "}
-        </div>
         {" "}
-      </div>
-      {" "}
+        <div className="kpi-valor-principal">
+          {" "}
+          <span className="valor-indicador" style={{ color: corPrincipal }}>
+            {formatPercentual(disponibilidade)}{" "}
+          </span>
+          <p className="card-meta">Tempo Operacional / Tempo Total</p>{" "}
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 }

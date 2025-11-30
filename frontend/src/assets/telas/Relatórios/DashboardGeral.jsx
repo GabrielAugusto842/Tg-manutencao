@@ -1,4 +1,4 @@
-// src/componentes/Relatorios/DashboardGeral.jsx
+// src/componentes/Relatorios/DashboardGeral.jsx (AJUSTADO)
 
 import React from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
@@ -7,26 +7,38 @@ import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
 import DisponibilidadeResumoCard from "./DisponibilidadeResumoCard.jsx";
 import "./DashboardGeral.css";
 
-export default function DashboardGeral({ dataInicial, dataFinal }) {
+// 🎯 1. RECEBE idSetor NAS PROPS
+export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
   return (
     <div className="w-full px-4 py-6">
+      {" "}
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        📊 Relatório Geral de Indicadores
+        📊 Relatório Geral de Indicadores{" "}
       </h2>
-
-      {/* GRID responsivo moderno */}
+      {/* GRID responsivo moderno */}{" "}
       <div className="dashboard-kpi-grid">
-        <MttrResumoCard dataInicial={dataInicial} dataFinal={dataFinal} />
-        <MtbfResumoCard dataInicial={dataInicial} dataFinal={dataFinal} />
+        {/* 🎯 2. PASSA idSetor PARA TODOS OS CARDS */}{" "}
+        <MttrResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />{" "}
+        <MtbfResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />{" "}
         <DisponibilidadeResumoCard
           dataInicial={dataInicial}
           dataFinal={dataFinal}
-        />
+          idSetor={idSetor}
+        />{" "}
         <OsConcluidasResumoCard
           dataInicial={dataInicial}
           dataFinal={dataFinal}
-        />
-      </div>
+          idSetor={idSetor}
+        />{" "}
+      </div>{" "}
     </div>
   );
 }

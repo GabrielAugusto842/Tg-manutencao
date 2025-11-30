@@ -1,11 +1,16 @@
-// OsConcluidasResumoCard.jsx
+// OsConcluidasResumoCard.jsx (AJUSTADO PARA idSetor)
 
 import React, { useState, useEffect } from "react";
 import "./DashboardGeral.css"; // Estilos compartilhados
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function OsConcluidasResumoCard({ dataInicial, dataFinal }) {
+// 🎯 1. RECEBE idSetor NAS PROPS
+export default function OsConcluidasResumoCard({
+  dataInicial,
+  dataFinal,
+  idSetor,
+}) {
   const [totalConcluidas, setTotalConcluidas] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -18,12 +23,15 @@ export default function OsConcluidasResumoCard({ dataInicial, dataFinal }) {
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
+
+        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA
+        if (idSetor) params.append("idSetor", idSetor);
+
         const query = params.toString() ? `?${params.toString()}` : "";
         const headers = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
+        }; // Chamando o endpoint: /os-concluidas-geral
 
-        // Chamando o endpoint: /os-concluidas-geral
         const resposta = await fetch(`${API_URL}/os-concluidas-geral${query}`, {
           headers,
         });
@@ -39,8 +47,8 @@ export default function OsConcluidasResumoCard({ dataInicial, dataFinal }) {
         setCarregando(false);
       }
     };
-    buscarTotalOs();
-  }, [dataInicial, dataFinal]);
+    buscarTotalOs(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+  }, [dataInicial, dataFinal, idSetor]);
 
   if (carregando)
     return (
@@ -50,18 +58,20 @@ export default function OsConcluidasResumoCard({ dataInicial, dataFinal }) {
 
   return (
     <div className="kpi-card os-concluidas">
-      <h4 className="card-titulo">O.S. Concluídas no Período</h4>
+      <h4 className="card-titulo">O.S. Concluídas no Período</h4>{" "}
       <div className="kpi-content centralizado">
+        {" "}
         <div className="kpi-valor-principal">
+          {" "}
           <span
             className="valor-indicador"
             style={{ color: "#4e73df" }} // Azul padrão
           >
-            {totalConcluidas.toLocaleString("pt-BR")}
+            {totalConcluidas.toLocaleString("pt-BR")}{" "}
           </span>
-          <p className="card-meta">Ordens Concluídas</p>
-        </div>
-      </div>
+          <p className="card-meta">Ordens Concluídas</p>{" "}
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 }
