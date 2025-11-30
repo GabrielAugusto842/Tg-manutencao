@@ -1,14 +1,16 @@
 .navbar {
   height: 80px;
- background-image: 
-    linear-gradient(rgba(83, 82, 82, 0.2), rgba(80, 163, 236, 0.804)),
-    url('../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg');
+  background-image: linear-gradient(
+      rgba(83, 82, 82, 0.2),
+      rgba(80, 163, 236, 0.804)
+    ),
+    url("../../wallpaper-azul-papel-de-parede-azul-fundo-4.jpg");
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 40px;
   border-bottom: 1px solid #ccc;
-  box-shadow: var(--shadow-navbar); 
+  box-shadow: var(--shadow-navbar);
   flex-shrink: 0; /* Garante que a navbar não encolha */
 }
 
@@ -24,15 +26,6 @@
   gap: 8px;
 }
 
-.menu-option.botao-sair {
-  color: #ff1900;
-  font-size: 18px;
-  
-}
-.menu-option.botao-sair:hover {
-  background-color: #fa9292; 
-}
-
 .profile-wrapper {
   position: relative;
   cursor: pointer;
@@ -41,14 +34,6 @@
 .profile-icon-group {
   display: flex;
   align-items: center;
-}
-
-.dropdown-arrow-icon {
-  font-size: 18px;
-  color: #ffffff;
-  margin-right: 0px;
-  z-index: 10;
-  transition: transform 0.2s;
 }
 
 .profile-icon {
@@ -64,33 +49,30 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   min-width: 250px;
-  box-shadow: 0 4px 12px rgbd(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.1);
   z-index: 100;
 }
 
-.profile-menu::before {
-  content: "";
-  position: absolute;
-  top: -11px; /* Ajuste para posicionar o triângulo acima da borda */
-  right: 10px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 11px solid #d4d4d4; /* Cor da borda do triângulo */
-}
-
-/* Triângulo interno (para preenchimento) */
+.profile-menu::before,
 .profile-menu::after {
   content: "";
   position: absolute;
-  top: -10px;
-  right: 10px;
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid #fff; /* Cor de preenchimento do triângulo */
+}
+
+.profile-menu::before {
+  top: -11px;
+  right: 10px;
+  border-bottom: 11px solid #d4d4d4;
+}
+
+.profile-menu::after {
+  top: -10px;
+  right: 10px;
+  border-bottom: 10px solid #fff;
   z-index: 101;
 }
 
@@ -115,7 +97,7 @@
 .user-name {
   font-size: 16px;
   font-weight: bold;
-  color: #007bff; /* Cor azul para o nome */
+  color: #007bff;
   margin-bottom: 2px;
 }
 
@@ -148,11 +130,52 @@
   background-color: #89c0f8;
 }
 
-.menu-option.selected {
-  background-color: #e0e0e0; /* Fundo cinza suave */
+/* Estilo do botão Trocar Senha */
+.menu-option.trocar-senha {
+  background-color: #5590cf;
+  color: #fff;
+  font-size: 18px;
+  padding: 12px 18px;
+  border-radius: 5px;
+  margin: 5px 0;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.menu-option.selected:hover {
-  background-color: #d0d0d0; /* Fundo cinza mais escuro no hover */
+.menu-option.trocar-senha:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
+.menu-option.trocar-senha.selected {
+  background-color: #004085;
+}
+
+.menu-option.trocar-senha:focus {
+  outline: 2px solid #004085;
+}
+
+/* Estilo do botão Sair */
+.menu-option.botao-sair {
+  background-color: #f8d7da;
+  color: #721c24;
+  font-size: 18px;
+  padding: 14px 18px;
+  border-radius: 5px;
+  margin: 5px 0;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.menu-option.botao-sair:hover {
+  background-color: #ca1e2f;
+  transform: scale(1.05);
+}
+
+.menu-option.botao-sair.selected {
+  background-color: #e02b3a;
+}
+
+.menu-option.botao-sair:focus {
+  outline: 2px solid #e2a1a6;
+}
