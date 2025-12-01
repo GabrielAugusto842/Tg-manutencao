@@ -1,14 +1,20 @@
 import express from "express";
 import {
-  getMTTRGeral,
-  getMTTRPorMaquina,
-  getMTBFGeral,
-  getDisponibilidadeGeral,
-  getOsConcluidasGeral,
-  getCustoTotalGeral,
+  getMTTRGeral,
+  getMTTRPorMaquina,
+  getMTBFGeral,
+  getDisponibilidadeGeral,
+  getOsConcluidasGeral,
+  getCustoTotalGeral,
+  getMTTAGeral,
+  getBacklogOsGeral, // Importação da nova função
+  getBacklogOsDetalhado // Importação da nova função
 } from "../controllers/relatorioController";
 
 const router = express.Router();
+
+
+router.get("/mtti-geral", getMTTAGeral);
 
 // --- MTTR ---
 router.get("/mttr-geral", getMTTRGeral);
@@ -27,5 +33,9 @@ router.get("/os-concluidas-geral", getOsConcluidasGeral);
 router.get("/custo-total-geral", getCustoTotalGeral);
 
 // --- BACKLOG ---
+router.get("/backlog-os-geral", getBacklogOsGeral); // Novo endpoint
+router.get("/backlog-os-detalhado", getBacklogOsDetalhado); // Novo endpoint
+
+
 
 export default router;
