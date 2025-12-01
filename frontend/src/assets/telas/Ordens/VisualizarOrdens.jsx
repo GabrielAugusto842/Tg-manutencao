@@ -227,8 +227,14 @@ function VisualizarOrdensContent({ user }) {
         </div>
       </div>
 
-      <div className="tabela-wrapper no-print">
-        <button onClick={() => window.print()}>📄📥 Exportar para PDF</button>
+      <div className="botao-pdf-wrapper no-print">
+        {" "}
+        <button
+          onClick={() => window.print()}
+          className="botao-pdf-ordens" /* Classe para o estilo ultra-compacto */
+        >
+          📥 EXPORTAR PDF{" "}
+        </button>{" "}
       </div>
 
       {erro && <div className="alerta-erro">{erro}</div>}

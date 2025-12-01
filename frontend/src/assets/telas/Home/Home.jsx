@@ -54,8 +54,8 @@ function Home() {
           usuario.cargo === "Administrador" ||
           usuario.cargo === "Gerente de Manutenção"
         ) {
-          const resUsuarios = await api.get("/usuarios");
-          const resMaquinas = await api.get("/maquinas");
+          const resUsuarios = await api.get("/user");
+          const resMaquinas = await api.get("/maquina");
           const resSetores = await api.get("/setores");
 
           setQuantidades({

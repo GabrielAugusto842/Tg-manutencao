@@ -446,3 +446,46 @@ body,
     overflow: visible !important;
   }
 }
+
+.botao-pdf-ordens {
+  /* Posição para o Canto Superior Direito */
+ 
+  top: 200px !important; /* Move para cima */
+  right: 80px !important; /* Move para a direita */
+  z-index: 10 !important;
+  /* Aparência Ultra Compacta */
+  background-color: #f3f4f6 !important;
+  color: #4b5563 !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important; /* Fonte MÍNIMA */
+  padding: 3px 6px !important; /* Espaçamento MÍNIMO */
+  border-radius: 3px !important; /* Bordas MÍNIMAS */
+  border: 1px solid #d1d5db !important;
+
+  /* Garante que ele não ocupe espaço desnecessário */
+  height: auto !important;
+  width: auto !important;
+
+  /* Outras propriedades */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.botao-pdf-ordens:hover {
+  background-color: #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.botao-pdf-ordens:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
+.botao-pdf-ordens span {
+  font-size: 0.7rem !important;
+}
