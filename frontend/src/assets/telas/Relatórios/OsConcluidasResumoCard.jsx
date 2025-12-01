@@ -58,20 +58,17 @@ export default function OsConcluidasResumoCard({
 
   return (
     <div className="kpi-card os-concluidas">
-      <h4 className="card-titulo">O.S. Concluídas no Período</h4>{" "}
+      <h4 className="card-titulo">O.S. Concluídas no Período</h4>
+
       <div className="kpi-content centralizado">
-        {" "}
         <div className="kpi-valor-principal">
-          {" "}
-          <span
-            className="valor-indicador"
-            style={{ color: "#4e73df" }} // Azul padrão
-          >
-            {totalConcluidas.toLocaleString("pt-BR")}{" "}
+          <span className="valor-indicador">
+            {totalConcluidas.toLocaleString("pt-BR")}
           </span>
-          <p className="card-meta">Ordens Concluídas</p>{" "}
-        </div>{" "}
-      </div>{" "}
+
+          <p className="card-meta">Ordens Concluídas</p>
+        </div>
+      </div>
     </div>
   );
 }

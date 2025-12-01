@@ -292,6 +292,49 @@ export async function getOsConcluidasGeral(req: Request, res: Response) {
   }
 }
 
+// -------------------------------------------
+// CUSTO TOTAL DE MANUTENÇÃO (NOVO RELATÓRIO)
+// -------------------------------------------
+
+export async function getCustoTotalGeral(req: Request, res: Response) {
+  try {
+    const { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
+
+    // Somar todos os custos das O.S. concluídas
+    let where = `WHERE o.data_termino IS NOT NULL AND o.custo IS NOT NULL`;
+
+    if (dataInicial) {
+      where += " AND o.data_termino >= ?";
+      params.push(dataInicial);
+    }
+    if (dataFinal) {
+      where += " AND o.data_termino <= ?";
+      params.push(dataFinal);
+    }
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+      SELECT IFNULL(SUM(o.custo), 0) AS custoTotal
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    res.json({
+      custoTotal: rows[0]?.custoTotal ?? 0,
+    });
+  } catch (err) {
+    console.error("Erro ao calcular Custo Total:", err);
+    res.status(500).json({ erro: "Erro ao calcular Custo Total" });
+  }
+}
+
 // -------------------------------
 // DASHBOARD POR MÁQUINA
 // -------------------------------

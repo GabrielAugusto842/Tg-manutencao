@@ -1,10 +1,13 @@
-// src/componentes/Relatorios/DashboardGeral.jsx
-
 import React from "react";
+// ... (outros imports)
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
 import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
 import DisponibilidadeResumoCard from "./DisponibilidadeResumoCard.jsx";
+// 🚨 NOVO IMPORT
+import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
+// 🚀 NOVO IMPORT DO BACKLOG
+
 import "./DashboardGeral.css";
 
 export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
@@ -15,7 +18,10 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           📊 Relatório Geral de Indicadores
         </h2>
 
-        <button onClick={() => window.print()} className="no-print botao-pdf-compacto">
+        <button
+          onClick={() => window.print()}
+          className="no-print botao-pdf-compacto"
+        >
           📄📥 Exportar PDF
         </button>
       </div>
@@ -42,6 +48,13 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           dataFinal={dataFinal}
           idSetor={idSetor}
         />
+
+        {/* 🚨 NOVO CARD DE CUSTO */}
+        <CustoTotalResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />  
       </div>
     </div>
   );

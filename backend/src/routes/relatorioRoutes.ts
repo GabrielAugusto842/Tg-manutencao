@@ -5,7 +5,7 @@ import {
   getMTBFGeral,
   getDisponibilidadeGeral,
   getOsConcluidasGeral,
-  // 🔹 lembrando de importar
+  getCustoTotalGeral,
 } from "../controllers/relatorioController";
 
 const router = express.Router();
@@ -22,5 +22,10 @@ router.get("/disponibilidade-geral", getDisponibilidadeGeral);
 
 // --- OS CONCLUÍDAS ---
 router.get("/os-concluidas-geral", getOsConcluidasGeral);
+
+// --- CUSTO ---
+router.get("/custo-total-geral", getCustoTotalGeral);
+
+// --- BACKLOG ---
 
 export default router;

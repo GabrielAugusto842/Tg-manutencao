@@ -109,14 +109,47 @@
    ======================================= */
 
 /* Estilo para O.S. Concluídas (Big Number) */
+/* ===========================
+   CARD — O.S. CONCLUÍDAS
+=========================== */
+.kpi-card.os-concluidas {
+  border-left: 4px solid rgba(59, 130, 246, 0.6); /* Azul */
+}
+
 .kpi-card.os-concluidas .valor-indicador {
   font-size: 3rem;
-  color: #3b82f6; /* Azul institucional */
-  margin-top: 15px;
+  font-weight: 800;
+  color: #3b82f6; /* Azul forte */
+  text-shadow: none;
 }
 
 .kpi-card.os-concluidas .kpi-valor-principal {
-  margin-top: 20px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* ===========================
+   CARD — CUSTO TOTAL
+=========================== */
+.kpi-card.custo-total {
+  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja */
+}
+
+.kpi-card.custo-total .valor-indicador {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-shadow: none;
+}
+
+.kpi-card.custo-total .kpi-valor-principal {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.kpi-card.custo-total .card-meta {
+  margin-top: 4px;
+  color: #000;
 }
 
 /* Cores de Destaque Lateral (Sugestão de Cores Melhores) */
@@ -215,7 +248,7 @@
 .kpi-progress-text {
   font-size: 0.85rem;
   color: #4b5563;
-  margin-top: 4px;
+  margin-top: 20px;
   text-align: right;
   font-weight: 600;
 }
@@ -229,15 +262,15 @@
    ======================================= */
 .botao-pdf-compacto {
   /* Posição para o Canto Superior Direito */
-  position: absolute !important;
+  /* Mudança para 'fixed' */
   top: 250px !important; /* Move para cima */
-  right: 80px !important; /* Move para a direita */
+  right: 100px !important; /* Move para a direita */
   z-index: 10 !important;
   /* Aparência Ultra Compacta */
   background-color: #f3f4f6 !important;
   color: #4b5563 !important;
   font-weight: 600 !important;
-  font-size: 1rem !important; /* Fonte MÍNIMA */
+  font-size: 0.8rem !important; /* Fonte MÍNIMA */
   padding: 3px 6px !important; /* Espaçamento MÍNIMO */
   border-radius: 3px !important; /* Bordas MÍNIMAS */
   border: 1px solid #d1d5db !important;
