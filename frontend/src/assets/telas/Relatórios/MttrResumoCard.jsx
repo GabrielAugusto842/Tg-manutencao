@@ -1,24 +1,30 @@
-// src/componentes/Relatorios/MttrResumoCard.jsx (AJUSTADO PARA idSetor)
+// src/componentes/Relatorios/MttrResumoCard.jsx
 
 import React, { useState, useEffect } from "react";
-import {
-  formatHoras,
-  getMttrColor,
-  MTTR_META_HORAS,
-} from "../../Services/formatters";
+import { formatHoras, getMttrColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
 import DashboardMTTR from "./DashboardMTTR.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-// 🎯 1. RECEBE idSetor NAS PROPS
-export default function MttrResumoCard({ dataInicial, dataFinal, idSetor }) {
+export default function MttrResumoCard({
+  dataInicial,
+  dataFinal,
+  idSetor,
+  metaHoras,
+  setMetaHoras,
+  metaMinutos,
+  setMetaMinutos,
+  metaMTTR, // Valor da meta em horas decimais
+}) {
   const [mttrGeral, setMttrGeral] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
+  // Usa a meta recebida por prop
+  const meta = metaMTTR || 4;
+
   useEffect(() => {
-    // Função de retry com backoff exponencial (mantida inalterada)
     const fetchWithRetry = async (url, options, retries = 3) => {
       for (let i = 0; i < retries; i++) {
         try {
@@ -45,8 +51,6 @@ export default function MttrResumoCard({ dataInicial, dataFinal, idSetor }) {
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
-
-        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA (QUERY STRING)
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
@@ -56,9 +60,7 @@ export default function MttrResumoCard({ dataInicial, dataFinal, idSetor }) {
 
         const respostaGeral = await fetchWithRetry(
           `${API_URL}/mttr-geral${query}`,
-          {
-            headers,
-          }
+          { headers }
         );
 
         if (!respostaGeral.ok) throw new Error("Erro ao buscar MTTR geral");
@@ -71,39 +73,61 @@ export default function MttrResumoCard({ dataInicial, dataFinal, idSetor }) {
         setCarregando(false);
       }
     };
-    buscarMTTR(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+    buscarMTTR();
   }, [dataInicial, dataFinal, idSetor]);
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTTR...</div>;
-  if (erro) return <div className="kpi-card error">Erro: {erro}</div>; // ... (Abaixo, o JSX do componente permanece inalterado) ...
+  if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
     <div className="kpi-card mttr">
-           <h4 className="card-titulo">MTTR Geral no Período</h4>   {" "}
+      <h4 className="card-titulo">MTTR Geral no Período</h4>
+
       <div className="kpi-content">
-                     {/* 👈 Container Flex principal */} {" "}
         <div className="kpi-valor-principal kpi-valor-grande">
-                           {/* 👈 NOVA CLASSE para dar mais peso visual */}
-                {" "}
           <span
             className="valor-indicador"
-            style={{ color: getMttrColor(mttrGeral, MTTR_META_HORAS) }}
+            style={{ color: getMttrColor(mttrGeral, meta) }}
           >
-                     {formatHoras(mttrGeral)}   {" "}
-          </span>{" "}
-                    {" "}
-          <p className="card-meta">Meta: {formatHoras(MTTR_META_HORAS)}</p> 
-              {" "}
-        </div>{" "}
-                 {/* Ocupa a coluna direita com o gráfico */}      {" "}
+            {formatHoras(mttrGeral)}
+          </span>
+          <p className="card-meta">Meta (Abaixo de): {formatHoras(meta)}</p>
+        </div>
+
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-                       {/* 👈 NOVA CLASSE para MTTR/MTBF */}
-             <DashboardMTTR mttrValue={mttrGeral} />   {" "}
-        </div>{" "}
-          {" "}
-      </div>{" "}
-        {" "}
+          {/* Passa o valor atual da meta (metaMTTR) para o gráfico/barra */}
+          <DashboardMTTR mttrValue={mttrGeral} valorMeta={meta} />
+        </div>
+      </div>
+
+      {/* BLOCO DA META NO FINAL DO CARD */}
+      <div className="mttr-meta-container-inline no-print">
+        <label className="font-semibold mr-2">Definir Meta:</label>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaHoras}
+            onChange={(e) => setMetaHoras(Math.max(0, Number(e.target.value)))}
+            min={0}
+          />
+          <span>h</span>
+        </div>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaMinutos}
+            onChange={(e) =>
+              setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))
+            }
+            min={0}
+            max={59}
+          />
+          <span>min</span>
+        </div>
+      </div>
     </div>
   );
 }

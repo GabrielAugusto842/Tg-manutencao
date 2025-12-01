@@ -1,4 +1,6 @@
-import React from "react";
+// src/componentes/Relatorios/DashboardGeral.jsx
+
+import React, { useState } from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
 import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
@@ -11,7 +13,14 @@ import { useBacklog } from "./backlog";
 import BacklogIntegradoCard from "./BacklogIntegrado.jsx";
 
 export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
-  // Chamada do hook
+  // Estado para a Meta MTTR
+  const [metaHoras, setMetaHoras] = useState(4);
+  const [metaMinutos, setMetaMinutos] = useState(0);
+
+  // Calcula o valor da meta em horas decimais
+  const metaMTTR = metaHoras + metaMinutos / 60;
+
+  // Chamada do hook (assumido)
   const { backlog, loading, error } = useBacklog(idSetor);
 
   return (
@@ -30,19 +39,48 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
       </div>
 
       <div className="dashboard-kpi-grid pula-linha-export">
-        <MttrResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
-        <MtbfResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
-        <DisponibilidadeResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
-        <OsConcluidasResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
-        <CustoTotalResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
-        <MttaResumoCard dataInicial={dataInicial} dataFinal={dataFinal} idSetor={idSetor} />
+        <MttrResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+          // Passando os props da meta para edição
+          metaHoras={metaHoras}
+          setMetaHoras={setMetaHoras}
+          metaMinutos={metaMinutos}
+          setMetaMinutos={setMetaMinutos}
+          metaMTTR={metaMTTR}
+        />
+        <MtbfResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />
+        <DisponibilidadeResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />
+        <OsConcluidasResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />
+        <CustoTotalResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />
+        <MttaResumoCard
+          dataInicial={dataInicial}
+          dataFinal={dataFinal}
+          idSetor={idSetor}
+        />
 
-        {/* 🚀 Backlog Integrado */}
         <BacklogIntegradoCard
           backlog={backlog}
           loading={loading}
           error={error}
-          chartComponent={null} // ou componente de gráfico se tiver
+          chartComponent={null}
         />
       </div>
     </div>

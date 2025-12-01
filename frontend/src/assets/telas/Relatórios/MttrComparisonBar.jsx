@@ -1,9 +1,10 @@
 // src/componentes/Relatorios/MttrComparisonBar.jsx
+
 import React from "react";
 import { formatHoras, getMttrColor } from "../../Services/formatters";
 
-// Valor máximo da escala fixa (pode ser ajustado conforme necessidade)
-const MAX_LIMIT = 24; // 24 horas como exemplo, você pode colocar outro valor
+// Valor máximo da escala fixa 
+const MAX_LIMIT = 24; 
 
 export default function MttrComparisonBar({ valorAtual, valorMeta }) {
   // Calcula largura percentual das barras em relação ao limite fixo
@@ -11,20 +12,23 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
   const larguraMeta = Math.min((valorMeta / MAX_LIMIT) * 100, 100);
 
   // Define cores
-  const corAtual = getMttrColor(valorAtual, valorMeta); // Vermelho se estiver fora da meta
+  const corAtual = getMttrColor(valorAtual, valorMeta); 
   const corMeta = "#0ebc0eff"; // Verde fixo para meta
 
   return (
-    <div style={{ marginTop: "15px", padding: "0 5px" }}>
+    <div style={{ 
+        marginTop: "25px", /* Empurra o bloco das barras para baixo */
+        padding: "0 5px" 
+    }}>
       {/* Barra do valor atual */}
       <div
         style={{
-          fontSize: "0.9rem",
-          fontWeight: "600",
+          fontSize: "1rem", /* AUMENTADO: Tamanho da fonte */
+          fontWeight: "700", /* AUMENTADO: Espessura da fonte */
           color: corAtual,
           display: "flex",
           justifyContent: "space-between",
-          marginBottom: "4px",
+          marginBottom: "6px", /* Espaço abaixo do texto */
         }}
       >
         <span>MTTR Atual:</span>
@@ -35,8 +39,8 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "12px",
-          marginBottom: "10px",
+          height: "16px", /* AUMENTADO: Grossura da barra */
+          marginBottom: "14px", /* Espaço abaixo da barra */
           width: "100%",
           overflow: "hidden",
         }}
@@ -54,12 +58,12 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
       {/* Barra da meta */}
       <div
         style={{
-          fontSize: "0.8rem",
-          fontWeight: "600",
+          fontSize: "1rem", /* AUMENTADO: Tamanho da fonte */
+          fontWeight: "700", /* AUMENTADO: Espessura da fonte */
           color: corMeta,
           display: "flex",
           justifyContent: "space-between",
-          marginBottom: "4px",
+          marginBottom: "6px",
         }}
       >
         <span>MTTR Meta:</span>
@@ -70,7 +74,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "12px",
+          height: "16px", /* AUMENTADO: Grossura da barra */
           width: "100%",
           overflow: "hidden",
         }}
@@ -90,7 +94,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
           fontSize: "0.75rem",
           color: "#6b7280",
           textAlign: "center",
-          marginTop: "8px",
+          marginTop: "12px", /* Espaçamento abaixo da barra */
         }}
       >
         Escala máxima: {formatHoras(MAX_LIMIT)}
