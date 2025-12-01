@@ -94,10 +94,61 @@ function VisualizarEquipamentosContent() {
     }
   };
 
+    // ------------------ //
+    // -- EXPORTAR CSV -- //
+    // ------------------ //
+    
+  const exportarCSV = () => {
+    // Pega os dados já filtrados, os mesmos da tabela
+    const filtrados = equipamentos.filter((m) => {
+      return (
+        m.nome.toLowerCase().includes(filtroNome.toLowerCase()) &&
+        m.numeroSerie.toLowerCase().includes(filtroSerie.toLowerCase()) &&
+        (filtroSetor ? m.setor === filtroSetor : true)
+      );
+    });
+    // Cabeçalho
+    const header = [
+      "nome",
+      "marca",
+      "modelo",
+      "numero_serie",
+      "tag",
+      "producao_hora",
+      "dispon_mensal",
+      "setor"
+    ];
+    // Linhas
+    const linhas = filtrados.map((m) => [
+      m.nome,
+      m.marca,
+      m.modelo,
+      m.numeroSerie,
+      m.tag,
+      m.producaoHora ?? "---",
+      m.disponibilidadeMes,
+      m.setor
+    ]);
+    // Monta o CSV
+    const csv = [
+      header.join(","),
+      ...linhas.map((l) => l.join(","))
+    ].join("\n");
+    // Baixa o arquivo
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "relatorio_equipamentos.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (carregando) return <p>Carregando máquinas...</p>;
 
   return (
     <div className="visualizar-equipamentos-page" id="print-area">
+        
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
@@ -107,44 +158,55 @@ function VisualizarEquipamentosContent() {
       {/* ===================== */}
       {/* 🔍 ÁREA DE FILTROS   */}
       {/* ===================== */}
-      <div className="filtros-container no-print">
-        <input
-          type="text"
-          placeholder="Buscar por nome..."
-          className="filtro-input"
-          value={filtroNome}
-          onChange={(e) => setFiltroNome(e.target.value)}
-        />
 
-        <input
-          type="text"
-          placeholder="Buscar por Nº de Série..."
-          className="filtro-input"
-          value={filtroSerie}
-          onChange={(e) => setFiltroSerie(e.target.value)}
-        />
+      <div className="opcoes-header">
+        <div className="filtros-container no-print">
+          <input
+            type="text"
+            placeholder="Buscar por nome..."
+            className="filtro-input"
+            value={filtroNome}
+            onChange={(e) => setFiltroNome(e.target.value)}
+          />
 
-        <select
-          className="filtro-select"
-          value={filtroSetor}
-          onChange={(e) => setFiltroSetor(e.target.value)}
-        >
+          <input
+            type="text"
+            placeholder="Buscar por Nº de Série..."
+            className="filtro-input"
+            value={filtroSerie}
+            onChange={(e) => setFiltroSerie(e.target.value)}
+          />
+
+          <select
+            className="filtro-select"
+            value={filtroSetor}
+            onChange={(e) => setFiltroSetor(e.target.value)}
+          >
           <option value="">Setor (Todos)</option>
           {opcoesSetor.map((setor) => (
             <option key={setor.id} value={setor.nome}>
               {setor.nome}
             </option>
-          ))}
-        </select>
+            ))}
+          </select>
+        </div>
+
+        {/*-----------------------------------
+         BOTÕES DE EXPORTAÇÃO (PDF + CSV) 
+        -----------------------------------*/}
+        <div className="export-group no-print" onClick={exportarCSV}>
+          <button className="botao-csv">
+            🗒️ EXPORTAR CSV
+          </button>
+          
+          <button onClick={() => window.print()} className="botao-pdf">
+            📥 EXPORTAR PDF
+          </button>
+        </div>
       </div>
 
-      <div className="botao-pdf-wrapper no-print">
-        {" "}
-        <button onClick={() => window.print()} className="botao-pdf">
-           📥 EXPORTAR PDF {" "}
-        </button>
-        {" "}
-      </div>
+      
+      
 
       {/* ===================== */}
       {/* 📋 TABELA            */}
