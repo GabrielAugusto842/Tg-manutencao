@@ -8,7 +8,7 @@
   margin-bottom: 35px; /* Espaço abaixo da grade */
 
   /* Fundo simples, sem efeito de desfoque */
-  background: rgba(255, 255, 255, 0.15); /* Fundo translúcido, sem desfoque */
+  background: rgba(255, 255, 255, 0.2); /* Fundo translúcido, sem desfoque */
   border-radius: 12px; /* Bordas arredondadas */
   padding: 15px; /* Espaço interno */
   backdrop-filter: none; /* Removido efeito de desfoque */
@@ -45,10 +45,10 @@
    3. TIPOGRAFIA GERAL DO CARD (SEM EFEITOS NAS LETRAS)
    ======================================= */
 .card-titulo {
-  font-size: 0.85rem;
-  color: #0f0f0f; /* Cor de texto para contraste */
+  font-size: 0.9rem;
+  color: #000000; /* Cor de texto para contraste */
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: none; /* Removido o "uppercase" */
   letter-spacing: normal; /* Sem espaçamento extra entre as letras */
   text-shadow: none; /* Removido qualquer sombra no texto */
@@ -64,9 +64,10 @@
 }
 
 .card-meta {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #000000; /* Cinza claro */
   margin-top: 6px;
+  font-weight: 600;
   text-shadow: none; /* Removido qualquer sombra no texto */
 }
 
@@ -246,10 +247,9 @@
 }
 
 .kpi-progress-text {
-  font-size: 0.85rem;
-  color: #4b5563;
-  margin-top: 20px;
-  text-align: right;
+  font-size: 0.9rem;
+  color: #000000;
+  margin-top: 30px;
   font-weight: 600;
 }
 

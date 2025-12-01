@@ -4,6 +4,7 @@
   padding: 22px;
   width: 100%;
   display: flex;
+  font-weight: 600;
   flex-direction: column;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   grid-column: span 2;
@@ -58,10 +59,10 @@
 }
 
 /* Status */
-.status.aberta { background:#DBEAFE; color:#0044ff; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
-.status.andamento { background:#DBEAFE; color:#ff9900; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
-.status.finalizado { background:#DCFCE7; color:#047857; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
-.status.aguardando-pecas { background:#F3E8FF; color:#6B21A8; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.aberta {font-weight: 700; background:#DBEAFE; color:#0044ff; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.andamento { font-weight: 700; background:#DBEAFE; color:#ff9900; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.finalizado {font-weight: 700; background:#DCFCE7; color:#047857; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.aguardando-pecas {font-weight: 700; background:#F3E8FF; color:#6B21A8; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
 .status.aguardando-aprovacao { background:#FEF3C7; color:#B45309; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
 .status.desconhecido { background:#E5E7EB; color:#374151; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
 
