@@ -22,7 +22,7 @@
 .edicao-usuario-titulo {
   font-size: 22px;
   font-weight: 700;
-  color: #222831;
+  color: #000000;
   margin-bottom: 10px;
 }
 
@@ -45,7 +45,7 @@
 .edicao-usuario-form label {
   font-size: 14px;
   font-weight: 600;
-  color: #414852;
+  color: #000000;
 }
 
 /* Inputs */
