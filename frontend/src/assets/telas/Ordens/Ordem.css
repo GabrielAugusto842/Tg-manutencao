@@ -207,39 +207,3 @@
   }
 }
 
-/* ============================
-   REMOVER EFEITOS NOS TEXTOS
-   ============================ */
-.ordem-secao,
-.ordem-secao:nth-child(odd),
-.ordem-secao:nth-child(even),
-.descricao-bloco,
-.ordem-item,
-.label,
-.valor,
-.ordem-secao h3 {
-  /* Remove transform e hover que afetam texto */
-  transition: none !important;
-}
-
-.ordem-secao:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.descricao-bloco {
-  box-shadow: none !important;
-}
-
-/* Garante que linhas longas não sobreponham */
-.ordem-secao, 
-.descricao-bloco,
-.ordem-item,
-.label,
-.valor {
-  overflow: visible;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  line-height: 1.5;
-}
-
