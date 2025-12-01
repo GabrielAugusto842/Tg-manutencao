@@ -28,7 +28,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
           color: corAtual,
           display: "flex",
           justifyContent: "space-between",
-          marginBottom: "6px", /* Espaço abaixo do texto */
+          marginBottom: "4px", /* Espaço abaixo do texto */
         }}
       >
         <span>MTTR Atual:</span>
@@ -39,7 +39,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "16px", /* AUMENTADO: Grossura da barra */
+          height: "12px", /* AUMENTADO: Grossura da barra */
           marginBottom: "14px", /* Espaço abaixo da barra */
           width: "100%",
           overflow: "hidden",
@@ -74,7 +74,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "16px", /* AUMENTADO: Grossura da barra */
+          height: "12px", /* AUMENTADO: Grossura da barra */
           width: "100%",
           overflow: "hidden",
         }}
@@ -97,7 +97,6 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
           marginTop: "12px", /* Espaçamento abaixo da barra */
         }}
       >
-        Escala máxima: {formatHoras(MAX_LIMIT)}
       </div>
     </div>
   );

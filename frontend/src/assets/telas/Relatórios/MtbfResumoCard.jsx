@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { formatHoras, getMtbfColor } from "../../Services/formatters"; // Assumindo que você moverá as funções formatadoras
-import "./DashboardGeral.css"; // Estilos compartilhados
+// CORREÇÃO: Ajustando o caminho do import
+import { formatHoras, getMtbfColor } from "../../Services/formatters";
+import "./DashboardGeral.css";
 import DashboardMTBF from "./DashboardMTBF.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
-const MTBF_META_HORAS = 200.0; // Meta alta
 
-// 🎯 1. RECEBE idSetor NAS PROPS
-export default function MtbfResumoCard({ dataInicial, dataFinal, idSetor }) {
+// RECEBE PROPS DE META
+export default function MtbfResumoCard({
+  dataInicial,
+  dataFinal,
+  idSetor,
+  // NOVAS PROPS DE ENTRADA H/M para MTBF (valores inteiros)
+  metaMtbfHoras,
+  setMetaMtbfHoras,
+  metaMtbfMinutos,
+  setMetaMtbfMinutos,
+  // Prop do valor total da meta (decimal) calculado pelo DashboardGeral
+  metaMTBF,
+}) {
   const [mtbfGeral, setMtbfGeral] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
+  // Usa o valor da meta recebido por prop (200.0 se for nulo)
+  const meta = metaMTBF || 200;
+
   useEffect(() => {
-    // Lógica de fetch simplificada apenas para o MTBF Geral
     const buscarMTBF = async () => {
       setCarregando(true);
       setErro(null);
@@ -21,8 +34,6 @@ export default function MtbfResumoCard({ dataInicial, dataFinal, idSetor }) {
         const params = new URLSearchParams();
         if (dataInicial) params.append("dataInicial", dataInicial);
         if (dataFinal) params.append("dataFinal", dataFinal);
-
-        // 🎯 2. ADICIONA idSetor AOS PARÂMETROS DE CONSULTA
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
@@ -43,8 +54,19 @@ export default function MtbfResumoCard({ dataInicial, dataFinal, idSetor }) {
         setCarregando(false);
       }
     };
-    buscarMTBF(); // 🎯 3. INCLUI idSetor NO ARRAY DE DEPENDÊNCIAS
+    buscarMTBF();
   }, [dataInicial, dataFinal, idSetor]);
+
+  // Manipuladores de alteração para Meta MTBF
+  const handleMetaHorasChange = (e) => {
+    // Garante que o valor não é negativo
+    setMetaMtbfHoras(Math.max(0, Number(e.target.value)));
+  };
+
+  const handleMetaMinutosChange = (e) => {
+    // Garante que o valor está entre 0 e 59
+    setMetaMtbfMinutos(Math.min(59, Math.max(0, Number(e.target.value))));
+  };
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTBF...</div>;
@@ -52,23 +74,48 @@ export default function MtbfResumoCard({ dataInicial, dataFinal, idSetor }) {
 
   return (
     <div className="kpi-card mtbf">
-      <h4 className="card-titulo">MTBF Geral no Período</h4>{" "}
+      <h4 className="card-titulo">MTBF Geral no Período</h4>
       <div className="kpi-content">
-        {" "}
         <div className="kpi-valor-principal">
-          {" "}
           <span
             className="valor-indicador"
-            style={{ color: getMtbfColor(mtbfGeral, MTBF_META_HORAS) }} // Use a cor condicional
+            style={{ color: getMtbfColor(mtbfGeral, meta) }}
           >
-            {formatHoras(mtbfGeral)}{" "}
-          </span>{" "}
-          <p className="card-meta">Meta: {formatHoras(MTBF_META_HORAS)}</p>{" "}
-        </div>{" "}
+            {formatHoras(mtbfGeral)}
+          </span>
+          <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
+        </div>
         <div className="kpi-grafico-rosca">
-          <DashboardMTBF mtbfValue={mtbfGeral} />{" "}
-        </div>{" "}
-      </div>{" "}
+          {/* Passa o valor da meta em decimal para o gráfico */}
+          <DashboardMTBF mtbfValue={mtbfGeral} valorMeta={meta} />
+        </div>
+      </div>
+
+      {/* CAMPOS DE INPUT PARA DEFINIR A META MTBF */}
+      <div className="mttb-meta-container-inline no-print">
+        <label className="font-semibold mr-2">Definir Meta:</label>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaMtbfHoras}
+            onChange={handleMetaHorasChange}
+            min={0}
+          />
+          <span>h</span>
+        </div>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaMtbfMinutos}
+            onChange={handleMetaMinutosChange}
+            min={0}
+            max={59}
+          />
+          <span>min</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,3 @@
-// src/componentes/Relatorios/DashboardGeral.jsx
-
 import React, { useState } from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
@@ -9,6 +7,7 @@ import MttaResumoCard from "./MttaResumoCard.jsx";
 import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
 
 import "./DashboardGeral.css";
+// NOTE: Mantendo imports assumidos pelo seu contexto
 import { useBacklog } from "./backlog";
 import BacklogIntegradoCard from "./BacklogIntegrado.jsx";
 
@@ -17,8 +16,15 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
   const [metaHoras, setMetaHoras] = useState(4);
   const [metaMinutos, setMetaMinutos] = useState(0);
 
-  // Calcula o valor da meta em horas decimais
+  // Calcula o valor da meta MTTR em horas decimais
   const metaMTTR = metaHoras + metaMinutos / 60;
+
+  // ESTADOS ESSENCIAIS PARA O MTBF (CORRIGIDO)
+  const [metaMtbfHoras, setMetaMtbfHoras] = useState(200);
+  const [metaMtbfMinutos, setMetaMtbfMinutos] = useState(0); // <-- NOVO/CORRIGIDO
+
+  // CÁLCULO CORRETO: Minutos convertidos para horas decimais (CORRIGIDO)
+  const metaMTBF = metaMtbfHoras + metaMtbfMinutos / 60;
 
   // Chamada do hook (assumido)
   const { backlog, loading, error } = useBacklog(idSetor);
@@ -43,7 +49,6 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           dataInicial={dataInicial}
           dataFinal={dataFinal}
           idSetor={idSetor}
-          // Passando os props da meta para edição
           metaHoras={metaHoras}
           setMetaHoras={setMetaHoras}
           metaMinutos={metaMinutos}
@@ -54,6 +59,12 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           dataInicial={dataInicial}
           dataFinal={dataFinal}
           idSetor={idSetor}
+          // PASSANDO OS ESTADOS COMPLETOS
+          metaMtbfHoras={metaMtbfHoras}
+          setMetaMtbfHoras={setMetaMtbfHoras}
+          metaMtbfMinutos={metaMtbfMinutos} // <-- NOVO/CORRIGIDO
+          setMetaMtbfMinutos={setMetaMtbfMinutos} // <-- NOVO/CORRIGIDO
+          metaMTBF={metaMTBF}
         />
         <DisponibilidadeResumoCard
           dataInicial={dataInicial}

@@ -1,61 +1,73 @@
-// src/componentes/Relatorios/DashboardMTBF.jsx (VERSÃO FINAL COM MARCADOR DE META)
 import React from "react";
-import {
-  formatHoras,
-  getMtbfColor,
-  MTBF_META_HORAS,
-} from "../../Services/formatters";
+// Importa de Services/formatters (resolvendo o erro de compilação)
+import { getMtbfColor } from "../../Services/formatters";
+import "./DashboardGeral.css"; // Importa estilos
 
 // Define o limite superior para a escala visual.
 const ESCALA_VISUAL_MAX = (valorAtual, valorMeta) => {
   // Garante que a barra total seja sempre ligeiramente maior que o maior valor (atual ou meta)
-  return Math.max(valorAtual, valorMeta) * 1.1;
+  const scale = Math.max(valorAtual, valorMeta) * 1.1;
+  // Garante uma escala mínima, caso os valores sejam zero
+  return Math.max(scale, 1);
 };
 
-export default function DashboardMTBF({ mtbfValue }) {
+// Assume que mtbfValue e valorMeta estão em HORAS DECIMAIS
+export default function DashboardMTBF({ mtbfValue, valorMeta }) {
   const valorAtual = mtbfValue || 0;
-  const meta = MTBF_META_HORAS;
-  const corBarra = getMtbfColor(valorAtual, meta); // 1. Calcula a escala máxima para garantir que o 100% do gráfico é o limite VISUAL
+  const meta = valorMeta || 200.0;
+  // Obtém a cor com base na comparação (verde se >= meta)
+  const corBarra = getMtbfColor(valorAtual, meta);
 
-  const maxScale = ESCALA_VISUAL_MAX(valorAtual, meta); // 2. Calcula o percentual para o foreground (barra colorida) em relação à escala visual
+  const maxScale = ESCALA_VISUAL_MAX(valorAtual, meta);
 
-  const percentualBarra = (valorAtual / maxScale) * 100; // 3. Calcula o percentual para o MARCADOR de meta
+  // Calcula os percentuais
+  const percentualBarra = (valorAtual / maxScale) * 100;
+  const percentualMarcador = (meta / maxScale) * 100;
 
-  const percentualMarcador = (meta / maxScale) * 100; // A largura da barra não deve exceder 100% do container
+  // Limita a barra visualmente a 100%
+  const larguraBarra = Math.min(percentualBarra, 100);
 
-  const larguraBarra = Math.min(percentualBarra, 100); // A cor do marcador pode ser um verde fixo (para meta) ou a cor da barra atual // Vamos usar um verde para Meta Atingida (#10b981) para consistência visual.
-
+  // Usa a cor de sucesso (#0ebc0eff - verde) para o marcador se ele for atingido (ou ultrapassado)
+  // Se o valor da barra for maior ou igual ao marcador, usa a cor da barra (verde ou vermelho). Caso contrário, a cor do marcador é verde.
   const corMarcador =
-    percentualMarcador <= percentualBarra ? corBarra : "#10b981"; // Usa a cor de sucesso se não for ultrapassada
+    percentualBarra >= percentualMarcador ? corBarra : "#0ebc0eff";
 
   return (
     <div className="kpi-progress-wrapper" style={{ position: "relative" }}>
-      {" "}
+      {/* Linha de título com o valor atual */}
+      <div className="kpi-progress-line">
+      
+      </div>
+
+      {/* Barra de Progresso Principal */}
       <div className="kpi-progress-bar-background">
-        {/* Barra de Progresso (Foreground) */}{" "}
         <div
           className="kpi-progress-bar-foreground"
           style={{ width: `${larguraBarra}%`, backgroundColor: corBarra }}
         ></div>
-        {/* 🛑 Marcador de Meta (Linha Vertical) */}{" "}
+
+        {/* Marcador de Meta (Linha Vertical) */}
         {percentualMarcador <= 100 && (
           <div
+            // Marcador vertical da meta
             style={{
               position: "absolute",
               left: `${percentualMarcador}%`,
-              top: "0",
+              top: "10px",
               height: "100%",
-              width: "2px", // Espessura
-              backgroundColor: corMarcador, // Cor verde ou a cor de status se já estiver acima
-              transform: "translateX(-50%)", // Centraliza
-              borderRadius: "1px",
+              width: "3px",
+              backgroundColor: corMarcador,
+              transform: "translateX(-50%)",
+              borderRadius: "4px",
             }}
           ></div>
-        )}{" "}
-      </div>{" "}
-      <div className="kpi-progress-text">
-        {formatHoras(valorAtual)} / {formatHoras(meta)}{" "}
-      </div>{" "}
+        )}
+      </div>
+
+      {/* Rodapé com Meta e Escala Máxima */}
+      <div className="kpi-progress-text-footer">
+        
+      </div>
     </div>
   );
 }

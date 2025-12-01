@@ -192,7 +192,7 @@
 }
 
 .kpi-card.mtbf .kpi-progress-wrapper {
-  margin-top: 38px;
+  margin-top: 52px;
 }
 
 /* =======================================
@@ -254,6 +254,9 @@
     margin-top: 12px;
   }
 }
+
+
+
 
 /* Status */
 .status.aberta {
@@ -518,4 +521,21 @@
 
 .botao-pdf-compacto span {
   font-size: 0.7rem !important;
+}
+
+.mttb-meta-container-inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 85px;
+  gap: 10px;
+}
+
+.mttb-meta-container-inline label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
 }
