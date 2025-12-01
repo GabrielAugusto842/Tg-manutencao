@@ -12,19 +12,20 @@ import { useBacklog } from "./backlog";
 import BacklogIntegradoCard from "./BacklogIntegrado.jsx";
 
 export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
-  // Estado para a Meta MTTR
+  // Estado para a Meta MTTR (Horas e Minutos)
   const [metaHoras, setMetaHoras] = useState(4);
   const [metaMinutos, setMetaMinutos] = useState(0);
-
   // Calcula o valor da meta MTTR em horas decimais
   const metaMTTR = metaHoras + metaMinutos / 60;
 
-  // ESTADOS ESSENCIAIS PARA O MTBF (CORRIGIDO)
+  // ESTADOS ESSENCIAIS PARA O MTBF (Horas e Minutos)
   const [metaMtbfHoras, setMetaMtbfHoras] = useState(200);
-  const [metaMtbfMinutos, setMetaMtbfMinutos] = useState(0); // <-- NOVO/CORRIGIDO
-
-  // CÁLCULO CORRETO: Minutos convertidos para horas decimais (CORRIGIDO)
+  const [metaMtbfMinutos, setMetaMtbfMinutos] = useState(0);
+  // CÁLCULO CORRETO: Minutos convertidos para horas decimais
   const metaMTBF = metaMtbfHoras + metaMtbfMinutos / 60;
+
+  // NOVO ESTADO: Meta para Disponibilidade (%)
+  const [metaDisponibilidade, setMetaDisponibilidade] = useState(95.0);
 
   // Chamada do hook (assumido)
   const { backlog, loading, error } = useBacklog(idSetor);
@@ -62,14 +63,17 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           // PASSANDO OS ESTADOS COMPLETOS
           metaMtbfHoras={metaMtbfHoras}
           setMetaMtbfHoras={setMetaMtbfHoras}
-          metaMtbfMinutos={metaMtbfMinutos} // <-- NOVO/CORRIGIDO
-          setMetaMtbfMinutos={setMetaMtbfMinutos} // <-- NOVO/CORRIGIDO
+          metaMtbfMinutos={metaMtbfMinutos}
+          setMetaMtbfMinutos={setMetaMtbfMinutos}
           metaMTBF={metaMTBF}
         />
         <DisponibilidadeResumoCard
           dataInicial={dataInicial}
           dataFinal={dataFinal}
           idSetor={idSetor}
+          // PASSANDO AS NOVAS PROPS DE META
+          metaDisponibilidade={metaDisponibilidade}
+          setMetaDisponibilidade={setMetaDisponibilidade}
         />
         <OsConcluidasResumoCard
           dataInicial={dataInicial}
