@@ -285,7 +285,7 @@ const Navbar = ({ title, user }) => {
               </div>
             </div>
 
-            <button className="menu-option" onClick={handleTrocarSenha}>
+            <button className="menu-option botao-trocar-senha" onClick={handleTrocarSenha}>
               <IoRefreshCircleOutline className="option-icon" /> Trocar senha
             </button>
 
