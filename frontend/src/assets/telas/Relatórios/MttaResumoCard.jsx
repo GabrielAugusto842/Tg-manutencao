@@ -1,5 +1,3 @@
-// src/componentes/Relatorios/MttiResumoCard.jsx
-
 import React, { useState, useEffect } from "react";
 import { formatHoras, getMttaColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
@@ -17,11 +15,12 @@ export default function MttaResumoCard({
   setMetaMinutos,
   metaMTTA, // Meta em horas decimais
 }) {
-  const [mtti, setMtti] = useState(null);
+  const [mtta, setMtta] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  const meta = metaMTTA || 0.5; // Meta padrão: 30 min = 0.5 horas
+  const metaDefault = metaMTTA || 0.5; // Meta padrão: 30 min = 0.5 horas
+  const metaDecimal = (metaHoras || 0) + (metaMinutos || 0) / 60 || metaDefault;
 
   useEffect(() => {
     const fetchMTTA = async () => {
@@ -43,7 +42,7 @@ export default function MttaResumoCard({
         if (!resposta.ok) throw new Error("Erro ao buscar MTTA");
         const dados = await resposta.json();
 
-        setMtti(dados?.mtti ?? 0);
+        setMtta(dados?.mttaHoras ?? 0);
       } catch (e) {
         setErro(e.message);
       } finally {
@@ -65,21 +64,19 @@ export default function MttaResumoCard({
         <div className="kpi-valor-principal kpi-valor-grande">
           <span
             className="valor-indicador"
-            style={{ color: getMttaColor(mtti, meta) }}
+            style={{ color: getMttaColor(mtta, metaDecimal) }}
           >
-            {formatHoras(mtti)}
+            {formatHoras(mtta)}
           </span>
-          <p className="card-meta">Meta (Abaixo de): {formatHoras(meta)}</p>
+          <p className="card-meta">Meta (Abaixo de): {formatHoras(metaDecimal)}</p>
         </div>
 
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-          <DashboardMTTA mttaValue={mtti} valorMeta={meta} />
+          <DashboardMTTA mttaValue={mtta} valorMeta={metaDecimal} />
         </div>
       </div>
 
-      {/* BLOCO DA META IGUAL AO MTTR */}
-<div className="mttr-meta-container-inline no-print" style={{ marginTop: "26px" }}>
-
+      <div className="mttr-meta-container-inline no-print" style={{ marginTop: "26px" }}>
         <label className="font-semibold mr-2">Definir Meta:</label>
 
         <div className="input-time-card">

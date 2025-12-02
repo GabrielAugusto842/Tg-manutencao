@@ -379,39 +379,56 @@ export async function getMTTAGeral(req: Request, res: Response) {
   try {
     const { dataInicial, dataFinal, idSetor } = req.query;
     const params: any[] = [];
-    // Seleciona somente OS que já iniciaram (data_inicio IS NOT NULL)
-    let where = "WHERE o.data_inicio IS NOT NULL";
+
+    // Filtro principal: só OS que já começaram (data_inicio não nula)
+    let where = "WHERE o.data_inicio IS NOT NULL AND o.data_abertura IS NOT NULL";
 
     if (dataInicial) {
       where += " AND o.data_abertura >= ?";
       params.push(dataInicial);
     }
+
     if (dataFinal) {
       where += " AND o.data_inicio <= ?";
       params.push(dataFinal);
     }
+
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
     const query = `
- SELECT 
- AVG(TIMESTAMPDIFF(HOUR, o.data_abertura, o.data_inicio)) AS mttiMinutos
- FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- `;
+      SELECT 
+        COUNT(*) AS total_os,
+        AVG(TIMESTAMPDIFF(MINUTE, o.data_abertura, o.data_inicio)) AS mtta_minutos
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+    `;
 
     const [rows]: any = await db.query(query, params);
 
-    // Converte a média de minutos para horas (para padronizar com MTTR/MTBF)
-    const mttiHoras = (rows[0]?.mttiMinutos ?? 0) / 60;
+    const totalOs = rows[0]?.total_os ?? 0;
+    const mttaMinutosDoBanco = rows[0]?.mtta_minutos ?? 0;
 
-    res.json({ mtti: Number(mttiHoras.toFixed(2)) });
+    // Se não houver OS válidas, retorna 0
+    if (totalOs === 0 || mttaMinutosDoBanco === null) {
+      return res.json({ totalOs: 0, mttaMinutos: 0, mttaHoras: 0 });
+    }
+
+    // Garantir número válido
+    const mttaMinutos = parseFloat(mttaMinutosDoBanco) || 0;
+    const mttaHoras = mttaMinutos / 60;
+
+    res.json({
+      totalOs,
+      mttaMinutos: Number(mttaMinutos.toFixed(0)),
+      mttaHoras: Number(mttaHoras.toFixed(2)),
+    });
   } catch (err) {
-    console.error("Erro ao calcular MTTI:", err);
-    res.status(500).json({ erro: "Erro ao calcular MTTI" });
+    console.error("Erro ao calcular MTTA Geral:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTA Geral" });
   }
 }
 
@@ -661,4 +678,60 @@ export async function getMTBFAnual(req: Request, res: Response) {
   }
 }
 
+// -------------------------------------------
+// MTTA Anual (Mean Time To Acknowledge) por mês
+export async function getMTTAAnual(req: Request, res: Response) {
+  try {
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
 
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // Query retorna média em MINUTOS
+    const query = `
+      SELECT 
+        MONTH(o.data_termino) AS mes_num,
+        IFNULL(AVG(TIMESTAMPDIFF(MINUTE, o.data_abertura, o.data_inicio)), 0) AS mtta_minutos
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // Preenche todos os 12 meses
+    const monthNames = [
+      "Jan","Fev","Mar","Abr","Mai","Jun",
+      "Jul","Ago","Set","Out","Nov","Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => ({
+      mes_num: i + 1,
+      periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+      mtta: 0,
+    }));
+
+    const finalData = fullYearData.map(monthData => {
+      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
+      return {
+        ...monthData,
+        mtta: dbRow ? parseFloat(dbRow.mtta_minutos) : 0
+      };
+    });
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTTA Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTA Anual" });
+  }
+}

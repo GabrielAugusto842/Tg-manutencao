@@ -10,7 +10,8 @@ import {
  getBacklogOsGeral, // Importação da nova função
  getBacklogOsDetalhado,
  getMTTRAnual, 
- getMTBFAnual // Importação da nova função
+ getMTBFAnual, // Importação da nova função
+ getMTTAAnual
 } from "../controllers/relatorioController";
 
 const router = express.Router();
@@ -41,6 +42,8 @@ router.get("/backlog-os-detalhado", getBacklogOsDetalhado); // Novo endpoint
 router.get("/mttr-anual", getMTTRAnual);
 
 router.get("/mtbf-anual", getMTBFAnual);
+
+router.get("/mtta-anual", getMTTAAnual)
 
 
 

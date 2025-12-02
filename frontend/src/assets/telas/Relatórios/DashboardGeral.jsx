@@ -6,7 +6,7 @@ import MttaResumoCard from "./MttaResumoCard.jsx";
 import MttrAnualChart from "./MttrAnualChart.jsx";
 import MtbfAnualChart from "./MtbfAnualChart.jsx";
 import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
-
+import MttaAnualChart from "./MttaAnualChart.jsx";
 import "./DashboardGeral.css";
 import { useBacklog } from "./backlog";
 import BacklogIntegradoCard from "./BacklogIntegrado.jsx";
@@ -113,6 +113,13 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
       {/* ----------------- NOVO GRÁFICO ANUAL MTBF ----------------- */}
 <div className="dashboard-kpi-grid pula-linha-export full-width-chart">
   <MtbfAnualChart 
+    idSetor={idSetor} 
+  />
+</div>
+
+      {/* ----------------- NOVO GRÁFICO ANUAL MTTA ----------------- */}
+<div className="dashboard-kpi-grid pula-linha-export full-width-chart">
+  <MttaAnualChart 
     idSetor={idSetor} 
   />
 </div>
