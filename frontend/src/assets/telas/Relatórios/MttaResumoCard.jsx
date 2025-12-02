@@ -1,30 +1,29 @@
-// src/componentes/Relatorios/MtbfResumoCard.jsx
-
 import React, { useState, useEffect } from "react";
-import { formatHoras, getMtbfColor } from "../../Services/formatters";
+import { formatHoras, getMttaColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
-import DashboardMTBF from "./DashboardMTBF.jsx";
+import DashboardMTTA from "./DashboardMTTA.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function MtbfResumoCard({
+export default function MttaResumoCard({
   dataInicial,
   dataFinal,
   idSetor,
-  metaMtbfHoras,
-  setMetaMtbfHoras,
-  metaMtbfMinutos,
-  setMetaMtbfMinutos,
-  metaMTBF, // meta em decimal (horas)
+  metaHoras,
+  setMetaHoras,
+  metaMinutos,
+  setMetaMinutos,
+  metaMTTA, // Meta em horas decimais
 }) {
-  const [mtbfGeral, setMtbfGeral] = useState(null);
+  const [mtta, setMtta] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  const meta = metaMTBF ?? 200; // default
+  const metaDefault = metaMTTA || 0.5; // Meta padrão: 30 min = 0.5 horas
+  const metaDecimal = (metaHoras || 0) + (metaMinutos || 0) / 60 || metaDefault;
 
   useEffect(() => {
-    const buscarMTBF = async () => {
+    const fetchMTTA = async () => {
       setCarregando(true);
       setErro(null);
 
@@ -35,15 +34,15 @@ export default function MtbfResumoCard({
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
 
-        const res = await fetch(`${API_URL}/mtbf-geral${query}`, { headers });
-        if (!res.ok) throw new Error("Erro ao buscar MTBF geral");
+        const resposta = await fetch(`${API_URL}/mtta-geral${query}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
 
-        const dados = await res.json();
-        setMtbfGeral(dados?.mtbf ?? 0);
+        if (!resposta.ok) throw new Error("Erro ao buscar MTTA");
+        const dados = await resposta.json();
+
+        setMtta(dados?.mttaHoras ?? 0);
       } catch (e) {
         setErro(e.message);
       } finally {
@@ -51,47 +50,40 @@ export default function MtbfResumoCard({
       }
     };
 
-    buscarMTBF();
+    fetchMTTA();
   }, [dataInicial, dataFinal, idSetor]);
 
-  if (carregando)
-    return <div className="kpi-card loading">Carregando MTBF...</div>;
+  if (carregando) return <div className="kpi-card loading">Carregando MTTA...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
-    <div className="kpi-card mtbf">
-      <h4 className="card-titulo">MTBF Geral no Período</h4>
+    <div className="kpi-card mttr">
+      <h4 className="card-titulo">MTTA Geral no Período</h4>
 
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
           <span
             className="valor-indicador"
-            style={{ color: getMtbfColor(mtbfGeral, meta) }}
+            style={{ color: getMttaColor(mtta, metaDecimal) }}
           >
-            {formatHoras(mtbfGeral)}
+            {formatHoras(mtta)}
           </span>
-          <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
+          <p className="card-meta">Meta (Abaixo de): {formatHoras(metaDecimal)}</p>
         </div>
 
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-          <DashboardMTBF mtbfValue={mtbfGeral} valorMeta={meta} />
+          <DashboardMTTA mttaValue={mtta} valorMeta={metaDecimal} />
         </div>
       </div>
 
-      {/* INPUTS DA META */}
-      <div
-        className="mttr-meta-container-inline no-print"
-        style={{ marginTop: "28px" }}
-      >
+      <div className="mttr-meta-container-inline no-print" style={{ marginTop: "26px" }}>
         <label className="font-semibold mr-2">Definir Meta:</label>
 
         <div className="input-time-card">
           <input
             type="number"
-            value={metaMtbfHoras}
-            onChange={(e) =>
-              setMetaMtbfHoras(Math.max(0, Number(e.target.value)))
-            }
+            value={metaHoras}
+            onChange={(e) => setMetaHoras(Math.max(0, Number(e.target.value)))}
             min={0}
           />
           <span>h</span>
@@ -100,11 +92,9 @@ export default function MtbfResumoCard({
         <div className="input-time-card">
           <input
             type="number"
-            value={metaMtbfMinutos}
+            value={metaMinutos}
             onChange={(e) =>
-              setMetaMtbfMinutos(
-                Math.min(59, Math.max(0, Number(e.target.value)))
-              )
+              setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))
             }
             min={0}
             max={59}

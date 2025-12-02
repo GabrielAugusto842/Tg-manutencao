@@ -1,37 +1,31 @@
-// src/componentes/Relatorios/MttrComparisonBar.jsx
+// src/componentes/Relatorios/MttaComparisonBar.jsx
 
 import React from "react";
-import { formatHoras, getMttrColor } from "../../Services/formatters";
+import { formatHoras, getMttaColor } from "../../Services/formatters";
 
-// Valor máximo da escala fixa 
-const MAX_LIMIT = 24; 
+const MAX_LIMIT = 48; // Escala fixa igual MTTR
 
-export default function MttrComparisonBar({ valorAtual, valorMeta }) {
-  // Calcula largura percentual das barras em relação ao limite fixo
+export default function MttaComparisonBar({ valorAtual, valorMeta }) {
   const larguraAtual = Math.min((valorAtual / MAX_LIMIT) * 100, 100);
   const larguraMeta = Math.min((valorMeta / MAX_LIMIT) * 100, 100);
 
-  // Define cores
-  const corAtual = getMttrColor(valorAtual, valorMeta); 
-  const corMeta = "#0ebc0eff"; // Verde fixo para meta
+  const corAtual = getMttaColor(valorAtual, valorMeta);
+  const corMeta = "#0ebc0eff";
 
   return (
-    <div style={{ 
-        marginTop: "25px", /* Empurra o bloco das barras para baixo */
-        padding: "0 5px" 
-    }}>
-      {/* Barra do valor atual */}
+    <div style={{ marginTop: "28px", padding: "0 5px" }}>
+      {/* Atual */}
       <div
         style={{
-          fontSize: "1rem", /* AUMENTADO: Tamanho da fonte */
-          fontWeight: "700", /* AUMENTADO: Espessura da fonte */
+          fontSize: "1rem",
+          fontWeight: "700",
           color: corAtual,
           display: "flex",
           justifyContent: "space-between",
-          marginBottom: "4px", /* Espaço abaixo do texto */
+          marginBottom: "4px",
         }}
       >
-        <span>MTTR Atual:</span>
+        <span>MTTA Atual:</span>
         <span>{formatHoras(valorAtual)}</span>
       </div>
 
@@ -39,8 +33,8 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "12px", /* AUMENTADO: Grossura da barra */
-          marginBottom: "14px", /* Espaço abaixo da barra */
+          height: "12px",
+          marginBottom: "14px",
           width: "100%",
           overflow: "hidden",
         }}
@@ -55,18 +49,18 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         ></div>
       </div>
 
-      {/* Barra da meta */}
+      {/* Meta */}
       <div
         style={{
-          fontSize: "1rem", /* AUMENTADO: Tamanho da fonte */
-          fontWeight: "700", /* AUMENTADO: Espessura da fonte */
+          fontSize: "1rem",
+          fontWeight: "700",
           color: corMeta,
           display: "flex",
           justifyContent: "space-between",
           marginBottom: "6px",
         }}
       >
-        <span>MTTR Meta:</span>
+        <span>MTTA Meta:</span>
         <span>{formatHoras(valorMeta)}</span>
       </div>
 
@@ -74,7 +68,7 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
         style={{
           backgroundColor: "#e5e7eb",
           borderRadius: "4px",
-          height: "12px", /* AUMENTADO: Grossura da barra */
+          height: "12px",
           width: "100%",
           overflow: "hidden",
         }}
@@ -87,16 +81,6 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
             transition: "width 0.5s ease",
           }}
         ></div>
-      </div>
-
-      <div
-        style={{
-          fontSize: "0.75rem",
-          color: "#6b7280",
-          textAlign: "center",
-          marginTop: "12px", /* Espaçamento abaixo da barra */
-        }}
-      >
       </div>
     </div>
   );

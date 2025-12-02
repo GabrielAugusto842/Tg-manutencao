@@ -62,35 +62,36 @@ function EditarOS() {
 
   // Função para salvar a O.S.
   // Função para salvar a O.S.
- const handleSalvar = async (e) => {
-  e.preventDefault();
+  const handleSalvar = async (e) => {
+    e.preventDefault();
 
-  // Verifica e trata o custo
-  const custoTratado = dadosFormulario.custo === "" ? null : Number(dadosFormulario.custo);
+    // Trata o custo
+    const custoTratado =
+      dadosFormulario.custo === "" ? null : Number(dadosFormulario.custo);
 
-  // Prepara os dados para o envio, com o campo `idUsuario` como número
-  const dadosAtualizados = {
-    descricao: dadosFormulario.descricao,
-    idUsuario: Number(dadosFormulario.manutentor),  // Ajustado para "idUsuario"
-    solucao: dadosFormulario.solucao,
-    custo: custoTratado,
+    // Monta objeto com os campos que podem ser alterados
+    const dadosAtualizados = {};
+
+    if (ordemServico.status === "Aberta") {
+      dadosAtualizados.descricao = dadosFormulario.descricao;
+    } else if (ordemServico.status === "Em andamento") {
+      dadosAtualizados.descricao = dadosFormulario.descricao;
+      dadosAtualizados.idUsuario = Number(dadosFormulario.manutentor);
+    } else if (ordemServico.status === "Finalizado") {
+      dadosAtualizados.descricao = dadosFormulario.descricao;
+      dadosAtualizados.solucao = dadosFormulario.solucao;
+      dadosAtualizados.custo = custoTratado;
+    }
+
+    try {
+      await api.put(`/os/${id}`, dadosAtualizados);
+      alert("Ordem de serviço atualizada com sucesso!");
+      navigate(`/ordens/visualizar/`);
+    } catch (error) {
+      console.error("Falha na atualização:", error);
+      alert("Falha ao atualizar ordem de serviço.");
+    }
   };
-
-  // Log dos dados que serão enviados
-  console.log("Dados enviados para o backend:", dadosAtualizados);
-
-  try {
-    // Envia os dados ao backend via PUT
-    await api.put(`/os/${id}`, dadosAtualizados);
-    alert("Ordem de serviço atualizada com sucesso!");
-    navigate(`/ordens/visualizar/`); // Redireciona para a página de visualização
-  } catch (error) {
-    console.error("Falha na atualização:", error);
-    alert("Falha ao atualizar ordem de serviço.");
-  }
-};
-
-
 
   // Exibe um carregamento ou mensagem de erro
   if (loading) return <p>Carregando dados da O.S...</p>;

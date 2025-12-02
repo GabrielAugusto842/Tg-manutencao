@@ -1,12 +1,24 @@
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { formatPercentual } from "../../Services/formatters";
+// Removido: import { formatPercentual } from "../../Services/formatters";
 
-export default function DashboardDisponibilidade({ valor }) {
+// Função de formatação local para tornar o componente autocontido
+const formatPercentual = (value) => {
+  if (typeof value !== "number" || isNaN(value)) return "0.00%";
+  return `${value.toFixed(2)}%`;
+};
+
+// Removendo o valor padrão do argumento para definir a lógica de fallback no corpo
+export default function DashboardDisponibilidade({ valor, meta }) {
+  // Garante que o valor da meta é um número válido. Se não for, usa 95.0.
+  // Isso torna a verificação da prop 'meta' mais robusta.
+  const metaLimite = typeof meta === "number" && !isNaN(meta) ? meta : 95.0;
+
   const valorAtual = valor ?? 0;
 
-  // Cor condicional: verde >= 95%, amarelo < 95%
-  const corPrincipal = valorAtual >= 95 ? "#28a745" : "#ffc107";
+  // Cor condicional: agora usa a metaLimite para comparação.
+  // A corPrincipal será recalculada sempre que 'meta' (prop) ou 'valor' (prop) mudar.
+  const corPrincipal = valorAtual >= metaLimite ? "#28a745" : "#ffc107";
 
   const dadosGrafico = [
     { name: "Disponível", value: valorAtual, color: corPrincipal },

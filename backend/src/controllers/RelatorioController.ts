@@ -28,91 +28,7 @@ function calculateTotalMinutes(dataInicial: any, dataFinal: any): number {
   return totalMinutes > 0 ? totalMinutes : 24 * 60; // Pelo menos 1 dia (1440 min)
 }
 
-// -------------------------------
-// MTTR GERAL (CORRETO)
-// -------------------------------
-export async function getMTTRGeral(req: Request, res: Response) {
-  try {
-    const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
-    let where = "WHERE o.data_termino IS NOT NULL";
-
-    if (dataInicial) {
-      where += " AND o.data_inicio >= ?";
-      params.push(dataInicial);
-    }
-    if (dataFinal) {
-      where += " AND o.data_termino <= ?";
-      params.push(dataFinal);
-    }
-    if (idSetor) {
-      where += " AND m.id_setor = ?";
-      params.push(idSetor);
-    }
-
-    const query = `
- SELECT 
- AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)) AS mttr
- FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- `;
-
-    const [rows]: any = await db.query(query, params);
-    res.json({ mttr: rows[0]?.mttr ?? 0 });
-  } catch (err) {
-    res.status(500).json({ erro: "Erro ao calcular MTTR" });
-  }
-}
-
-// -------------------------------
-// MTTR POR MÁQUINA (CORRETO)
-// -------------------------------
-export const getMTTRPorMaquina = async (req: Request, res: Response) => {
-  const { dataInicial, dataFinal, idSetor } = req.query;
-  const params: string[] = [];
-  let where = `
- o.id_estado = 3 
- AND o.data_inicio IS NOT NULL 
- AND o.data_termino IS NOT NULL
- `;
-
-  if (dataInicial && dataFinal) {
-    where += " AND o.data_termino BETWEEN ? AND ?";
-    params.push(dataInicial as string, dataFinal as string);
-  }
-  if (idSetor) {
-    where += " AND m.id_setor = ?";
-    params.push(idSetor as string);
-  }
-
-  try {
-    const [rows]: any = await db.query(
-      `
-SELECT 
- m.id_maquina,
- m.nome AS maquina,
- m.tag,
- IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
- FROM ordem_servico o
- JOIN maquina m ON o.id_maquina = m.id_maquina
- WHERE ${where}
- GROUP BY m.id_maquina, m.nome, m.tag
- ORDER BY m.id_maquina
- `,
-      params
-    );
-
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao calcular MTTR por máquina" });
-  }
-};
-
-// -------------------------------
-// MTBF GERAL (AJUSTADO PARA MÊS ATUAL)
-// -------------------------------
-// Função para calcular o tempo total em minutos do mês atual
+// Função auxiliar para calcular o tempo total em minutos do mês atual
 function getTotalMinutesPeriod(
   dataInicial?: string,
   dataFinal?: string
@@ -130,128 +46,347 @@ function getTotalMinutesPeriod(
 }
 
 // -------------------------------
-// MTBF GERAL (AJUSTADO PARA MÊS OU PERÍODO FILTRADO)
+// MTTR GERAL (CORRETO)
 // -------------------------------
-export async function getMTBFGeral(req: Request, res: Response) {
+// Assumindo que 'db' é uma conexão de banco de dados global/importada
+
+// Supondo que 'db' seja sua conexão com o banco de dados
+
+export async function getMTTRGeral(req: Request, res: Response) {
   try {
-    let { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
+    let { dataInicial, dataFinal, idSetor } = req.query as {
+      dataInicial?: string;
+      dataFinal?: string;
+      idSetor?: string;
+    };
 
-    // Se não houver período, dataInicial e dataFinal são undefined, função cuidará do Month-to-Date
-    const totalMinutes = getTotalMinutesPeriod(
-      dataInicial as string | undefined,
-      dataFinal as string | undefined
-    );
-    const totalHours = totalMinutes / 60;
+    const agora = new Date();
 
-    // WHERE para tempo de indisponibilidade (Down Time)
-    let whereIndisponivel =
-      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
-    let whereFalhas = "WHERE o.data_termino IS NOT NULL";
-
-    if (dataInicial) {
-      whereIndisponivel += " AND o.data_inicio >= ?";
-      whereFalhas += " AND o.data_termino >= ?";
-      params.push(dataInicial, dataInicial);
+    // --- 1. CONFIGURAÇÃO DE DATAS ---
+    if (!dataInicial) dataInicial = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2,'0')}-01`;
+    if (!dataFinal) {
+      const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
+      dataFinal = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2,'0')}-${String(ultimoDia.getDate()).padStart(2,'0')}`;
     }
-    if (dataFinal) {
-      whereIndisponivel += " AND o.data_termino <= ?";
-      whereFalhas += " AND o.data_termino <= ?";
-      params.push(dataFinal, dataFinal);
-    }
+
+    // Cria datas completas no horário local
+    const inicioFiltro = new Date(`${dataInicial}T00:00:00`);
+    const fimFiltro = new Date(`${dataFinal}T23:59:59.999`);
+
+    const params: any[] = [inicioFiltro, fimFiltro];
+    let where =
+      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL AND o.data_termino >= ? AND o.data_inicio <= ?";
+
     if (idSetor) {
-      whereIndisponivel += " AND m.id_setor = ?";
-      whereFalhas += " AND m.id_setor = ?";
-      params.push(idSetor, idSetor);
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
     }
 
-    // Query para obter total de horas de downtime e total de falhas
-    const queryStats = `
-      SELECT
-        (SELECT IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0)
-         FROM ordem_servico o
-         JOIN maquina m ON m.id_maquina = o.id_maquina
-         ${whereIndisponivel}) AS totalDownTimeHours,
-        (SELECT COUNT(*)
-         FROM ordem_servico o
-         JOIN maquina m ON m.id_maquina = o.id_maquina
-         ${whereFalhas}) AS totalFailures
+    // --- 2. CONSULTA SQL ---
+    const query = `
+      SELECT o.id_ord_serv, m.nome AS nome_maquina, o.data_inicio, o.data_termino
+      FROM ordem_servico o
+      JOIN maquina m ON o.id_maquina = m.id_maquina
+      ${where}
     `;
 
-    const [stats]: any = await db.query(queryStats, params);
+    const [rows]: any = await db.query(query, params);
 
-    const totalDownTimeHours = stats[0]?.totalDownTimeHours ?? 0;
-    const totalFailures = stats[0]?.totalFailures ?? 0;
+    if (!rows.length) return res.json({ mttr: 0 });
 
-    if (totalFailures === 0) return res.json({ mtbf: 0 });
+    let totalHoras = 0;
+    let countOS = rows.length; // Contamos todas as OS retornadas pelo filtro
 
-    // Tempo operacional = total do período - downtime
-    const totalUpTimeHours = Math.max(0, totalHours - totalDownTimeHours);
+    // --- 3. CÁLCULO DA INTERSEÇÃO ---
+    for (const os of rows) {
+      const inicioOS = new Date(os.data_inicio);
+      const terminoOS = new Date(os.data_termino);
 
-    // MTBF em horas
-    const mtbf = totalUpTimeHours / totalFailures;
+      // Calcula apenas o tempo que cruza o período do filtro
+      const inicioConsiderado = inicioOS > inicioFiltro ? inicioOS : inicioFiltro;
+      const terminoConsiderado = terminoOS < fimFiltro ? terminoOS : fimFiltro;
 
-    res.json({ mtbf: Number(mtbf.toFixed(2)) });
+      const diffMs = terminoConsiderado.getTime() - inicioConsiderado.getTime();
+      const diffHoras = diffMs / (1000 * 60 * 60);
+
+      totalHoras += diffHoras;
+
+      // DEBUG opcional
+      console.log(`OS ID: ${os.id_ord_serv} | Máquina: ${os.nome_maquina}`);
+      console.log(`  Período: ${inicioConsiderado.toISOString()} -> ${terminoConsiderado.toISOString()}`);
+      console.log(`  Duração: ${diffHoras.toFixed(2)}h`);
+    }
+
+    const mttr = totalHoras / countOS;
+
+    console.log(`Total Horas: ${totalHoras.toFixed(2)} | Contagem OS: ${countOS} | MTTR: ${mttr.toFixed(2)}h`);
+
+    res.json({ mttr: Number(mttr.toFixed(2)) });
   } catch (err) {
-    console.error("Erro no MTBF:", err);
-    res.status(500).json({ erro: "Erro ao calcular MTBF" });
+    console.error("Erro ao calcular MTTR Geral:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTR Geral" });
   }
 }
+
+
+
 // -------------------------------
-// MTBF POR MÁQUINA
+// MTTR POR MÁQUINA (CORRETO)
 // -------------------------------
-export const getMTBFPorMaquina = async (req: Request, res: Response) => {
-  // manter sua versão atual
+export const getMTTRPorMaquina = async (req: Request, res: Response) => {
+  const { dataInicial, dataFinal, idSetor } = req.query;
+  const params: string[] = [];
+  let where = `
+o.id_estado = 3 
+AND o.data_inicio IS NOT NULL 
+AND o.data_termino IS NOT NULL
+`;
+
+  if (dataInicial && dataFinal) {
+    where += " AND o.data_termino BETWEEN ? AND ?";
+    params.push(dataInicial as string, dataFinal as string);
+  }
+  if (idSetor) {
+    where += " AND m.id_setor = ?";
+    params.push(idSetor as string);
+  }
+
+  try {
+    const [rows]: any = await db.query(
+      `
+SELECT 
+m.id_maquina,
+m.nome AS maquina,
+m.tag,
+IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
+FROM ordem_servico o
+JOIN maquina m ON o.id_maquina = m.id_maquina
+WHERE ${where}
+GROUP BY m.id_maquina, m.nome, m.tag
+ORDER BY m.id_maquina
+`,
+      params
+    );
+
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao calcular MTTR por máquina" });
+  }
 };
 
-// -------------------------------
-// DISPONIBILIDADE GERAL (AJUSTADO PARA MÊS ATUAL)
-// -------------------------------
-export async function getDisponibilidadeGeral(req: Request, res: Response) {
-  try {
-    const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
-    let where =
-      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
 
-    if (dataInicial) {
-      where += " AND o.data_inicio >= ?";
-      params.push(dataInicial);
+// -------------------------------
+// MTBF GERAL (AJUSTADO PARA MÊS OU PERÍODO FILTRADO)
+// -------------------------------
+// -------------------------------
+// MTBF GERAL (AJUSTADO E CORRIGIDO)
+// -------------------------------
+
+export async function getMTBFGeral(req: Request, res: Response) {
+  try {
+    let { dataInicial, dataFinal, idSetor } = req.query as {
+      dataInicial?: string;
+      dataFinal?: string;
+      idSetor?: string;
+    };
+
+    // -------------------------------
+    // 1. DEFINIÇÃO DO PERÍODO
+    // -------------------------------
+    const hoje = new Date();
+    
+    // Configuração de datas padrão (Mês atual)
+    if (!dataInicial) {
+      dataInicial = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2,'0')}-01`;
     }
-    if (dataFinal) {
-      where += " AND o.data_termino <= ?";
-      params.push(dataFinal);
+    if (!dataFinal) {
+      const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+      dataFinal = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2,'0')}-${String(ultimoDia.getDate()).padStart(2,'0')}`;
     }
+
+    // Cria datas completas no horário local (início do dia e fim do dia)
+    const inicioFiltro = new Date(`${dataInicial}T00:00:00`);
+    const fimFiltro = new Date(`${dataFinal}T23:59:59.999`);
+
+    // -------------------------------
+    // 2. QUERY SQL
+    // -------------------------------
+    let where = `
+      WHERE o.data_inicio IS NOT NULL
+      AND o.data_termino IS NOT NULL
+      AND o.data_termino >= ?
+      AND o.data_inicio <= ?
+    `;
+    // Usando as strings de data para o filtro SQL BETWEEN (se o banco for MySQL) ou as datas completas para >= e <=.
+    // Usando Date objects que serão serializados pelo driver do DB (mais seguro).
+    const params: any[] = [inicioFiltro, fimFiltro]; 
+
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
     const query = `
- SELECT
- SUM(TIMESTAMPDIFF(MINUTE, o.data_inicio, o.data_termino)) AS tempoIndisponivel
- FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- `;
+      SELECT 
+        o.id_ord_serv,
+        o.id_maquina,
+        m.nome AS maquina,
+        o.data_inicio,
+        o.data_termino
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      ORDER BY o.id_maquina, o.data_inicio
+    `;
 
     const [rows]: any = await db.query(query, params);
 
-    const indisponivel = rows[0]?.tempoIndisponivel ?? 0;
+    if (!rows.length) return res.json({ mtbf: 0 });
 
-    // Total de minutos é dinâmico (período fornecido ou Month-to-Date)
-    const totalMinutos = calculateTotalMinutes(dataInicial, dataFinal);
-
-    // Evita divisão por zero ou períodos inválidos
-    if (totalMinutos <= 0) {
-      return res.json({ disponibilidade: 0 });
+    // -------------------------------
+    // 3. AGRUPAMENTO POR MÁQUINA
+    // -------------------------------
+    const maquinas: Record<number, any[]> = {};
+    for (const os of rows) {
+      const id = os.id_maquina;
+      if (id != null) {
+        maquinas[id] = maquinas[id] ?? [];
+        // Converte datas para Date
+        os.data_inicio = new Date(os.data_inicio);
+        os.data_termino = new Date(os.data_termino);
+        maquinas[id].push(os);
+      }
     }
 
-    const disponibilidade =
-      ((totalMinutos - indisponivel) / totalMinutos) * 100;
+    // -------------------------------
+    // 4. CÁLCULO DOS INTERVALOS (TBF) CORRIGIDO
+    // -------------------------------
+    let totalIntervalosHoras = 0;
+    let countIntervalos = 0;
 
-    res.json({ disponibilidade: Number(disponibilidade.toFixed(2)) });
+    for (const idMaquina in maquinas) {
+      const osMaquina = maquinas[idMaquina];
+      if (!osMaquina || osMaquina.length < 2) continue;
+
+      for (let i = 0; i < osMaquina.length - 1; i++) {
+        // Término da OS anterior (OS que falhou)
+        const terminoAtual = osMaquina[i].data_termino;
+        // Início da próxima OS (Próxima falha)
+        const inicioProxima = osMaquina[i + 1].data_inicio;
+
+        // --- LÓGICA DE INTERSEÇÃO CORRIGIDA ---
+        // O início do TBF considerado é o maior entre o término da OS anterior e o início do filtro.
+        const inicioTBFConsiderado = terminoAtual > inicioFiltro ? terminoAtual : inicioFiltro;
+        // O fim do TBF considerado é o menor entre o início da próxima OS e o fim do filtro.
+        const fimTBFConsiderado = inicioProxima < fimFiltro ? inicioProxima : fimFiltro;
+
+        // A duração é a diferença entre o menor fim e o maior início.
+        const diffMs = fimTBFConsiderado.getTime() - inicioTBFConsiderado.getTime();
+        const diffHoras = diffMs / (1000 * 60 * 60);
+
+        if (diffHoras > 0) { // Só conta se houver uma interseção positiva com o período
+          totalIntervalosHoras += diffHoras;
+          countIntervalos++; // Conta o intervalo (falha) que contribuiu para o tempo
+        }
+      }
+    }
+
+    // -------------------------------
+    // 5. MTBF FINAL
+    // -------------------------------
+    const mtbf = countIntervalos > 0 ? totalIntervalosHoras / countIntervalos : 0;
+    res.json({ mtbf: Number(mtbf.toFixed(2)) });
   } catch (err) {
+    console.error("Erro ao calcular MTBF Geral:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTBF Geral" });
+  }
+}
+
+// ... [Outras funções como getOsConcluidasGeral, getCustoTotalGeral, etc.] ...
+
+
+export async function getDisponibilidadeGeral(req: Request, res: Response) {
+  try {
+    const { dataInicial, dataFinal, idSetor } = req.query;
+
+    // 1) Determinar período do filtro ou mês atual
+    const hoje = new Date();
+    const inicioMes = dataInicial
+      ? new Date(dataInicial as string)
+      : new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const fimMes = dataFinal
+      ? new Date(dataFinal as string)
+      : new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59);
+
+    // 2) Buscar máquinas com disponibilidade_mes
+    let whereMaquina = "WHERE disponibilidade_mes IS NOT NULL";
+    const paramsMaquina: any[] = [];
+
+    if (idSetor) {
+      whereMaquina += " AND id_setor = ?";
+      paramsMaquina.push(idSetor);
+    }
+
+    const [maquinas]: any = await db.query(
+      `SELECT id_maquina, disponibilidade_mes FROM maquina ${whereMaquina}`,
+      paramsMaquina
+    );
+
+    if (maquinas.length === 0) return res.json({ disponibilidade: 0 });
+
+    const disponibilidades: number[] = [];
+
+    for (const maquina of maquinas) {
+      // 3) Buscar downtime da máquina dentro do período
+      const [rows]: any = await db.query(
+        `
+        SELECT 
+          o.data_inicio, o.data_termino
+        FROM ordem_servico o
+        WHERE o.id_maquina = ?
+          AND o.data_inicio IS NOT NULL
+          AND (o.data_termino IS NULL OR o.data_termino IS NOT NULL)
+      `,
+        [maquina.id_maquina]
+      );
+
+      let tempoParadoMinutos = 0;
+
+      for (const os of rows) {
+        const inicioOS = new Date(os.data_inicio);
+        const terminoOS = os.data_termino ? new Date(os.data_termino) : fimMes;
+
+        // Calcula apenas o tempo que caiu dentro do período
+        const inicio = inicioOS < inicioMes ? inicioMes : inicioOS;
+        const fim = terminoOS > fimMes ? fimMes : terminoOS;
+
+        const diff = (fim.getTime() - inicio.getTime()) / (1000 * 60); // minutos
+
+        if (diff > 0) tempoParadoMinutos += diff;
+      }
+
+      // 4) Disponibilidade da máquina
+      const totalDisponibilidadeMinutos = maquina.disponibilidade_mes * 60;
+
+      if (totalDisponibilidadeMinutos <= 0) continue;
+
+      const disp =
+        ((totalDisponibilidadeMinutos - tempoParadoMinutos) /
+          totalDisponibilidadeMinutos) *
+        100;
+
+      disponibilidades.push(Math.max(0, Math.min(disp, 100)));
+    }
+
+    if (disponibilidades.length === 0) return res.json({ disponibilidade: 0 });
+
+    // 5) Média das disponibilidades
+    const media =
+      disponibilidades.reduce((a, b) => a + b, 0) / disponibilidades.length;
+
+    res.json({ disponibilidade: Number(media.toFixed(2)) });
+  } catch (err) {
+    console.error("Erro ao calcular disponibilidade:", err);
     res.status(500).json({ erro: "Erro ao calcular disponibilidade" });
   }
 }
@@ -279,11 +414,11 @@ export async function getOsConcluidasGeral(req: Request, res: Response) {
     }
 
     const query = `
- SELECT COUNT(*) AS totalOsConcluidas
- FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- `;
+SELECT COUNT(*) AS totalOsConcluidas
+FROM ordem_servico o
+JOIN maquina m ON m.id_maquina = o.id_maquina
+${where}
+`;
 
     const [rows]: any = await db.query(query, params);
     res.json({ totalOsConcluidas: rows[0]?.totalOsConcluidas ?? 0 });
@@ -295,7 +430,6 @@ export async function getOsConcluidasGeral(req: Request, res: Response) {
 // -------------------------------------------
 // CUSTO TOTAL DE MANUTENÇÃO (NOVO RELATÓRIO)
 // -------------------------------------------
-
 export async function getCustoTotalGeral(req: Request, res: Response) {
   try {
     const { dataInicial, dataFinal, idSetor } = req.query;
@@ -318,11 +452,11 @@ export async function getCustoTotalGeral(req: Request, res: Response) {
     }
 
     const query = `
-      SELECT IFNULL(SUM(o.custo), 0) AS custoTotal
-      FROM ordem_servico o
-      JOIN maquina m ON m.id_maquina = o.id_maquina
-      ${where}
-    `;
+ SELECT IFNULL(SUM(o.custo), 0) AS custoTotal
+ FROM ordem_servico o
+ JOIN maquina m ON m.id_maquina = o.id_maquina
+ ${where}
+ `;
 
     const [rows]: any = await db.query(query, params);
 
@@ -336,8 +470,387 @@ export async function getCustoTotalGeral(req: Request, res: Response) {
 }
 
 // -------------------------------
+// MTTI GERAL (Mean Time To Initial Response)
+// -------------------------------
+export async function getMTTAGeral(req: Request, res: Response) {
+  try {
+    const { dataInicial, dataFinal, idSetor } = req.query;
+    const params: any[] = [];
+
+    // Filtro principal: só OS que já começaram (data_inicio não nula)
+    let where = "WHERE o.data_inicio IS NOT NULL AND o.data_abertura IS NOT NULL";
+
+    if (dataInicial) {
+      where += " AND o.data_abertura >= ?";
+      params.push(dataInicial);
+    }
+
+    if (dataFinal) {
+      where += " AND o.data_inicio <= ?";
+      params.push(dataFinal);
+    }
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+      SELECT 
+        COUNT(*) AS total_os,
+        AVG(TIMESTAMPDIFF(MINUTE, o.data_abertura, o.data_inicio)) AS mtta_minutos
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    const totalOs = rows[0]?.total_os ?? 0;
+    const mttaMinutosDoBanco = rows[0]?.mtta_minutos ?? 0;
+
+    // Se não houver OS válidas, retorna 0
+    if (totalOs === 0 || mttaMinutosDoBanco === null) {
+      return res.json({ totalOs: 0, mttaMinutos: 0, mttaHoras: 0 });
+    }
+
+    // Garantir número válido
+    const mttaMinutos = parseFloat(mttaMinutosDoBanco) || 0;
+    const mttaHoras = mttaMinutos / 60;
+
+    res.json({
+      totalOs,
+      mttaMinutos: Number(mttaMinutos.toFixed(0)),
+      mttaHoras: Number(mttaHoras.toFixed(2)),
+    });
+  } catch (err) {
+    console.error("Erro ao calcular MTTA Geral:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTA Geral" });
+  }
+}
+
+// -------------------------------------------
+// BACKLOG GERAL (Contagem total de OS pendentes) - NOVO ENDPOINT
+// -------------------------------------------
+export async function getBacklogOsGeral(req: Request, res: Response) {
+  try {
+    const { idSetor } = req.query;
+    const params: any[] = [];
+    // Filtra por OS que ainda não foram concluídas (data_termino é NULL)
+    let where = "WHERE o.data_termino IS NULL";
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+            SELECT 
+                COUNT(*) AS totalBacklog
+            FROM ordem_servico o
+            JOIN maquina m ON m.id_maquina = o.id_maquina
+            ${where}
+        `;
+
+    const [rows]: any = await db.query(query, params);
+
+    res.json({ totalBacklog: rows[0]?.totalBacklog ?? 0 });
+  } catch (err) {
+    console.error("Erro ao buscar Backlog Geral:", err);
+    res.status(500).json({ erro: "Erro ao buscar Backlog Geral" });
+  }
+}
+
+// -------------------------------------------
+// BACKLOG DETALHADO (Lista de OS pendentes) - CORRIGIDO SEM USUÁRIO
+// -------------------------------------------
+
+export async function getBacklogOsDetalhado(req: Request, res: Response) {
+  try {
+    const { idSetor } = req.query;
+    const params: any[] = [];
+
+    // Filtra por OS que ainda não foram concluídas (data_termino é NULL)
+    let where = "WHERE o.data_termino IS NULL";
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+            SELECT 
+                o.id_ord_serv,
+                o.descricao,
+                o.data_abertura,
+                DATEDIFF(NOW(), o.data_abertura) AS idade_dias,
+                m.nome AS nome_maquina,
+                m.tag AS tag_maquina,
+                s.setor AS nome_setor,
+                o.id_estado
+            FROM ordem_servico o
+            JOIN maquina m ON m.id_maquina = o.id_maquina
+            JOIN setor s ON m.id_setor = s.id_setor
+            ${where}
+            ORDER BY idade_dias DESC, o.data_abertura ASC
+        `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // Mapear id_estado para status legível
+    const estadoMap: Record<number, string> = {
+      1: "Aberta",
+      2: "Em Andamento",
+      3: "Finalizado",
+    };
+
+    const backlogDetalhadoComStatus = rows.map((row: any) => ({
+      ...row,
+      status: estadoMap[row.id_estado] || "Desconhecido",
+    }));
+
+    res.json(backlogDetalhadoComStatus);
+  } catch (err) {
+    console.error("Erro ao buscar Backlog Detalhado:", err);
+    res.status(500).json({ erro: "Erro ao buscar Backlog Detalhado" });
+  }
+}
+
+// -------------------------------
 // DASHBOARD POR MÁQUINA
 // -------------------------------
 export const getDashboardMaquina = async (req: Request, res: Response) => {
   // manter sua versão atual
 };
+
+// -------------------------------------------
+// MTTR Anual (Agrupado por Mês)
+
+
+
+// Assumindo que 'db' é a conexão do MySQL já importada
+
+
+
+export async function getMTTRAnual(req: Request, res: Response) {
+  try {
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
+
+    // 1. Filtro por Ano
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    // 2. Filtro por Setor
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // 3. Query: traz todas as OS do ano
+    const query = `
+      SELECT o.data_inicio, o.data_termino
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // 4. Estrutura anual: 12 meses
+    const monthNames = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => ({
+      mes_num: i + 1,
+      periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+      mttr: 0,
+      countOS: 0
+    }));
+
+    // 5. Itera cada OS e distribui horas por mês
+    for (const os of rows) {
+      const dataInicioOS = new Date(os.data_inicio);
+      const dataTerminoOS = new Date(os.data_termino);
+
+      for (let mesIndex = 0; mesIndex < 12; mesIndex++) {
+        const inicioMes = new Date(targetYear, mesIndex, 1, 0, 0, 0);
+        const fimMes = new Date(targetYear, mesIndex + 1, 0, 23, 59, 59);
+
+        // Interseção OS x mês
+        const inicioConsiderado = dataInicioOS > inicioMes ? dataInicioOS : inicioMes;
+        const terminoConsiderado = dataTerminoOS < fimMes ? dataTerminoOS : fimMes;
+
+        const diffMs = terminoConsiderado.getTime() - inicioConsiderado.getTime();
+        const diffHoras = diffMs / (1000 * 60 * 60); // horas decimais
+
+        if (diffHoras > 0) {
+  // fullYearData[mesIndex] sempre existe, então usamos !
+  fullYearData[mesIndex]!.mttr += diffHoras;
+  fullYearData[mesIndex]!.countOS += 1;
+}
+
+      }
+    }
+
+    // 6. Calcula MTTR médio por mês
+    const finalData = fullYearData.map(month => ({
+      mes_num: month.mes_num,
+      periodo: month.periodo,
+      mttr: month.countOS > 0 ? Number((month.mttr / month.countOS).toFixed(2)) : 0
+    }));
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTTR Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTR Anual" });
+  }
+}
+
+
+
+export async function getMTBFAnual(req: Request, res: Response) {
+  try {
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
+
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // 1. Query para obter o tempo de inatividade (downtime) e a contagem de falhas (failures) por mês.
+    const query = `
+      SELECT 
+        MONTH(o.data_termino) AS mes_num,
+        -- Soma do tempo de inatividade no mês (em horas)
+        IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS downtime_hours,
+        -- Contagem total de ordens de serviço concluídas (falhas) no mês
+        COUNT(*) AS failure_count
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // 2. PÓS-PROCESSAMENTO: Cria estrutura de 12 meses
+    const monthNames = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => {
+      // Calcula o número total de dias no mês para o ano alvo
+      const totalDaysInMonth = new Date(targetYear, i + 1, 0).getDate();
+      const totalAvailableHours = totalDaysInMonth * 24;
+
+      return {
+        mes_num: i + 1,
+        periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+        totalAvailableHours: totalAvailableHours,
+        mtbf: 0.0,
+      };
+    });
+
+    // 3. Mescla os resultados e calcula o MTBF
+    const finalData = fullYearData.map(monthData => {
+      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
+      
+      if (dbRow) {
+        const downtimeHours = parseFloat(dbRow.downtime_hours);
+        const failureCount = parseInt(dbRow.failure_count, 10);
+
+        let mtbf = 0.0;
+
+        if (failureCount > 0) {
+          // Tempo operacional (Up Time) = Total disponível - Downtime
+          const upTimeHours = Math.max(0, monthData.totalAvailableHours - downtimeHours);
+          
+          // MTBF = Up Time / Número de Falhas
+          mtbf = upTimeHours / failureCount;
+        }
+
+        return {
+          ...monthData,
+          mtbf: Number(mtbf.toFixed(2)),
+        };
+      }
+
+      return monthData;
+    });
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTBF Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTBF Anual" });
+  }
+}
+
+// -------------------------------------------
+// MTTA Anual (Mean Time To Acknowledge) por mês
+export async function getMTTAAnual(req: Request, res: Response) {
+  try {
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
+
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // Query retorna média em MINUTOS
+    const query = `
+      SELECT 
+        MONTH(o.data_termino) AS mes_num,
+        IFNULL(AVG(TIMESTAMPDIFF(MINUTE, o.data_abertura, o.data_inicio)), 0) AS mtta_minutos
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // Preenche todos os 12 meses
+    const monthNames = [
+      "Jan","Fev","Mar","Abr","Mai","Jun",
+      "Jul","Ago","Set","Out","Nov","Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => ({
+      mes_num: i + 1,
+      periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+      mtta: 0,
+    }));
+
+    const finalData = fullYearData.map(monthData => {
+      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
+      return {
+        ...monthData,
+        mtta: dbRow ? parseFloat(dbRow.mtta_minutos) : 0
+      };
+    });
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTTA Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTA Anual" });
+  }
+}

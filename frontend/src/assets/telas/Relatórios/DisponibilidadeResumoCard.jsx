@@ -3,17 +3,24 @@ import "./DashboardGeral.css";
 import DashboardDisponibilidade from "./DashboardDisponibilidade.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
-const DISPONIBILIDADE_META = 95.0;
 
+// RECEBE PROPS DE META
 export default function DisponibilidadeResumoCard({
   dataInicial,
   dataFinal,
   idSetor,
+  // NOVAS PROPS para Meta de Disponibilidade (%)
+  metaDisponibilidade,
+  setMetaDisponibilidade,
 }) {
   const [disponibilidade, setDisponibilidade] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
+  // Usa o valor da meta recebido por prop (95.0% se for nulo)
+  const meta = metaDisponibilidade ?? 95.0;
+
+  // Lógica de retry (mantida do arquivo original)
   useEffect(() => {
     const fetchWithRetry = async (url, options, retries = 3) => {
       for (let i = 0; i < retries; i++) {
@@ -68,6 +75,13 @@ export default function DisponibilidadeResumoCard({
     buscarDisponibilidade();
   }, [dataInicial, dataFinal, idSetor]);
 
+  // Manipulador de alteração para Meta Disponibilidade
+  const handleMetaChange = (e) => {
+    // Garante que o valor está entre 0 e 100 e permite décimos (step=0.1)
+    const valor = Number(e.target.value);
+    setMetaDisponibilidade(Math.min(100, Math.max(0, valor)));
+  };
+
   if (carregando)
     return (
       <div className="kpi-card loading">Carregando Disponibilidade...</div>
@@ -80,23 +94,44 @@ export default function DisponibilidadeResumoCard({
 
       {/* Rosca */}
       <div className="kpi-content kpi-disponibilidade-visual">
-        <DashboardDisponibilidade valor={disponibilidade} />
+        <DashboardDisponibilidade valor={disponibilidade} meta={meta} />
       </div>
 
       {/* Meta abaixo da rosca */}
       <p
         className="card-meta"
-        style={{ textAlign: "center", marginTop: "8px" }}
+        style={{ textAlign: "center", marginTop: "7px" }}
       >
-        Meta: {DISPONIBILIDADE_META}%
+        Meta: {meta}%
       </p>
 
       <p
         className="card-meta"
-        style={{ textAlign: "center", marginTop: "4px" }}
+        style={{ textAlign: "center", marginTop: "1px" }}
       >
-        Tempo Operacional / Tempo Total
+        Tempo Operacional
       </p>
+
+      {/* CAMPOS DE INPUT PARA DEFINIR A META DE DISPONIBILIDADE */}
+      <div
+        className="mttr-meta-container-inline no-print"
+        style={{ marginTop: "0px" }}
+      >
+        <label className="font-semibold mr-2">Definir Meta:</label>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaDisponibilidade}
+            onChange={handleMetaChange}
+            min={0}
+            max={100}
+            step={0.1} // Permite valores decimais (ex: 95.5)
+            style={{ width: "40px" }} // Ajusta a largura
+          />
+          <span>%</span>
+        </div>
+      </div>
     </div>
   );
 }

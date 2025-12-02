@@ -1,0 +1,178 @@
+.backlog-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  display: flex;
+  font-weight: 600;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  grid-column: span 2;
+}
+
+.backlog-card {
+  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para MTTR */
+}
+
+.backlog-flex {
+  display: flex;
+  gap: 10px;
+}
+
+.backlog-left {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: auto; /* permite rolagem horizontal */
+  border-right: none;
+  padding-right: 0;
+}
+
+
+.backlog-left::-webkit-scrollbar {
+  width: 6px;
+}
+
+.backlog-left::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.backlog-right {
+  width: 23%; /* aumenta um pouco a largura */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.grafico-titulo {
+  font-weight: bold;
+  font-size: 1.1rem; /* título maior */
+  margin-bottom: 16px; /* menos espaçamento para o gráfico */
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .backlog-right {
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+/* Status */
+.status.aberta {font-weight: 700; background:#DBEAFE; color:#0044ff; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.andamento { font-weight: 700; background:#DBEAFE; color:#ff9900; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.finalizado {font-weight: 700; background:#DCFCE7; color:#047857; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.aguardando-pecas {font-weight: 700; background:#F3E8FF; color:#6B21A8; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.aguardando-aprovacao { background:#FEF3C7; color:#B45309; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+.status.desconhecido { background:#E5E7EB; color:#374151; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
+
+/* Links */
+.os-link {
+  text-decoration: none;
+  color: #1d4ed8;
+  font-weight: bold;
+}
+
+.os-link:hover {
+  text-decoration: underline;
+}
+
+/* Descrição curta */
+.os-descricao {
+  display: block;
+  max-height: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 2rem;
+  margin-top: 1px;
+}
+
+/* Tooltip à direita */
+.col-os {
+  position: relative;
+}
+
+.os-tooltip {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 8px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  white-space: normal;
+  z-index: 50;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.col-os:hover .os-tooltip {
+  display: block;
+}
+
+/* Tabela */
+/* Força a tabela a respeitar a largura disponível */
+.tabela-os {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* importante! */
+}
+
+/* Permite quebra de linha em células longas */
+.tabela-os th, .tabela-os td {
+  padding: 8px 6px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  word-wrap: break-word; /* quebra palavras longas */
+  overflow-wrap: break-word; /* compatibilidade */
+}
+
+/* Descrição longa liberada, mas quebra linha */
+.os-descricao {
+  display: block;
+  max-height: none; /* libera altura */
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal; /* permite quebrar linha */
+  line-height: 1.4rem;
+  margin-top: 2px;
+}
+
+/* Tooltip não interfere na largura da tabela */
+.os-tooltip {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 8px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  white-space: normal;
+  z-index: 50;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  word-wrap: break-word; /* garante quebra no tooltip */
+  overflow-wrap: break-word;
+}
+
+/* Ajusta colunas para não expandirem a tabela */
+.tabela-os td:nth-child(2) {
+  width: 40%; /* coluna da descrição/máquina */
+}
+.tabela-os td:nth-child(3) {
+  width: 20%; /* coluna setor */
+}
+.tabela-os td:nth-child(4) {
+  width: 25%; /* status */
+}
+.tabela-os td:nth-child(1) {
+  width: 15%; /* idade */
+}

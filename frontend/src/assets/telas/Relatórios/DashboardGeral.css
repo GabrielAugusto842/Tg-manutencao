@@ -3,71 +3,72 @@
    ======================================= */
 .dashboard-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 26px; /* Espaço entre os cards */
-  margin-bottom: 35px; /* Espaço abaixo da grade */
-
-  /* Fundo simples, sem efeito de desfoque */
-  background: rgba(255, 255, 255, 0.15); /* Fundo translúcido, sem desfoque */
-  border-radius: 12px; /* Bordas arredondadas */
-  padding: 15px; /* Espaço interno */
-  backdrop-filter: none; /* Removido efeito de desfoque */
-  -webkit-backdrop-filter: none; /* Removido efeito de desfoque */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 0px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 30px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* =======================================
-   2. CARD BASE E HOVER (VIDRO FOSCO)
+   2. CARD BASE E HOVER
    ======================================= */
 .kpi-card {
-  background: rgba(255, 255, 255, 0.9); /* Fundo translúcido sem desfoque */
-  border-radius: 12px; /* Bordas arredondadas */
-  padding: 22px; /* Espaço interno */
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 22px; /* Espaço interno padrão */
   border: none;
   position: relative;
   display: flex;
   flex-direction: column;
-
-  /* Remover desfoque do fundo */
-  backdrop-filter: none; /* Remover efeito de desfoque no fundo */
-  -webkit-backdrop-filter: none; /* Remover efeito de desfoque no fundo */
-
-  /* Sombra clean */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .kpi-card:hover {
-  transform: translateY(-5px); /* Movimento mais forte */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais forte no hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 🛑 MTTR CARD - GARANTE PADDING PADRÃO (SEM ESPAÇO NO TOPO) */
+.kpi-card.mttr {
+  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para MTTR */
+  padding-top: 22px; /* Volta ao padding padrão */
 }
 
 /* =======================================
-   3. TIPOGRAFIA GERAL DO CARD (SEM EFEITOS NAS LETRAS)
+   3. TIPOGRAFIA GERAL DO CARD
    ======================================= */
 .card-titulo {
-  font-size: 0.85rem;
-  color: #0f0f0f; /* Cor de texto para contraste */
+  font-size: 0.9rem;
+  color: #000000;
   margin-bottom: 15px;
-  font-weight: 600;
-  text-transform: none; /* Removido o "uppercase" */
-  letter-spacing: normal; /* Sem espaçamento extra entre as letras */
-  text-shadow: none; /* Removido qualquer sombra no texto */
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  text-shadow: none;
 }
 
 .valor-indicador {
-  font-size: 2.4rem; /* Tamanho para valor fora da rosca */
+  font-size: 2.4rem;
   font-weight: 800;
-  color: #000000; /* Preto para maior contraste */
+  color: #000000;
   line-height: 1.2;
   display: block;
-  text-shadow: none; /* Removido qualquer sombra no texto */
+  text-shadow: none;
 }
 
 .card-meta {
-  font-size: 0.85rem;
-  color: #000000; /* Cinza claro */
+  font-size: 0.9rem;
+  color: #000000;
   margin-top: 6px;
-  text-shadow: none; /* Removido qualquer sombra no texto */
+  font-weight: 600;
+  text-shadow: none;
 }
 
 /* =======================================
@@ -76,7 +77,7 @@
 .kpi-grafico-wrapper {
   position: relative;
   width: 100%;
-  height: 130px; /* Tamanho ajustado para o gráfico */
+  height: 130px;
   margin-bottom: 8px;
 }
 
@@ -90,18 +91,18 @@
 }
 
 .kpi-valor-centralizado .valor-indicador {
-  font-size: 1.7rem; /* Tamanho ajustado para caber na rosca */
+  font-size: 1.7rem;
   font-weight: 800;
   line-height: 1.1;
   display: block;
-  text-shadow: none; /* Removido qualquer sombra no texto */
+  text-shadow: none;
 }
 
 .kpi-valor-centralizado .card-meta-pequena {
   font-size: 0.75rem;
-  color: #000000; /* Cinza sutil */
+  color: #000000;
   margin-top: 2px;
-  text-shadow: none; /* Removido qualquer sombra no texto */
+  text-shadow: none;
 }
 
 /* =======================================
@@ -109,17 +110,14 @@
    ======================================= */
 
 /* Estilo para O.S. Concluídas (Big Number) */
-/* ===========================
-   CARD — O.S. CONCLUÍDAS
-=========================== */
 .kpi-card.os-concluidas {
-  border-left: 4px solid rgba(59, 130, 246, 0.6); /* Azul */
+  border-left: 4px solid rgba(59, 130, 246, 0.6);
 }
 
 .kpi-card.os-concluidas .valor-indicador {
   font-size: 3rem;
   font-weight: 800;
-  color: #3b82f6; /* Azul forte */
+  color: #3b82f6;
   text-shadow: none;
 }
 
@@ -128,11 +126,9 @@
   text-align: center;
 }
 
-/* ===========================
-   CARD — CUSTO TOTAL
-=========================== */
+/* CARD — CUSTO TOTAL */
 .kpi-card.custo-total {
-  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja */
+  border-left: 4px solid rgba(234, 88, 12, 0.6);
 }
 
 .kpi-card.custo-total .valor-indicador {
@@ -152,78 +148,21 @@
   color: #000;
 }
 
-/* Cores de Destaque Lateral (Sugestão de Cores Melhores) */
-.kpi-card.mttr {
-  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para MTTR */
-}
-
+/* Cores de Destaque Lateral */
 .kpi-card.mtbf {
-  border-left: 4px solid rgba(16, 185, 129, 0.6); /* Verde para MTBF */
+  border-left: 4px solid rgba(16, 185, 129, 0.6);
 }
 
 .kpi-card.disponibilidade {
-  border-left: 4px solid rgba(59, 130, 246, 0.6); /* Azul para Disponibilidade */
+  border-left: 4px solid rgba(59, 130, 246, 0.6);
 }
 
 .kpi-card.os {
-  border-left: 4px solid rgba(234, 88, 12, 0.6); /* Laranja para O.S. */
+  border-left: 4px solid rgba(234, 88, 12, 0.6);
 }
 
 /* =======================================
-   7. EXPORT PDF E IMPRESSÃO
-   ======================================= */
-
-/* IMPRIMIR */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  /* Exibir apenas a área de impressão */
-  #print-area,
-  #print-area * {
-    visibility: visible;
-  }
-
-  /* Posiciona a área de impressão no topo */
-  #print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-
-  /* Remove elementos indesejados */
-  .no-print,
-  header,
-  nav,
-  .filtros,
-  .menu-lateral {
-    display: none !important;
-  }
-}
-
-@media print {
-  html,
-  body {
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  /* Remove qualquer rolagem interna */
-  * {
-    overflow: visible !important;
-  }
-}
-
-@media print {
-  .pula-linha-export {
-    display: block !important;
-  }
-}
-
-/* =======================================
-   6. PROGRESS BAR (EXCLUSIVO PARA OS CARDS)
+   6. PROGRESS BAR (REGRAS GERAIS)
    ======================================= */
 .kpi-progress-wrapper {
   width: 100%;
@@ -232,7 +171,7 @@
 
 .kpi-progress-bar-background {
   width: 100%;
-  height: 12px; /* Altura da barra */
+  height: 12px;
   background: #e0e0e0;
   border-radius: 2px;
   overflow: hidden;
@@ -246,40 +185,322 @@
 }
 
 .kpi-progress-text {
-  font-size: 0.85rem;
-  color: #4b5563;
-  margin-top: 20px;
-  text-align: right;
+  font-size: 0.9rem;
+  color: #000000;
+  margin-top: 30px;
   font-weight: 600;
 }
 
 .kpi-card.mtbf .kpi-progress-wrapper {
-  margin-top: 38px; /* Ajustado para o MTBF */
+  margin-top: 52px;
 }
 
 /* =======================================
-   ESTILO DO BOTÃO EXTRAI PDF (ULTRA COMPACTO)
-   ======================================= */
+   7. BACKLOG CARD E TABELA (ESTILOS JÁ FORNECIDOS)
+   ======================================= */
+.backlog-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 22px;
+  width: 100%;
+  display: flex;
+  font-weight: 600;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  grid-column: span 2;
+  border-left: 4px solid rgba(234, 88, 12, 0.6);
+}
+
+.backlog-flex {
+  display: flex;
+  gap: 12px;
+}
+
+.backlog-left {
+  flex: 1;
+  max-height: 300px;
+  overflow-y: auto;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 8px;
+}
+
+.backlog-left::-webkit-scrollbar {
+  width: 6px;
+}
+
+.backlog-left::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.backlog-right {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.grafico-titulo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .backlog-right {
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+
+
+
+/* Status */
+.status.aberta {
+  font-weight: 700;
+  background: #dbeafe;
+  color: #0044ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status.andamento {
+  font-weight: 700;
+  background: #dbeafe;
+  color: #ff9900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status.finalizado {
+  font-weight: 700;
+  background: #dcfce7;
+  color: #047857;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status.aguardando-pecas {
+  font-weight: 700;
+  background: #f3e8ff;
+  color: #6b21a8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status.aguardando-aprovacao {
+  background: #fef3c7;
+  color: #b45309;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.status.desconhecido {
+  background: #e5e7eb;
+  color: #374151;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Links */
+.os-link {
+  text-decoration: none;
+  color: #1d4ed8;
+  font-weight: bold;
+}
+
+.os-link:hover {
+  text-decoration: underline;
+}
+
+/* Descrição curta e Tooltip */
+.os-descricao {
+  display: block;
+  max-height: none;
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  line-height: 1.4rem;
+  margin-top: 2px;
+}
+
+.col-os {
+  position: relative;
+}
+
+.os-tooltip {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  white-space: normal;
+  z-index: 50;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.col-os:hover .os-tooltip {
+  display: block;
+}
+
+/* Tabela */
+.tabela-os {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.tabela-os th,
+.tabela-os td {
+  padding: 8px 6px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Ajusta colunas para não expandirem a tabela */
+.tabela-os td:nth-child(2) {
+  width: 40%;
+}
+.tabela-os td:nth-child(3) {
+  width: 20%;
+}
+.tabela-os td:nth-child(4) {
+  width: 25%;
+}
+.tabela-os td:nth-child(1) {
+  width: 15%;
+}
+
+/* =======================================
+   8. ESTILO PARA INPUT DE META INLINE 
+   ======================================= */
+.mttr-meta-container-inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.mttr-meta-container-inline label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* Estilo para os inputs de tempo */
+.input-time-card {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 5px 8px;
+}
+
+.input-time-card input {
+  width: 30px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input-time-card span {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+/* =======================================
+   9. EXPORT PDF E IMPRESSÃO
+   ======================================= */
+
+/* IMPRIMIR */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .no-print,
+  header,
+  nav,
+  .filtros,
+  .menu-lateral,
+  .mttr-meta-container-inline {
+    /* Oculta o input de meta */
+    display: none !important;
+  }
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  * {
+    overflow: visible !important;
+  }
+}
+
+@media print {
+  .pula-linha-export {
+    display: block !important;
+  }
+}
+
+/* ESTILO DO BOTÃO EXTRAI PDF (ULTRA COMPACTO) */
 .botao-pdf-compacto {
-  /* Posição para o Canto Superior Direito */
-  /* Mudança para 'fixed' */
-  top: 250px !important; /* Move para cima */
-  right: 100px !important; /* Move para a direita */
+  top: 250px !important;
+  right: 100px !important;
   z-index: 10 !important;
-  /* Aparência Ultra Compacta */
+
   background-color: #f3f4f6 !important;
   color: #4b5563 !important;
   font-weight: 600 !important;
-  font-size: 0.8rem !important; /* Fonte MÍNIMA */
-  padding: 3px 6px !important; /* Espaçamento MÍNIMO */
-  border-radius: 3px !important; /* Bordas MÍNIMAS */
+  font-size: 0.8rem !important;
+  padding: 3px 6px !important;
+  border-radius: 3px !important;
   border: 1px solid #d1d5db !important;
 
-  /* Garante que ele não ocupe espaço desnecessário */
   height: auto !important;
   width: auto !important;
 
-  /* Outras propriedades */
   transition: all 0.2s ease;
   cursor: pointer;
   display: inline-flex !important;
@@ -298,7 +519,39 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
 }
 
-/* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
 .botao-pdf-compacto span {
   font-size: 0.7rem !important;
+}
+
+.mttb-meta-container-inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 85px;
+  gap: 10px;
+}
+
+.mttb-meta-container-inline label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* Para que o gráfico anual fique em uma linha própria e ocupe toda a largura */
+.dashboard-kpi-grid.full-width-chart {
+    display: flex;
+    /* Faz o card do gráfico ocupar toda a largura da grade */
+    grid-column: 1 / -1; 
+    margin-top: 20px;
+    padding: 0; /* Remove padding duplicado se houver */
+}
+
+/* Estilo para garantir que o card do gráfico use 100% do espaço */
+.kpi-card.chart-card.full-width {
+    width: 100%;
+    padding: 15px; /* Adiciona padding interno */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
