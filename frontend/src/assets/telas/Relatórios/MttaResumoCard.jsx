@@ -1,35 +1,30 @@
+// src/componentes/Relatorios/MttiResumoCard.jsx
+
 import React, { useState, useEffect } from "react";
-import { formatHoras } from "../../Services/formatters.jsx";
-import DashboardMTTI from "./DashboardMTTA.jsx";
+import { formatHoras, getMttaColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
+import DashboardMTTA from "./DashboardMTTA.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function MttiResumoCard({ dataInicial, dataFinal, idSetor }) {
+export default function MttaResumoCard({
+  dataInicial,
+  dataFinal,
+  idSetor,
+  metaHoras,
+  setMetaHoras,
+  metaMinutos,
+  setMetaMinutos,
+  metaMTTA, // Meta em horas decimais
+}) {
   const [mtti, setMtti] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    const fetchWithRetry = async (url, options, retries = 3) => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const resposta = await fetch(url, options);
-          if (resposta.status === 429 && i < retries - 1) {
-            const delay = Math.pow(2, i) * 1000;
-            await new Promise((r) => setTimeout(r, delay));
-            continue;
-          }
-          return resposta;
-        } catch (err) {
-          if (i === retries - 1) throw err;
-          const delay = Math.pow(2, i) * 1000;
-          await new Promise((r) => setTimeout(r, delay));
-        }
-      }
-    };
+  const meta = metaMTTA || 0.5; // Meta padrão: 30 min = 0.5 horas
 
-    const carregar = async () => {
+  useEffect(() => {
+    const fetchMTTA = async () => {
       setCarregando(true);
       setErro(null);
 
@@ -41,32 +36,25 @@ export default function MttiResumoCard({ dataInicial, dataFinal, idSetor }) {
 
         const query = params.toString() ? `?${params.toString()}` : "";
 
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
+        const resposta = await fetch(`${API_URL}/mtti-geral${query}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
 
-        const resp = await fetchWithRetry(
-          `${API_URL}/mtti-geral${query}`,
-          { headers }
-        );
-
-        if (!resp.ok) throw new Error("Erro ao buscar MTTI");
-        const dados = await resp.json();
+        if (!resposta.ok) throw new Error("Erro ao buscar MTTA");
+        const dados = await resposta.json();
 
         setMtti(dados?.mtti ?? 0);
       } catch (e) {
-        console.error("Erro ao buscar MTTI:", e);
         setErro(e.message);
       } finally {
         setCarregando(false);
       }
     };
 
-    carregar();
+    fetchMTTA();
   }, [dataInicial, dataFinal, idSetor]);
 
-  if (carregando)
-    return <div className="kpi-card loading">Carregando MTTI...</div>;
+  if (carregando) return <div className="kpi-card loading">Carregando MTTA...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -75,15 +63,46 @@ export default function MttiResumoCard({ dataInicial, dataFinal, idSetor }) {
 
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
-          <span className="valor-indicador">
+          <span
+            className="valor-indicador"
+            style={{ color: getMttaColor(mtti, meta) }}
+          >
             {formatHoras(mtti)}
           </span>
-
-          <p className="card-meta">Tempo médio até iniciar reparo</p>
+          <p className="card-meta">Meta (Abaixo de): {formatHoras(meta)}</p>
         </div>
 
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-          <DashboardMTTI mttiValue={mtti} />
+          <DashboardMTTA mttaValue={mtti} valorMeta={meta} />
+        </div>
+      </div>
+
+      {/* BLOCO DA META IGUAL AO MTTR */}
+<div className="mttr-meta-container-inline no-print" style={{ marginTop: "26px" }}>
+
+        <label className="font-semibold mr-2">Definir Meta:</label>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaHoras}
+            onChange={(e) => setMetaHoras(Math.max(0, Number(e.target.value)))}
+            min={0}
+          />
+          <span>h</span>
+        </div>
+
+        <div className="input-time-card">
+          <input
+            type="number"
+            value={metaMinutos}
+            onChange={(e) =>
+              setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))
+            }
+            min={0}
+            max={59}
+          />
+          <span>min</span>
         </div>
       </div>
     </div>

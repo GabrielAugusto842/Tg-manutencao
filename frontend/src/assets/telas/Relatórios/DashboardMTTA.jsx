@@ -1,6 +1,8 @@
-import React from "react";
-import MttiComparisonBar from "./MttiComparisonBar.jsx";
+// src/componentes/Relatorios/DashboardMTTA.jsx
 
-export default function DashboardMTTI({ mttiValue }) {
-  return <MttiComparisonBar valorAtual={mttiValue} />;
+import React from "react";
+import MttaComparisonBar from "./MttaComparisonBar.jsx";
+
+export default function DashboardMTTA({ mttaValue, valorMeta }) {
+  return <MttaComparisonBar valorAtual={mttaValue || 0} valorMeta={valorMeta} />;
 }

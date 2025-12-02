@@ -100,20 +100,23 @@ export default function DisponibilidadeResumoCard({
       {/* Meta abaixo da rosca */}
       <p
         className="card-meta"
-        style={{ textAlign: "center", marginTop: "8px" }}
+        style={{ textAlign: "center", marginTop: "7px" }}
       >
         Meta: {meta}%
       </p>
 
       <p
         className="card-meta"
-        style={{ textAlign: "center", marginTop: "4px" }}
+        style={{ textAlign: "center", marginTop: "1px" }}
       >
         Tempo Operacional
       </p>
 
       {/* CAMPOS DE INPUT PARA DEFINIR A META DE DISPONIBILIDADE */}
-      <div className="mttr-meta-container-inline no-print">
+      <div
+        className="mttr-meta-container-inline no-print"
+        style={{ marginTop: "0px" }}
+      >
         <label className="font-semibold mr-2">Definir Meta:</label>
 
         <div className="input-time-card">

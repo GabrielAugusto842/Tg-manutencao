@@ -72,3 +72,10 @@ export function getMtbfColor(mtbfValue, meta = MTBF_META_HORAS) {
   // Se o valor do MTBF for menor que a meta, a cor será vermelha (alerta)
   return "#cc1818ff";
 }
+
+export const getMttaColor = (valorAtual, valorMeta) => {
+  if (valorAtual <= valorMeta) {
+    return "#0ebc0eff"; // Verde
+  }
+  return "#cc1818ff"; // Laranja/Amarelo
+};
