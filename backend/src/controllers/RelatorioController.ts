@@ -48,39 +48,87 @@ function getTotalMinutesPeriod(
 // -------------------------------
 // MTTR GERAL (CORRETO)
 // -------------------------------
+// Assumindo que 'db' é uma conexão de banco de dados global/importada
+
+// Supondo que 'db' seja sua conexão com o banco de dados
+
 export async function getMTTRGeral(req: Request, res: Response) {
   try {
-    const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
-    let where = "WHERE o.data_termino IS NOT NULL";
+    let { dataInicial, dataFinal, idSetor } = req.query as {
+      dataInicial?: string;
+      dataFinal?: string;
+      idSetor?: string;
+    };
 
-    if (dataInicial) {
-      where += " AND o.data_inicio >= ?";
-      params.push(dataInicial);
+    const agora = new Date();
+
+    // --- 1. CONFIGURAÇÃO DE DATAS ---
+    if (!dataInicial) dataInicial = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2,'0')}-01`;
+    if (!dataFinal) {
+      const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
+      dataFinal = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2,'0')}-${String(ultimoDia.getDate()).padStart(2,'0')}`;
     }
-    if (dataFinal) {
-      where += " AND o.data_termino <= ?";
-      params.push(dataFinal);
-    }
+
+    // Cria datas completas no horário local
+    const inicioFiltro = new Date(`${dataInicial}T00:00:00`);
+    const fimFiltro = new Date(`${dataFinal}T23:59:59.999`);
+
+    const params: any[] = [inicioFiltro, fimFiltro];
+    let where =
+      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL AND o.data_termino >= ? AND o.data_inicio <= ?";
+
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
+    // --- 2. CONSULTA SQL ---
     const query = `
-SELECT 
-AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)) AS mttr
-FROM ordem_servico o
-JOIN maquina m ON m.id_maquina = o.id_maquina
-${where}
-`;
+      SELECT o.id_ord_serv, m.nome AS nome_maquina, o.data_inicio, o.data_termino
+      FROM ordem_servico o
+      JOIN maquina m ON o.id_maquina = m.id_maquina
+      ${where}
+    `;
 
     const [rows]: any = await db.query(query, params);
-    res.json({ mttr: rows[0]?.mttr ?? 0 });
+
+    if (!rows.length) return res.json({ mttr: 0 });
+
+    let totalHoras = 0;
+    let countOS = rows.length; // Contamos todas as OS retornadas pelo filtro
+
+    // --- 3. CÁLCULO DA INTERSEÇÃO ---
+    for (const os of rows) {
+      const inicioOS = new Date(os.data_inicio);
+      const terminoOS = new Date(os.data_termino);
+
+      // Calcula apenas o tempo que cruza o período do filtro
+      const inicioConsiderado = inicioOS > inicioFiltro ? inicioOS : inicioFiltro;
+      const terminoConsiderado = terminoOS < fimFiltro ? terminoOS : fimFiltro;
+
+      const diffMs = terminoConsiderado.getTime() - inicioConsiderado.getTime();
+      const diffHoras = diffMs / (1000 * 60 * 60);
+
+      totalHoras += diffHoras;
+
+      // DEBUG opcional
+      console.log(`OS ID: ${os.id_ord_serv} | Máquina: ${os.nome_maquina}`);
+      console.log(`  Período: ${inicioConsiderado.toISOString()} -> ${terminoConsiderado.toISOString()}`);
+      console.log(`  Duração: ${diffHoras.toFixed(2)}h`);
+    }
+
+    const mttr = totalHoras / countOS;
+
+    console.log(`Total Horas: ${totalHoras.toFixed(2)} | Contagem OS: ${countOS} | MTTR: ${mttr.toFixed(2)}h`);
+
+    res.json({ mttr: Number(mttr.toFixed(2)) });
   } catch (err) {
-    res.status(500).json({ erro: "Erro ao calcular MTTR" });
+    console.error("Erro ao calcular MTTR Geral:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTR Geral" });
   }
 }
+
+
 
 // -------------------------------
 // MTTR POR MÁQUINA (CORRETO)

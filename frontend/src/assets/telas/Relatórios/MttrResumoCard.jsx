@@ -7,6 +7,26 @@ import DashboardMTTR from "./DashboardMTTR.jsx";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
+// Função de fetch com retry definida fora do componente para não recriar a cada render
+const fetchWithRetry = async (url, options, retries = 3) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const resposta = await fetch(url, options);
+      if (resposta.status === 429 && i < retries - 1) {
+        const delay = Math.pow(2, i) * 1000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
+      }
+      return resposta;
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      const delay = Math.pow(2, i) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error("Falha na requisição após várias tentativas.");
+};
+
 export default function MttrResumoCard({
   dataInicial,
   dataFinal,
@@ -21,29 +41,10 @@ export default function MttrResumoCard({
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Usa a meta recebida por prop
-  const meta = metaMTTR || 4;
+  // Usa a meta recebida por prop ou padrão 4h
+  const meta = metaMTTR ?? 4;
 
   useEffect(() => {
-    const fetchWithRetry = async (url, options, retries = 3) => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const resposta = await fetch(url, options);
-          if (resposta.status === 429 && i < retries - 1) {
-            const delay = Math.pow(2, i) * 1000;
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            continue;
-          }
-          return resposta;
-        } catch (error) {
-          if (i === retries - 1) throw error;
-          const delay = Math.pow(2, i) * 1000;
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
-      }
-      throw new Error("Falha na requisição após várias tentativas.");
-    };
-
     const buscarMTTR = async () => {
       setCarregando(true);
       setErro(null);
@@ -73,8 +74,9 @@ export default function MttrResumoCard({
         setCarregando(false);
       }
     };
+
     buscarMTTR();
-  }, [dataInicial, dataFinal, idSetor]);
+  }, [dataInicial, dataFinal, idSetor, metaMTTR]); // metaMTTR incluída para atualizar gráfico
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTTR...</div>;
@@ -88,16 +90,15 @@ export default function MttrResumoCard({
         <div className="kpi-valor-principal kpi-valor-grande">
           <span
             className="valor-indicador"
-            style={{ color: getMttrColor(mttrGeral, meta) }}
+            style={{ color: getMttrColor(mttrGeral ?? 0, meta) }}
           >
-            {formatHoras(mttrGeral)}
+            {formatHoras(mttrGeral ?? 0)}
           </span>
           <p className="card-meta">Meta (Abaixo de): {formatHoras(meta)}</p>
         </div>
 
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-          {/* Passa o valor atual da meta (metaMTTR) para o gráfico/barra */}
-          <DashboardMTTR mttrValue={mttrGeral} valorMeta={meta} />
+          <DashboardMTTR mttrValue={mttrGeral ?? 0} valorMeta={meta} />
         </div>
       </div>
 
@@ -108,6 +109,7 @@ export default function MttrResumoCard({
         <div className="input-time-card">
           <input
             type="number"
+            step="1"
             value={metaHoras}
             onChange={(e) => setMetaHoras(Math.max(0, Number(e.target.value)))}
             min={0}
@@ -118,6 +120,7 @@ export default function MttrResumoCard({
         <div className="input-time-card">
           <input
             type="number"
+            step="1"
             value={metaMinutos}
             onChange={(e) =>
               setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))
