@@ -15,7 +15,7 @@
 }
 
 .navbar-title {
-  font-size: 50px;
+  font-size: 48px;
   font-weight: bold;
   color: #fff;
 }
@@ -40,6 +40,8 @@
   font-size: 38px;
   color: #ffffff;
 }
+
+/* | CONTEUDO DO MENU|*/
 
 .profile-menu {
   position: absolute;
@@ -75,6 +77,62 @@
   border-bottom: 10px solid #fff;
   z-index: 101;
 }
+
+/* MENU DO HAMBURGUER (segue o mesmo padrão do profile-menu) */
+.hamburger-menu {
+  position: absolute;
+  top: 60px;      /* ajuste como quiser */
+  left: 10px;    /* igual ao menu do perfil */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 220px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  z-index: 9999;
+  padding: 10px 0;
+}
+
+/* setinha opcional (igual ao profile-menu) */
+.hamburger-menu::before,
+.hamburger-menu::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.hamburger-menu::before {
+  top: -11px;
+  left: 30px;
+  border-bottom: 11px solid #d4d4d4;
+}
+
+.hamburger-menu::after {
+  top: -10px;
+  left: 30px;
+  border-bottom: 10px solid #fff;
+}
+
+/* Botões */
+.hamburger-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  display: block;
+}
+
+.hamburger-item:hover {
+  background: #89c0f8;
+}
+/* ^^^^^^ Conteúdo do menu ^^^^^^*/
+
+
 
 .user-info {
   display: flex;
@@ -178,4 +236,77 @@
 
 .menu-option.botao-sair:focus {
   outline: 2px solid #e2a1a6;
+}
+
+/* Responsividade Navbar */
+
+@media (max-width: 1024px) {
+  .layout-sidebar {
+    display: none;
+  --sidebar-width: 0;
+}
+  .menu-icon {
+    display: block;
+    cursor: pointer;
+    font-size: 24px;
+  }
+}
+
+/* Só mostra quando a tela for maior que 1024px */
+@media (min-width: 1024px) {
+  .sidebar {
+  display: flex;
+}
+#menu-wrap{
+  display: none;
+  width: 0;
+  height: 0;
+}
+}
+
+/* SUBMENU DO HAMBURG */
+
+/* Para itens que têm submenu */
+.hamburger-item.has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Submenu do hambúrguer */
+.hamburger-submenu {
+  background-color: #f8f9fa;
+  border-left: 3px solid #3498db;
+  margin: 0 10px 5px 30px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hamburger-submenu button {
+  display: block;
+  width: 100%;
+  padding: 8px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hamburger-submenu button:hover {
+  background-color: #e9ecef;
+  color: #3498db;
+}
+
+/* Ajuste para os ícones nos botões */
+.hamburger-item svg:first-child {
+  margin-right: 8px;
+}
+
+/* Seta dos submenus */
+.hamburger-item.has-submenu svg:last-child {
+  margin-left: auto;
+  font-size: 14px;
 }
