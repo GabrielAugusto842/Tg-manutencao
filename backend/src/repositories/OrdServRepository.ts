@@ -122,80 +122,84 @@ export class OrdServRepository {
   //Função para o Gerente de Manutenção atualizar as OS
   async updateOrdemServico(
     idOrdServ: number,
-    descricao: string,
-    solucao: string | null,
-    custo: number | null,
-    manutentor: number | null // Passando o campo correto "manutentor"
-  ): Promise<boolean> {
-    // Primeiramente, busca a OS no banco
-    const os = await this.findById(idOrdServ);
-    if (!os) {
-      throw new Error("Ordem de serviço não encontrada!");
+    campos: {
+      descricao?: string;
+      solucao?: string | null;
+      custo?: number | null;
+      manutentor?: number | null;
     }
+  ): Promise<boolean> {
+    const os = await this.findById(idOrdServ);
+    if (!os) throw new Error("Ordem de serviço não encontrada!");
 
-    // Depois, busca os estados
     const estadoAberto = await this.estadoRepo.getByCodigo(1);
     const estadoAndamento = await this.estadoRepo.getByCodigo(2);
     const estadoFinalizado = await this.estadoRepo.getByCodigo(3);
+
     if (!estadoAberto || !estadoAndamento || !estadoFinalizado) {
       throw new Error("Estados de OS não configurados no sistema");
     }
 
-    // Monta dinamicamente a query com os campos fornecidos
     const fields: string[] = [];
     const values: any[] = [];
 
-    if (os.getIdEstado == estadoAberto.getIdEstado) {
-      if (descricao !== undefined) {
-        fields.push("descricao = ?");
-        values.push(descricao);
-      }
-      if (manutentor !== undefined) {
-        fields.push("id_usuario = ?");
-        values.push(manutentor); // Atualizando o campo id_usuario com o valor correto
-        const idEstado = estadoAndamento.getIdEstado;
-        fields.push("id_estado = ?");
-        values.push(idEstado);
-        const operacao = false;
-        fields.push("operacao = ?");
-        values.push(Number(operacao));
-        const dataInicio = getCurrentDateTime();
-        fields.push("data_inicio = ?");
-        values.push(dataInicio);
-      }
-    } else if (os.getIdEstado == estadoAndamento.getIdEstado) {
-      if (descricao !== undefined) {
-        fields.push("descricao = ?");
-        values.push(descricao);
-      }
-      if (manutentor !== undefined) {
-        fields.push("id_usuario = ?");
-        values.push(manutentor); // Atualizando o campo id_usuario
-      }
-    } else if (os.getIdEstado == estadoFinalizado.getIdEstado) {
-      if (solucao !== undefined) {
-        fields.push("solucao = ?");
-        values.push(solucao);
-      }
-      if (custo !== undefined) {
-        fields.push("custo = ?");
-        values.push(custo);
-      }
-      values.push(idOrdServ);
-    } else {
-      throw new Error("Estado passado não consta no sistema!");
+    switch (os.getIdEstado) {
+      case estadoAberto.getIdEstado:
+        if (campos.descricao !== undefined) {
+          fields.push("descricao = ?");
+          values.push(campos.descricao);
+        }
+        if (campos.manutentor !== undefined) {
+          fields.push("id_usuario = ?");
+          values.push(campos.manutentor);
+
+          fields.push("id_estado = ?");
+          values.push(estadoAndamento.getIdEstado);
+
+          fields.push("operacao = ?");
+          values.push(0);
+
+          fields.push("data_inicio = ?");
+          values.push(getCurrentDateTime());
+        }
+        break;
+
+      case estadoAndamento.getIdEstado:
+        if (campos.descricao !== undefined) {
+          fields.push("descricao = ?");
+          values.push(campos.descricao);
+        }
+        if (campos.manutentor !== undefined) {
+          fields.push("id_usuario = ?");
+          values.push(campos.manutentor);
+        }
+        break;
+
+      case estadoFinalizado.getIdEstado:
+        if (campos.descricao !== undefined) {
+          fields.push("descricao = ?");
+          values.push(campos.descricao);
+        }
+        if (campos.solucao !== undefined) {
+          fields.push("solucao = ?");
+          values.push(campos.solucao);
+        }
+        if (campos.custo !== undefined) {
+          fields.push("custo = ?");
+          values.push(campos.custo);
+        }
+        break;
+
+      default:
+        throw new Error("Estado da OS não reconhecido no sistema!");
     }
 
-    if (fields.length === 0) {
-      console.log("Nada para atualizar");
-      return false; // Nada para atualizar
-    }
+    if (fields.length === 0) return false;
 
     values.push(idOrdServ);
     const sql = `UPDATE ordem_servico SET ${fields.join(
       ", "
     )} WHERE id_ord_serv = ?`;
-    console.log("SQL da atualização: ", sql); // Log da query para verificar
     const [result]: any = await db.execute(sql, values);
     return result.affectedRows > 0;
   }

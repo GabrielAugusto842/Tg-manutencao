@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
 import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
-import DisponibilidadeResumoCard from "./DisponibilidadeResumoCard.jsx";
 import MttaResumoCard from "./MttaResumoCard.jsx";
 import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
 
@@ -21,8 +20,6 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
   const [metaMtbfMinutos, setMetaMtbfMinutos] = useState(0);
   const metaMTBF = metaMtbfHoras + metaMtbfMinutos / 60;
 
-  /* ------------------- META DISPONIBILIDADE ------------------- */
-  const [metaDisponibilidade, setMetaDisponibilidade] = useState(95.0);
 
   /* ------------------- META MTTA (NOVA) ------------------- */
   const [metaMttaHoras, setMetaMttaHoras] = useState(0);
@@ -84,14 +81,7 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           metaMTTA={metaMTTA}
         />
 
-        {/* ----------------- DISPONIBILIDADE ----------------- */}
-        <DisponibilidadeResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
-          idSetor={idSetor}
-          metaDisponibilidade={metaDisponibilidade}
-          setMetaDisponibilidade={setMetaDisponibilidade}
-        />
+ 
 
         {/* ----------------- CUSTO TOTAL ----------------- */}
         <CustoTotalResumoCard

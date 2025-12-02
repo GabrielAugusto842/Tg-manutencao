@@ -3,12 +3,12 @@
    ======================================= */
 .dashboard-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 26px;
-  margin-bottom: 35px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 0px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  padding: 15px;
+  padding: 30px;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }

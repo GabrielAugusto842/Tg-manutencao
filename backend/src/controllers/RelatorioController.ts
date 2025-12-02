@@ -208,55 +208,88 @@ export async function getMTBFGeral(req: Request, res: Response) {
 export const getMTBFPorMaquina = async (req: Request, res: Response) => {
   // manter sua versão atual
 };
-
-// -------------------------------
-// DISPONIBILIDADE GERAL (AJUSTADO PARA MÊS ATUAL)
-// -------------------------------
 export async function getDisponibilidadeGeral(req: Request, res: Response) {
   try {
     const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
-    let where =
-      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL";
 
-    if (dataInicial) {
-      where += " AND o.data_inicio >= ?";
-      params.push(dataInicial);
-    }
-    if (dataFinal) {
-      where += " AND o.data_termino <= ?";
-      params.push(dataFinal);
-    }
+    // 1) Determinar período do filtro ou mês atual
+    const hoje = new Date();
+    const inicioMes = dataInicial
+      ? new Date(dataInicial as string)
+      : new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const fimMes = dataFinal
+      ? new Date(dataFinal as string)
+      : new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59);
+
+    // 2) Buscar máquinas com disponibilidade_mes
+    let whereMaquina = "WHERE disponibilidade_mes IS NOT NULL";
+    const paramsMaquina: any[] = [];
+
     if (idSetor) {
-      where += " AND m.id_setor = ?";
-      params.push(idSetor);
+      whereMaquina += " AND id_setor = ?";
+      paramsMaquina.push(idSetor);
     }
 
-    const query = `
-SELECT
-SUM(TIMESTAMPDIFF(MINUTE, o.data_inicio, o.data_termino)) AS tempoIndisponivel
-FROM ordem_servico o
-JOIN maquina m ON m.id_maquina = o.id_maquina
-${where}
-`;
+    const [maquinas]: any = await db.query(
+      `SELECT id_maquina, disponibilidade_mes FROM maquina ${whereMaquina}`,
+      paramsMaquina
+    );
 
-    const [rows]: any = await db.query(query, params);
+    if (maquinas.length === 0) return res.json({ disponibilidade: 0 });
 
-    const indisponivel = rows[0]?.tempoIndisponivel ?? 0;
+    const disponibilidades: number[] = [];
 
-    // Total de minutos é dinâmico (período fornecido ou Month-to-Date)
-    const totalMinutos = calculateTotalMinutes(dataInicial, dataFinal);
+    for (const maquina of maquinas) {
+      // 3) Buscar downtime da máquina dentro do período
+      const [rows]: any = await db.query(
+        `
+        SELECT 
+          o.data_inicio, o.data_termino
+        FROM ordem_servico o
+        WHERE o.id_maquina = ?
+          AND o.data_inicio IS NOT NULL
+          AND (o.data_termino IS NULL OR o.data_termino IS NOT NULL)
+      `,
+        [maquina.id_maquina]
+      );
 
-    // Evita divisão por zero ou períodos inválidos
-    if (totalMinutos <= 0) {
-      return res.json({ disponibilidade: 0 });
+      let tempoParadoMinutos = 0;
+
+      for (const os of rows) {
+        const inicioOS = new Date(os.data_inicio);
+        const terminoOS = os.data_termino ? new Date(os.data_termino) : fimMes;
+
+        // Calcula apenas o tempo que caiu dentro do período
+        const inicio = inicioOS < inicioMes ? inicioMes : inicioOS;
+        const fim = terminoOS > fimMes ? fimMes : terminoOS;
+
+        const diff = (fim.getTime() - inicio.getTime()) / (1000 * 60); // minutos
+
+        if (diff > 0) tempoParadoMinutos += diff;
+      }
+
+      // 4) Disponibilidade da máquina
+      const totalDisponibilidadeMinutos = maquina.disponibilidade_mes * 60;
+
+      if (totalDisponibilidadeMinutos <= 0) continue;
+
+      const disp =
+        ((totalDisponibilidadeMinutos - tempoParadoMinutos) /
+          totalDisponibilidadeMinutos) *
+        100;
+
+      disponibilidades.push(Math.max(0, Math.min(disp, 100)));
     }
 
-    const disponibilidade =
-      ((totalMinutos - indisponivel) / totalMinutos) * 100;
+    if (disponibilidades.length === 0) return res.json({ disponibilidade: 0 });
 
-    res.json({ disponibilidade: Number(disponibilidade.toFixed(2)) });
+    // 5) Média das disponibilidades
+    const media =
+      disponibilidades.reduce((a, b) => a + b, 0) / disponibilidades.length;
+
+    res.json({ disponibilidade: Number(media.toFixed(2)) });
   } catch (err) {
+    console.error("Erro ao calcular disponibilidade:", err);
     res.status(500).json({ erro: "Erro ao calcular disponibilidade" });
   }
 }

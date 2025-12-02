@@ -74,39 +74,41 @@ export class OrdServController {
 
   updateOrdServ = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const idOrdServ = req.params.id;
-      const descricao = req.body.descricao;
-      const solucao = req.body.solucao;
-      const custo = req.body.custo;
-      const manutentor = req.body.idUsuario; // Verificando o campo correto
+      const idOrdServ = Number(req.params.id);
 
-      console.log("Dados recebidos para atualização:", req.body); // Adicionando log para verificar os dados recebidos
-
-      if (!descricao) {
-        return res
-          .status(400)
-          .json({ error: "Campo obrigatório não preenchido!" });
-      }
-
-      const updated = await this.ordServRepo.updateOrdemServico(
-        Number(idOrdServ),
-        descricao,
-        solucao || null,
-        custo || null,
-        manutentor || null // Passando o idUsuario corretamente para o repo
-      );
-
-      if (!updated) {
+      const osAtual: any = await this.ordServRepo.findById(idOrdServ);
+      if (!osAtual)
         return res
           .status(404)
           .json({ error: "Ordem de serviço não encontrada" });
+
+      const { descricao, solucao, custo, idUsuario } = req.body;
+
+      // Monta o objeto de campos para atualização
+      const camposAtualizados: any = {};
+      if (osAtual.status === "Aberta") {
+        if (descricao !== undefined) camposAtualizados.descricao = descricao;
+        if (idUsuario !== undefined) camposAtualizados.manutentor = idUsuario;
+      } else if (osAtual.status === "Em andamento") {
+        if (descricao !== undefined) camposAtualizados.descricao = descricao;
+        if (idUsuario !== undefined) camposAtualizados.manutentor = idUsuario;
+      } else if (osAtual.status === "Finalizado") {
+        if (descricao !== undefined) camposAtualizados.descricao = descricao;
+        if (solucao !== undefined) camposAtualizados.solucao = solucao;
+        if (custo !== undefined) camposAtualizados.custo = custo;
       }
+
+      const updated = await this.ordServRepo.updateOrdemServico(
+        idOrdServ,
+        camposAtualizados
+      );
+
+      if (!updated)
+        return res.status(400).json({ error: "Nenhum campo atualizado." });
+
       return res.json({ message: "Ordem de serviço atualizada com sucesso" });
     } catch (error) {
-      console.error(
-        "Erro ao atualizar informações da ordem de serviço:",
-        error
-      );
+      console.error("Erro ao atualizar OS:", error);
       return res
         .status(500)
         .json({ error: "Erro ao atualizar informações da ordem de serviço" });

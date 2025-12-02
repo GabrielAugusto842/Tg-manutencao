@@ -102,8 +102,8 @@
 }
 
 .user-email {
-  font-size: 12px;
-  color: #777;
+  font-size: 16px;
+  color: #000000;
 }
 
 .menu-option {
@@ -115,7 +115,7 @@
   text-align: left;
   padding: 14px 18px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 18px;
   transition: background 0.2s;
 }
@@ -132,8 +132,8 @@
 
 /* Estilo do botão Trocar Senha */
 .menu-option.trocar-senha {
-  background-color: #5590cf;
-  color: #fff;
+  background-color: #5590cf !important;
+  color: #000000 !important;
   font-size: 18px;
   padding: 12px 18px;
   border-radius: 5px;
@@ -158,7 +158,7 @@
 /* Estilo do botão Sair */
 .menu-option.botao-sair {
   background-color: #f8d7da;
-  color: #721c24;
+  color: #ca2132;
   font-size: 18px;
   padding: 14px 18px;
   border-radius: 5px;
@@ -168,7 +168,7 @@
 }
 
 .menu-option.botao-sair:hover {
-  background-color: #ca1e2f;
+  background-color: #ff949e;
   transform: scale(1.05);
 }
 
