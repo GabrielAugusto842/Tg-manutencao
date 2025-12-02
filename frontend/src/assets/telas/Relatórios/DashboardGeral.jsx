@@ -90,12 +90,7 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           idSetor={idSetor}
         />
 
-        {/* ----------------- OS CONCLUÍDAS ----------------- */}
-        <OsConcluidasResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
-          idSetor={idSetor}
-        />
+      
 
         {/* ----------------- BACKLOG INTEGRADO ----------------- */}
         <BacklogIntegradoCard

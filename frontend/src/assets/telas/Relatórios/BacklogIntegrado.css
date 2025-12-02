@@ -1,7 +1,7 @@
 .backlog-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
-  padding: 22px;
+  padding: 30px;
   width: 100%;
   display: flex;
   font-weight: 600;
@@ -16,16 +16,18 @@
 
 .backlog-flex {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .backlog-left {
-  flex: 1;
+  width: 100%;
   max-height: 300px;
   overflow-y: auto;
-  border-right: 1px solid #e5e7eb;
-  padding-right: 8px;
+  overflow-x: auto; /* permite rolagem horizontal */
+  border-right: none;
+  padding-right: 0;
 }
+
 
 .backlog-left::-webkit-scrollbar {
   width: 6px;
@@ -37,7 +39,7 @@
 }
 
 .backlog-right {
-  width: 25%; /* aumenta um pouco a largura */
+  width: 23%; /* aumenta um pouco a largura */
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -36,7 +36,7 @@ export default function MttaResumoCard({
 
         const query = params.toString() ? `?${params.toString()}` : "";
 
-        const resposta = await fetch(`${API_URL}/mtti-geral${query}`, {
+        const resposta = await fetch(`${API_URL}/mtta-geral${query}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
