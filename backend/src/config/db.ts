@@ -17,4 +17,5 @@ export const db = mysql.createPool({
     password: getEnvVar('DB_PASS'),
     database: getEnvVar('DB_NAME'),
     port: Number(process.env.DB_PORT) || 3306,
+    timezone: 'Z',
 })
