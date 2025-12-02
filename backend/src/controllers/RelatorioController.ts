@@ -575,9 +575,15 @@ export const getDashboardMaquina = async (req: Request, res: Response) => {
 
 // -------------------------------------------
 // MTTR Anual (Agrupado por Mês)
+
+
+
+// Assumindo que 'db' é a conexão do MySQL já importada
+
+
+
 export async function getMTTRAnual(req: Request, res: Response) {
   try {
-    // O frontend enviará o ano e, opcionalmente, o idSetor
     const { ano, idSetor } = req.query;
     const params: any[] = [];
     let where = "WHERE o.data_termino IS NOT NULL";
@@ -593,21 +599,17 @@ export async function getMTTRAnual(req: Request, res: Response) {
       params.push(idSetor);
     }
 
-    // 3. Query principal (só trará meses com dados)
+    // 3. Query: traz todas as OS do ano
     const query = `
-      SELECT 
-        MONTH(o.data_termino) AS mes_num,
-        IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
+      SELECT o.data_inicio, o.data_termino
       FROM ordem_servico o
       JOIN maquina m ON m.id_maquina = o.id_maquina
       ${where}
-      GROUP BY mes_num
-      ORDER BY mes_num ASC
     `;
 
     const [rows]: any = await db.query(query, params);
 
-    // 4. PÓS-PROCESSAMENTO: Cria estrutura de 12 meses e mescla os resultados do DB
+    // 4. Estrutura anual: 12 meses
     const monthNames = [
       "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
       "Jul", "Ago", "Set", "Out", "Nov", "Dez"
@@ -616,23 +618,41 @@ export async function getMTTRAnual(req: Request, res: Response) {
     const fullYearData = Array.from({ length: 12 }, (_, i) => ({
       mes_num: i + 1,
       periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
-      mttr: 0.0,
+      mttr: 0,
+      countOS: 0
     }));
 
-    // Mescla os resultados do banco de dados na estrutura anual
-    const finalData = fullYearData.map(monthData => {
-      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
-      if (dbRow) {
-        // CORREÇÃO: parseFloat garante número antes de toFixed
-        const mttrValue = parseFloat(dbRow.mttr);
+    // 5. Itera cada OS e distribui horas por mês
+    for (const os of rows) {
+      const dataInicioOS = new Date(os.data_inicio);
+      const dataTerminoOS = new Date(os.data_termino);
 
-        return {
-          ...monthData,
-          mttr: Number(mttrValue.toFixed(2)) || 0.0,
-        };
+      for (let mesIndex = 0; mesIndex < 12; mesIndex++) {
+        const inicioMes = new Date(targetYear, mesIndex, 1, 0, 0, 0);
+        const fimMes = new Date(targetYear, mesIndex + 1, 0, 23, 59, 59);
+
+        // Interseção OS x mês
+        const inicioConsiderado = dataInicioOS > inicioMes ? dataInicioOS : inicioMes;
+        const terminoConsiderado = dataTerminoOS < fimMes ? dataTerminoOS : fimMes;
+
+        const diffMs = terminoConsiderado.getTime() - inicioConsiderado.getTime();
+        const diffHoras = diffMs / (1000 * 60 * 60); // horas decimais
+
+        if (diffHoras > 0) {
+  // fullYearData[mesIndex] sempre existe, então usamos !
+  fullYearData[mesIndex]!.mttr += diffHoras;
+  fullYearData[mesIndex]!.countOS += 1;
+}
+
       }
-      return monthData;
-    });
+    }
+
+    // 6. Calcula MTTR médio por mês
+    const finalData = fullYearData.map(month => ({
+      mes_num: month.mes_num,
+      periodo: month.periodo,
+      mttr: month.countOS > 0 ? Number((month.mttr / month.countOS).toFixed(2)) : 0
+    }));
 
     res.json(finalData);
   } catch (err) {
@@ -640,6 +660,8 @@ export async function getMTTRAnual(req: Request, res: Response) {
     res.status(500).json({ erro: "Erro ao calcular MTTR Anual" });
   }
 }
+
+
 
 export async function getMTBFAnual(req: Request, res: Response) {
   try {
