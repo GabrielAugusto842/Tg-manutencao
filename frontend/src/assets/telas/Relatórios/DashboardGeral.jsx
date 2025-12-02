@@ -3,6 +3,8 @@ import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
 import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
 import MttaResumoCard from "./MttaResumoCard.jsx";
+import MttrAnualChart from "./MttrAnualChart.jsx";
+import MtbfAnualChart from "./MtbfAnualChart.jsx";
 import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
 
 import "./DashboardGeral.css";
@@ -100,6 +102,20 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
           chartComponent={null}
         />
       </div>
+
+      {/* ----------------- NOVO GRÁFICO ANUAL MTTR ----------------- */}
+<div className="dashboard-kpi-grid pula-linha-export full-width-chart">
+  <MttrAnualChart 
+    idSetor={idSetor} 
+  />
+</div>
+
+      {/* ----------------- NOVO GRÁFICO ANUAL MTBF ----------------- */}
+<div className="dashboard-kpi-grid pula-linha-export full-width-chart">
+  <MtbfAnualChart 
+    idSetor={idSetor} 
+  />
+</div>
     </div>
   );
 }

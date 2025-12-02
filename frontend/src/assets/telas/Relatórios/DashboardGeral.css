@@ -539,3 +539,19 @@
   color: #374151;
   white-space: nowrap;
 }
+
+/* Para que o gráfico anual fique em uma linha própria e ocupe toda a largura */
+.dashboard-kpi-grid.full-width-chart {
+    display: flex;
+    /* Faz o card do gráfico ocupar toda a largura da grade */
+    grid-column: 1 / -1; 
+    margin-top: 20px;
+    padding: 0; /* Remove padding duplicado se houver */
+}
+
+/* Estilo para garantir que o card do gráfico use 100% do espaço */
+.kpi-card.chart-card.full-width {
+    width: 100%;
+    padding: 15px; /* Adiciona padding interno */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}

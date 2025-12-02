@@ -507,3 +507,158 @@ export async function getBacklogOsDetalhado(req: Request, res: Response) {
 export const getDashboardMaquina = async (req: Request, res: Response) => {
   // manter sua versão atual
 };
+
+// -------------------------------------------
+// MTTR Anual (Agrupado por Mês)
+export async function getMTTRAnual(req: Request, res: Response) {
+  try {
+    // O frontend enviará o ano e, opcionalmente, o idSetor
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
+
+    // 1. Filtro por Ano
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    // 2. Filtro por Setor
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // 3. Query principal (só trará meses com dados)
+    const query = `
+      SELECT 
+        MONTH(o.data_termino) AS mes_num,
+        IFNULL(AVG(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS mttr
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // 4. PÓS-PROCESSAMENTO: Cria estrutura de 12 meses e mescla os resultados do DB
+    const monthNames = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => ({
+      mes_num: i + 1,
+      periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+      mttr: 0.0,
+    }));
+
+    // Mescla os resultados do banco de dados na estrutura anual
+    const finalData = fullYearData.map(monthData => {
+      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
+      if (dbRow) {
+        // CORREÇÃO: parseFloat garante número antes de toFixed
+        const mttrValue = parseFloat(dbRow.mttr);
+
+        return {
+          ...monthData,
+          mttr: Number(mttrValue.toFixed(2)) || 0.0,
+        };
+      }
+      return monthData;
+    });
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTTR Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTTR Anual" });
+  }
+}
+
+export async function getMTBFAnual(req: Request, res: Response) {
+  try {
+    const { ano, idSetor } = req.query;
+    const params: any[] = [];
+    let where = "WHERE o.data_termino IS NOT NULL";
+
+    const targetYear = Number(ano) || new Date().getFullYear();
+    where += " AND YEAR(o.data_termino) = ?";
+    params.push(targetYear);
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    // 1. Query para obter o tempo de inatividade (downtime) e a contagem de falhas (failures) por mês.
+    const query = `
+      SELECT 
+        MONTH(o.data_termino) AS mes_num,
+        -- Soma do tempo de inatividade no mês (em horas)
+        IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS downtime_hours,
+        -- Contagem total de ordens de serviço concluídas (falhas) no mês
+        COUNT(*) AS failure_count
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // 2. PÓS-PROCESSAMENTO: Cria estrutura de 12 meses
+    const monthNames = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+    ];
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => {
+      // Calcula o número total de dias no mês para o ano alvo
+      const totalDaysInMonth = new Date(targetYear, i + 1, 0).getDate();
+      const totalAvailableHours = totalDaysInMonth * 24;
+
+      return {
+        mes_num: i + 1,
+        periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
+        totalAvailableHours: totalAvailableHours,
+        mtbf: 0.0,
+      };
+    });
+
+    // 3. Mescla os resultados e calcula o MTBF
+    const finalData = fullYearData.map(monthData => {
+      const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
+      
+      if (dbRow) {
+        const downtimeHours = parseFloat(dbRow.downtime_hours);
+        const failureCount = parseInt(dbRow.failure_count, 10);
+
+        let mtbf = 0.0;
+
+        if (failureCount > 0) {
+          // Tempo operacional (Up Time) = Total disponível - Downtime
+          const upTimeHours = Math.max(0, monthData.totalAvailableHours - downtimeHours);
+          
+          // MTBF = Up Time / Número de Falhas
+          mtbf = upTimeHours / failureCount;
+        }
+
+        return {
+          ...monthData,
+          mtbf: Number(mtbf.toFixed(2)),
+        };
+      }
+
+      return monthData;
+    });
+
+    res.json(finalData);
+  } catch (err) {
+    console.error("Erro ao buscar MTBF Anual:", err);
+    res.status(500).json({ erro: "Erro ao calcular MTBF Anual" });
+  }
+}
+
+
