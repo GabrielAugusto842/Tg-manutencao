@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
-import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
 import MttaResumoCard from "./MttaResumoCard.jsx";
 import MttrAnualChart from "./MttrAnualChart.jsx";
 import MtbfAnualChart from "./MtbfAnualChart.jsx";

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import DashboardGeral from "./DashboardGeral.jsx";
+import DashboardRanking from "./DashboardRanking.jsx";
 import "./Relatorios.css";
 
 const API_URL = "http://localhost:3002/api/setores";
@@ -31,6 +32,8 @@ export default function Relatorios() {
     };
     buscarSetores();
   }, []);
+
+  const anoAtual = new Date().getFullYear();
 
   return (
     <Layout title="Relatórios">
@@ -66,7 +69,7 @@ export default function Relatorios() {
               value={ano}
               onChange={(e) => setAno(e.target.value)}
               className="filtro-input"
-              placeholder="2025"
+              placeholder={anoAtual.toString()}
               min="2000"
               max="2100"
             />
@@ -80,7 +83,8 @@ export default function Relatorios() {
               onChange={(e) => setTipoRelatorio(e.target.value)}
               className="filtro-input"
             >
-              <option value="dashboard-geral">Dashboard Geral - Métricas Gerais</option>
+              <option value="dashboard-geral">Dashboard - Métricas Gerais</option>
+              <option value="ranking">Ranking de Ordens</option>
             </select>
           </div>
 
@@ -111,6 +115,13 @@ export default function Relatorios() {
         <main className="relatorio-display-area">
           {tipoRelatorio === "dashboard-geral" && (
             <DashboardGeral
+              mes={mes}
+              ano={ano}
+              idSetor={idSetorSelecionado}
+            />
+          )}
+          {tipoRelatorio === "ranking" && (
+            <DashboardRanking
               mes={mes}
               ano={ano}
               idSetor={idSetorSelecionado}
