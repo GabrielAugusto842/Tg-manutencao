@@ -1,16 +1,15 @@
-// src/componentes/Relatorios/MttrComparisonBar.jsx
+// src/componentes/Relatorios/MtbfComparisonBar.jsx
 
 import React from "react";
-import { formatHoras, getMttrColor } from "../../Services/formatters";
+import { formatHoras, getMtbfColor } from "../../Services/formatters";
 
-// Escala dinâmica com mínimo de 24h
+// Escala dinâmica baseada nos valores
 const calcularEscala = (valorAtual, valorMeta) => {
   const maior = Math.max(valorAtual, valorMeta);
-  return Math.max(250, maior * 1.15); // margem de 15%
+  return Math.max(200, maior * 1.15); // margem de 15%, mínimo 200h
 };
 
-export default function MttrComparisonBar({ valorAtual, valorMeta }) {
-  
+export default function MtbfComparisonBar({ valorAtual, valorMeta }) {
   const escala = calcularEscala(valorAtual, valorMeta);
 
   // Larguras proporcionais
@@ -18,12 +17,11 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
   const larguraMeta = Math.min((valorMeta / escala) * 100, 100);
 
   // Cores
-  const corAtual = getMttrColor(valorAtual, valorMeta);
-  const corMeta = "#0ebc0eff";
+  const corAtual = getMtbfColor(valorAtual, valorMeta); // verde se bateu a meta
+  const corMeta = "#0ebc0eff"; // verde fixo para meta
 
   return (
     <div style={{ marginTop: "25px", padding: "0 5px" }}>
-
       {/* Texto valor atual */}
       <div
         style={{
@@ -35,11 +33,11 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
           marginBottom: "4px",
         }}
       >
-        <span>MTTR Atual:</span>
+        <span>MTBF Atual:</span>
         <span>{formatHoras(valorAtual)}</span>
       </div>
 
-      {/* Barra atual */}
+      {/* Barra do valor atual */}
       <div
         style={{
           backgroundColor: "#e5e7eb",
@@ -71,11 +69,11 @@ export default function MttrComparisonBar({ valorAtual, valorMeta }) {
           marginBottom: "6px",
         }}
       >
-        <span>MTTR Meta:</span>
+        <span>MTBF Meta:</span>
         <span>{formatHoras(valorMeta)}</span>
       </div>
 
-      {/* Barra meta */}
+      {/* Barra da meta */}
       <div
         style={{
           backgroundColor: "#e5e7eb",

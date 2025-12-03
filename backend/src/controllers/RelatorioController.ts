@@ -48,43 +48,54 @@ function getTotalMinutesPeriod(
 // -------------------------------
 // MTTR GERAL (CORRETO)
 // -------------------------------
-// Assumindo que 'db' é uma conexão de banco de dados global/importada
-
-// Supondo que 'db' seja sua conexão com o banco de dados
 
 export async function getMTTRGeral(req: Request, res: Response) {
   try {
-    let { dataInicial, dataFinal, idSetor } = req.query as {
-      dataInicial?: string;
-      dataFinal?: string;
+    let { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
       idSetor?: string;
     };
 
     const agora = new Date();
 
-    // --- 1. CONFIGURAÇÃO DE DATAS ---
-    if (!dataInicial) dataInicial = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2,'0')}-01`;
-    if (!dataFinal) {
-      const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
-      dataFinal = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2,'0')}-${String(ultimoDia.getDate()).padStart(2,'0')}`;
-    }
+    // ⚡ CONVERSÃO SEGURA DE PARÂMETROS
+    const m = mes && !isNaN(Number(mes)) ? Number(mes) : agora.getMonth() + 1;
+    const y = ano && !isNaN(Number(ano)) ? Number(ano) : agora.getFullYear();
 
-    // Cria datas completas no horário local
-    const inicioFiltro = new Date(`${dataInicial}T00:00:00`);
-    const fimFiltro = new Date(`${dataFinal}T23:59:59.999`);
+    // Garantir que o mês esteja entre 1 e 12
+    const mesValido = Math.min(Math.max(m, 1), 12);
 
-    const params: any[] = [inicioFiltro, fimFiltro];
-    let where =
-      "WHERE o.data_inicio IS NOT NULL AND o.data_termino IS NOT NULL AND o.data_termino >= ? AND o.data_inicio <= ?";
+    // 📅 Datas do período (início e fim do mês)
+    const dataInicial = new Date(y, mesValido - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(y, mesValido, 0, 23, 59, 59, 999);
+
+    console.log(`--- DEBUG MTTR ---`);
+    console.log(`Parâmetros Recebidos: mes=${mes}, ano=${ano}, idSetor=${idSetor}`);
+    console.log(`Período de Cálculo: ${dataInicial.toISOString()} ATÉ ${dataFinal.toISOString()}`);
+    console.log(`------------------`);
+
+    // Parâmetros para a query
+    const params: any[] = [dataInicial, dataFinal];
+
+    let where = `
+      WHERE o.data_inicio IS NOT NULL
+        AND o.data_termino IS NOT NULL
+        AND o.data_termino >= ?
+        AND o.data_inicio <= ?
+    `;
 
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
-    // --- 2. CONSULTA SQL ---
     const query = `
-      SELECT o.id_ord_serv, m.nome AS nome_maquina, o.data_inicio, o.data_termino
+      SELECT 
+        o.id_ord_serv,
+        m.nome AS nome_maquina,
+        o.data_inicio,
+        o.data_termino
       FROM ordem_servico o
       JOIN maquina m ON o.id_maquina = m.id_maquina
       ${where}
@@ -92,36 +103,31 @@ export async function getMTTRGeral(req: Request, res: Response) {
 
     const [rows]: any = await db.query(query, params);
 
-    if (!rows.length) return res.json({ mttr: 0 });
+    if (!rows.length) {
+      console.log("Nenhuma OS encontrada para o período/setor.");
+      return res.json({ mttr: 0 });
+    }
 
     let totalHoras = 0;
-    let countOS = rows.length; // Contamos todas as OS retornadas pelo filtro
+    const countOS = rows.length;
 
-    // --- 3. CÁLCULO DA INTERSEÇÃO ---
     for (const os of rows) {
       const inicioOS = new Date(os.data_inicio);
       const terminoOS = new Date(os.data_termino);
 
-      // Calcula apenas o tempo que cruza o período do filtro
-      const inicioConsiderado = inicioOS > inicioFiltro ? inicioOS : inicioFiltro;
-      const terminoConsiderado = terminoOS < fimFiltro ? terminoOS : fimFiltro;
+      const inicioConsiderado = inicioOS > dataInicial ? inicioOS : dataInicial;
+      const terminoConsiderado = terminoOS < dataFinal ? terminoOS : dataFinal;
 
       const diffMs = terminoConsiderado.getTime() - inicioConsiderado.getTime();
       const diffHoras = diffMs / (1000 * 60 * 60);
 
       totalHoras += diffHoras;
-
-      // DEBUG opcional
-      console.log(`OS ID: ${os.id_ord_serv} | Máquina: ${os.nome_maquina}`);
-      console.log(`  Período: ${inicioConsiderado.toISOString()} -> ${terminoConsiderado.toISOString()}`);
-      console.log(`  Duração: ${diffHoras.toFixed(2)}h`);
     }
 
     const mttr = totalHoras / countOS;
 
-    console.log(`Total Horas: ${totalHoras.toFixed(2)} | Contagem OS: ${countOS} | MTTR: ${mttr.toFixed(2)}h`);
-
     res.json({ mttr: Number(mttr.toFixed(2)) });
+
   } catch (err) {
     console.error("Erro ao calcular MTTR Geral:", err);
     res.status(500).json({ erro: "Erro ao calcular MTTR Geral" });
@@ -184,42 +190,36 @@ ORDER BY m.id_maquina
 
 export async function getMTBFGeral(req: Request, res: Response) {
   try {
-    let { dataInicial, dataFinal, idSetor } = req.query as {
-      dataInicial?: string;
-      dataFinal?: string;
+    let { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
       idSetor?: string;
     };
 
-    // -------------------------------
-    // 1. DEFINIÇÃO DO PERÍODO
-    // -------------------------------
     const hoje = new Date();
-    
-    // Configuração de datas padrão (Mês atual)
-    if (!dataInicial) {
-      dataInicial = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2,'0')}-01`;
-    }
-    if (!dataFinal) {
-      const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
-      dataFinal = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2,'0')}-${String(ultimoDia.getDate()).padStart(2,'0')}`;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+
+    if (mesNum < 1 || mesNum > 12) {
+      return res.status(400).json({ erro: "Mês inválido." });
     }
 
-    // Cria datas completas no horário local (início do dia e fim do dia)
-    const inicioFiltro = new Date(`${dataInicial}T00:00:00`);
-    const fimFiltro = new Date(`${dataFinal}T23:59:59.999`);
+    const mesIndex = mesNum - 1;
 
-    // -------------------------------
-    // 2. QUERY SQL
-    // -------------------------------
+    // 1. Período de Filtro: Limites do MÊS DE INTERESSE
+    const inicioFiltro = new Date(anoNum, mesIndex, 1, 0, 0, 0);
+    const fimFiltro = new Date(anoNum, mesIndex + 1, 0, 23, 59, 59, 999);
+
+    // 2. Período de Query (Escopo Expandido): Inclui o mês anterior
+    const inicioQuery = new Date(anoNum, mesIndex - 1, 1, 0, 0, 0);
+
     let where = `
       WHERE o.data_inicio IS NOT NULL
-      AND o.data_termino IS NOT NULL
-      AND o.data_termino >= ?
-      AND o.data_inicio <= ?
+        AND o.data_termino IS NOT NULL
+        AND o.data_termino >= ? 
+        AND o.data_inicio <= ?
     `;
-    // Usando as strings de data para o filtro SQL BETWEEN (se o banco for MySQL) ou as datas completas para >= e <=.
-    // Usando Date objects que serão serializados pelo driver do DB (mais seguro).
-    const params: any[] = [inicioFiltro, fimFiltro]; 
+    const params: any[] = [inicioQuery, fimFiltro];
 
     if (idSetor) {
       where += " AND m.id_setor = ?";
@@ -241,66 +241,118 @@ export async function getMTBFGeral(req: Request, res: Response) {
 
     const [rows]: any = await db.query(query, params);
 
-    if (!rows.length) return res.json({ mtbf: 0 });
+    // --- Ajuste para caso de zero falhas ---
+    const diffTempoTotalMes = fimFiltro.getTime() - inicioFiltro.getTime();
+    const horasMaximasPorMaquina = diffTempoTotalMes / (1000 * 60 * 60);
+    const numMaquinas = new Set(rows.map((os: any) => os.id_maquina)).size;
+    const uptimeMaximoTeorico = horasMaximasPorMaquina * numMaquinas;
+    
+    if (!rows.length) {
+      return res.json({ 
+        mtbf: 0, 
+        totalHorasOperacionais: Number(uptimeMaximoTeorico.toFixed(2)), 
+        countFalhas: 0, 
+        aviso: "Nenhuma falha registrada. Retornando Uptime máximo teórico." 
+      });
+    }
 
-    // -------------------------------
-    // 3. AGRUPAMENTO POR MÁQUINA
-    // -------------------------------
+    // Agrupar OS por máquina
     const maquinas: Record<number, any[]> = {};
     for (const os of rows) {
       const id = os.id_maquina;
       if (id != null) {
         maquinas[id] = maquinas[id] ?? [];
-        // Converte datas para Date
         os.data_inicio = new Date(os.data_inicio);
         os.data_termino = new Date(os.data_termino);
         maquinas[id].push(os);
       }
     }
 
-    // -------------------------------
-    // 4. CÁLCULO DOS INTERVALOS (TBF) CORRIGIDO
-    // -------------------------------
-    let totalIntervalosHoras = 0;
-    let countIntervalos = 0;
+    let totalHorasOperacionais = 0;
+    const falhasFinalizadasNoMes: Set<number> = new Set(); 
 
     for (const idMaquina in maquinas) {
       const osMaquina = maquinas[idMaquina];
-      if (!osMaquina || osMaquina.length < 2) continue;
+      if (!osMaquina || osMaquina.length === 0) continue;
 
-      for (let i = 0; i < osMaquina.length - 1; i++) {
-        // Término da OS anterior (OS que falhou)
-        const terminoAtual = osMaquina[i].data_termino;
-        // Início da próxima OS (Próxima falha)
-        const inicioProxima = osMaquina[i + 1].data_inicio;
-
-        // --- LÓGICA DE INTERSEÇÃO CORRIGIDA ---
-        // O início do TBF considerado é o maior entre o término da OS anterior e o início do filtro.
-        const inicioTBFConsiderado = terminoAtual > inicioFiltro ? terminoAtual : inicioFiltro;
-        // O fim do TBF considerado é o menor entre o início da próxima OS e o fim do filtro.
-        const fimTBFConsiderado = inicioProxima < fimFiltro ? inicioProxima : fimFiltro;
-
-        // A duração é a diferença entre o menor fim e o maior início.
-        const diffMs = fimTBFConsiderado.getTime() - inicioTBFConsiderado.getTime();
-        const diffHoras = diffMs / (1000 * 60 * 60);
-
-        if (diffHoras > 0) { // Só conta se houver uma interseção positiva com o período
-          totalIntervalosHoras += diffHoras;
-          countIntervalos++; // Conta o intervalo (falha) que contribuiu para o tempo
+      // Contagem de falhas no mês de filtro
+      for (const os of osMaquina) {
+        if (os.data_termino >= inicioFiltro && os.data_termino <= fimFiltro) {
+          falhasFinalizadasNoMes.add(os.id_ord_serv);
         }
+      }
+      
+      // Cálculo do TBF
+      for (let i = 0; i < osMaquina.length; i++) {
+        let terminoAnterior: Date;
+        let inicioProxima: Date;
+
+        if (i === 0) {
+          // TBF inicial: última OS concluída no mês anterior ou início do filtro
+          const osAnterioresConcluidas = rows.filter((os: any) => 
+            os.id_maquina === Number(idMaquina) && 
+            os.data_termino < inicioFiltro 
+          ).sort((a: any, b: any) => b.data_termino.getTime() - a.data_termino.getTime());
+          
+          terminoAnterior = osAnterioresConcluidas.length > 0
+            ? osAnterioresConcluidas[0].data_termino
+            : inicioFiltro;
+          
+          inicioProxima = osMaquina[0].data_inicio;
+      
+        } else if (i === osMaquina.length - 1) {
+          // Último TBF do mês: até fim do filtro
+          terminoAnterior = osMaquina[i].data_termino;
+          inicioProxima = fimFiltro;
+          
+        } else {
+          // TBF intermediário
+          terminoAnterior = osMaquina[i - 1].data_termino;
+          inicioProxima = osMaquina[i].data_inicio;
+        }
+        
+        // Recorte do período
+        const tbfInicio = terminoAnterior > inicioFiltro ? terminoAnterior : inicioFiltro;
+        const tbfFim = inicioProxima < fimFiltro ? inicioProxima : fimFiltro;
+
+        if (tbfFim <= tbfInicio) continue;
+
+        const diffHoras = (tbfFim.getTime() - tbfInicio.getTime()) / (1000 * 60 * 60);
+        if (diffHoras > 0) totalHorasOperacionais += diffHoras;
       }
     }
 
-    // -------------------------------
-    // 5. MTBF FINAL
-    // -------------------------------
-    const mtbf = countIntervalos > 0 ? totalIntervalosHoras / countIntervalos : 0;
-    res.json({ mtbf: Number(mtbf.toFixed(2)) });
+    // Retorno final
+    const countFalhas = falhasFinalizadasNoMes.size;
+
+    if (countFalhas <= 1) {
+      const aviso =
+        countFalhas === 1
+          ? "Houve apenas uma falha concluída no mês. MTBF não calculado."
+          : "Nenhuma falha registrada. Retornando Uptime total.";
+
+      return res.status(200).json({
+        mtbf: 0,
+        totalHorasOperacionais: Number(totalHorasOperacionais.toFixed(2)),
+        countFalhas,
+        aviso,
+      });
+    }
+
+    const mtbf = totalHorasOperacionais / countFalhas;
+
+    res.json({
+      mtbf: Number(mtbf.toFixed(2)),
+      totalHorasOperacionais: Number(totalHorasOperacionais.toFixed(2)),
+      countFalhas,
+    });
+
   } catch (err) {
     console.error("Erro ao calcular MTBF Geral:", err);
     res.status(500).json({ erro: "Erro ao calcular MTBF Geral" });
   }
 }
+
 
 // ... [Outras funções como getOsConcluidasGeral, getCustoTotalGeral, etc.] ...
 

@@ -8,8 +8,8 @@ import DashboardMTBF from "./DashboardMTBF.jsx";
 const API_URL = "http://localhost:3002/api/relatorios";
 
 export default function MtbfResumoCard({
-  dataInicial,
-  dataFinal,
+  mes,
+  ano,
   idSetor,
   metaMtbfHoras,
   setMetaMtbfHoras,
@@ -20,6 +20,7 @@ export default function MtbfResumoCard({
   const [mtbfGeral, setMtbfGeral] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [aviso, setAviso] = useState(""); // Novo estado para mensagens do backend
 
   const meta = metaMTBF ?? 200; // default
 
@@ -27,11 +28,12 @@ export default function MtbfResumoCard({
     const buscarMTBF = async () => {
       setCarregando(true);
       setErro(null);
+      setAviso("");
 
       try {
         const params = new URLSearchParams();
-        if (dataInicial) params.append("dataInicial", dataInicial);
-        if (dataFinal) params.append("dataFinal", dataFinal);
+        if (mes) params.append("mes", mes);
+        if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
@@ -43,7 +45,9 @@ export default function MtbfResumoCard({
         if (!res.ok) throw new Error("Erro ao buscar MTBF geral");
 
         const dados = await res.json();
+
         setMtbfGeral(dados?.mtbf ?? 0);
+        setAviso(dados?.aviso ?? ""); // captura aviso do backend, se houver
       } catch (e) {
         setErro(e.message);
       } finally {
@@ -52,7 +56,7 @@ export default function MtbfResumoCard({
     };
 
     buscarMTBF();
-  }, [dataInicial, dataFinal, idSetor]);
+  }, [mes, ano, idSetor]);
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTBF...</div>;
@@ -68,9 +72,12 @@ export default function MtbfResumoCard({
             className="valor-indicador"
             style={{ color: getMtbfColor(mtbfGeral, meta) }}
           >
-            {formatHoras(mtbfGeral)}
+            {mtbfGeral > 0 ? formatHoras(mtbfGeral) : "—"}
           </span>
-          <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
+          <p className="card-meta">
+            Meta (Acima de): {formatHoras(meta)}
+          </p>
+          {aviso && <p className="card-aviso">{aviso}</p>}
         </div>
 
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
