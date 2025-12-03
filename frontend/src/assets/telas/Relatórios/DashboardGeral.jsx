@@ -73,8 +73,8 @@ export default function DashboardGeral({ mes, ano, idSetor })
 
         {/* ---------------------- MTTA (CORRIGIDO) ----------------------- */}
         <MttaResumoCard
-          dataInicial={mes}
-          dataFinal={ano}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
           metaHoras={metaMttaHoras}
           setMetaHoras={setMetaMttaHoras}
@@ -87,8 +87,8 @@ export default function DashboardGeral({ mes, ano, idSetor })
 
         {/* ----------------- CUSTO TOTAL ----------------- */}
         <CustoTotalResumoCard
-          dataInicial={mes}
-          dataFinal={ano}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
         />
 

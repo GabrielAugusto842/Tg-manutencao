@@ -484,31 +484,43 @@ ${where}
 // -------------------------------------------
 export async function getCustoTotalGeral(req: Request, res: Response) {
   try {
-    const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
+    const { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
+      idSetor?: string;
+    };
 
-    // Somar todos os custos das O.S. concluídas
-    let where = `WHERE o.data_termino IS NOT NULL AND o.custo IS NOT NULL`;
+    const hoje = new Date();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
 
-    if (dataInicial) {
-      where += " AND o.data_termino >= ?";
-      params.push(dataInicial);
+    if (mesNum < 1 || mesNum > 12) {
+      return res.status(400).json({ erro: "Mês inválido" });
     }
-    if (dataFinal) {
-      where += " AND o.data_termino <= ?";
-      params.push(dataFinal);
-    }
+
+    // Datas de início e fim do mês
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59);
+
+    const params: any[] = [dataInicial, dataFinal];
+
+    let where = `
+      WHERE o.data_termino IS NOT NULL
+      AND o.custo IS NOT NULL
+      AND o.data_termino BETWEEN ? AND ?
+    `;
+
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
     const query = `
- SELECT IFNULL(SUM(o.custo), 0) AS custoTotal
- FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- `;
+      SELECT IFNULL(SUM(o.custo), 0) AS custoTotal
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+    `;
 
     const [rows]: any = await db.query(query, params);
 
@@ -526,27 +538,37 @@ export async function getCustoTotalGeral(req: Request, res: Response) {
 // -------------------------------
 export async function getMTTAGeral(req: Request, res: Response) {
   try {
-    const { dataInicial, dataFinal, idSetor } = req.query;
-    const params: any[] = [];
+    const { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
+      idSetor?: string;
+    };
 
-    // Filtro principal: só OS que já começaram (data_inicio não nula)
-    let where = "WHERE o.data_inicio IS NOT NULL AND o.data_abertura IS NOT NULL";
+    const hoje = new Date();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
 
-    if (dataInicial) {
-      where += " AND o.data_abertura >= ?";
-      params.push(dataInicial);
+    if (mesNum < 1 || mesNum > 12) {
+      return res.status(400).json({ erro: "Mês inválido" });
     }
 
-    if (dataFinal) {
-      where += " AND o.data_inicio <= ?";
-      params.push(dataFinal);
-    }
+    const inicioMes = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const fimMes = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const params: any[] = [inicioMes, fimMes];
+
+    let where = `
+      WHERE o.data_inicio IS NOT NULL
+      AND o.data_abertura IS NOT NULL
+      AND o.data_abertura BETWEEN ? AND ?
+    `;
 
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
+    // Query para MTTA
     const query = `
       SELECT 
         COUNT(*) AS total_os,
@@ -561,12 +583,6 @@ export async function getMTTAGeral(req: Request, res: Response) {
     const totalOs = rows[0]?.total_os ?? 0;
     const mttaMinutosDoBanco = rows[0]?.mtta_minutos ?? 0;
 
-    // Se não houver OS válidas, retorna 0
-    if (totalOs === 0 || mttaMinutosDoBanco === null) {
-      return res.json({ totalOs: 0, mttaMinutos: 0, mttaHoras: 0 });
-    }
-
-    // Garantir número válido
     const mttaMinutos = parseFloat(mttaMinutosDoBanco) || 0;
     const mttaHoras = mttaMinutos / 60;
 
@@ -580,6 +596,8 @@ export async function getMTTAGeral(req: Request, res: Response) {
     res.status(500).json({ erro: "Erro ao calcular MTTA Geral" });
   }
 }
+
+
 
 // -------------------------------------------
 // BACKLOG GERAL (Contagem total de OS pendentes) - NOVO ENDPOINT

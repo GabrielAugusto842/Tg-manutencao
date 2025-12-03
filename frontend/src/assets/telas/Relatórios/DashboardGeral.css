@@ -555,3 +555,69 @@
     padding: 15px; /* Adiciona padding interno */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
+
+/* ===== AJUSTES ESPECÍFICOS PARA O CARD DE CUSTO TOTAL ===== */
+
+/* Aumenta significativamente o valor principal */
+/* ===== AJUSTE DO CARD DE CUSTO ===== */
+
+.kpi-card.custo-total .kpi-valor-principal {
+  margin-top: 5px;
+  text-align: center;
+}
+
+.kpi-card.custo-total .valor-indicador {
+  margin-top: 20px !important;
+  font-size: 3rem !important;  /* maior */
+  font-weight: 900;
+  text-align: center;
+}
+
+.kpi-card.custo-total .card-meta {
+  margin-top: 20px !important;
+  font-size: 1rem;
+  text-align: center !important; /* CENTRALIZA */
+  width: 100%;
+}
+
+
+/* ===== CONTAINER DO LIMITE ===== */
+.custo-meta-container-inline {
+  margin-top: 70px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+}
+
+.custo-meta-container-inline label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Input mais limpo, sem zeros à esquerda */
+.custo-meta-container-inline .input-time-card {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+}
+
+.custo-meta-container-inline .input-time-card input {
+  width: 60px;
+  text-align: right;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.custo-meta-container-inline .input-time-card span {
+  margin-left: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+}
