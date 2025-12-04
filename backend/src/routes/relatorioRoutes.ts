@@ -11,7 +11,11 @@ import {
  getMTBFAnual, // Importação da nova função
  getMTTAAnual, 
  getRankingMaquinasOrdens,
- getRankingMaquinasCusto
+ getRankingMaquinasCusto,
+ getRankingSetoresOrdens,
+ getRankingSetoresCusto,
+ getRankingUsuariosOrdens,
+ getRankingUsuariosCusto
 } from "../controllers/RelatorioController";
 
 const router = express.Router();
@@ -42,6 +46,14 @@ router.get("/mtta-anual", getMTTAAnual);
 router.get("/ranking/maquinas-ordens", getRankingMaquinasOrdens);
 
 router.get("/ranking/maquinas-custos", getRankingMaquinasCusto);
+
+router.get("/ranking/setores-ordens", getRankingSetoresOrdens);
+
+router.get("/ranking/setores-custos", getRankingSetoresCusto);
+
+router.get("/ranking/usuarios-ordens", getRankingUsuariosOrdens);
+
+router.get("/ranking/usuarios-custos", getRankingUsuariosCusto);
 
 
 export default router;

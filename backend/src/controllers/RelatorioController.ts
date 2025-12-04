@@ -824,3 +824,152 @@ export async function getRankingMaquinasCusto(req: Request, res: Response) {
     res.status(500).json({ erro: "Erro ao buscar ranking de máquinas por custo" });
   }
 }
+
+export async function getRankingSetoresOrdens(req: Request, res: Response) {
+  try {
+    let { mes, ano } = req.query as { mes?: string; ano?: string };
+
+    const hoje = new Date();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
+
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const query = `
+      SELECT 
+        s.id_setor,
+        s.setor AS nome_setor,
+        COUNT(o.id_ord_serv) AS total_ordens
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      JOIN setor s ON s.id_setor = m.id_setor
+      WHERE o.data_abertura BETWEEN ? AND ?
+      GROUP BY s.id_setor, s.setor
+      ORDER BY total_ordens DESC
+      LIMIT 5
+    `;
+
+    const [rows]: any = await db.query(query, [dataInicial, dataFinal]);
+
+    const ranking = rows.map((row: any) => ({
+      idSetor: row.id_setor,
+      nomeSetor: row.nome_setor,
+      totalOrdens: Number(row.total_ordens),
+    }));
+
+    res.json(ranking);
+  } catch (err) {
+    console.error("Erro ao gerar ranking de setores:", err);
+    res.status(500).json({ erro: "Falha ao gerar ranking de setores" });
+  }
+}
+
+
+export async function getRankingSetoresCusto(req: Request, res: Response) {
+  try {
+    const { mes, ano } = req.query as { mes?: string; ano?: string };
+    const hoje = new Date();
+    const mesNum = mes ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano ? Number(ano) : hoje.getFullYear();
+
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const [rows]: any = await db.query(
+      `SELECT s.setor AS nomeSetor, SUM(o.custo) AS totalCusto
+       FROM ordem_servico o
+       JOIN maquina m ON m.id_maquina = o.id_maquina
+       JOIN setor s ON s.id_setor = m.id_setor
+       WHERE o.data_termino IS NOT NULL
+         AND o.custo IS NOT NULL
+         AND o.data_termino BETWEEN ? AND ?
+       GROUP BY s.id_setor, s.setor
+       ORDER BY totalCusto DESC 
+       LIMIT 5`,
+      [dataInicial, dataFinal]
+    );
+
+    const ranking = rows.map((row: any) => ({
+      nomeSetor: row.nomeSetor,
+      totalCusto: parseFloat(row.totalCusto) || 0
+    }));
+
+    res.json(ranking);
+  } catch (e) {
+    console.error("Erro no ranking de setores por custo:", e);
+    res.status(500).json({ erro: "Falha ao buscar ranking de setores por custo" });
+  }
+}
+
+export async function getRankingUsuariosOrdens(req: Request, res: Response) {
+  try {
+    const { mes, ano } = req.query as { mes?: string; ano?: string };
+    const hoje = new Date();
+    const mesNum = mes ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano ? Number(ano) : hoje.getFullYear();
+
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const [rows]: any = await db.query(
+      `
+      SELECT u.nome AS nomeUsuario, COUNT(o.id_ord_serv) AS totalOrdens
+      FROM ordem_servico o
+      JOIN usuario u ON u.id_usuario = o.id_usuario
+      WHERE o.data_termino IS NOT NULL
+        AND o.data_termino BETWEEN ? AND ?
+      GROUP BY u.id_usuario, u.nome
+      ORDER BY totalOrdens DESC
+      LIMIT 5
+      `,
+      [dataInicial, dataFinal]
+    );
+
+    const ranking = rows.map((row: any) => ({
+      nomeUsuario: row.nomeUsuario,
+      totalOrdens: Number(row.totalOrdens) || 0
+    }));
+
+    res.json(ranking);
+  } catch (e) {
+    console.error("Erro no ranking de usuários por ordens:", e);
+    res.status(500).json({ erro: "Falha ao buscar ranking de usuários por ordens" });
+  }
+}
+
+
+export async function getRankingUsuariosCusto(req: Request, res: Response) {
+  try {
+    const { mes, ano } = req.query as { mes?: string; ano?: string };
+    const hoje = new Date();
+    const mesNum = mes ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano ? Number(ano) : hoje.getFullYear();
+
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const [rows]: any = await db.query(
+      `
+      SELECT u.nome AS nomeUsuario, SUM(o.custo) AS totalCusto
+      FROM ordem_servico o
+      JOIN usuario u ON u.id_usuario = o.id_usuario
+      WHERE o.data_termino BETWEEN ? AND ?
+      GROUP BY u.id_usuario, u.nome
+      ORDER BY totalCusto DESC
+      LIMIT 5
+      `,
+      [dataInicial, dataFinal]
+    );
+
+    const ranking = rows.map((row: any) => ({
+      nomeUsuario: row.nomeUsuario,
+      totalCusto: Number(row.totalCusto) || 0
+    }));
+
+    res.json(ranking);
+  } catch (e) {
+    console.error("Erro no ranking de usuários por custo:", e);
+    res.status(500).json({ erro: "Falha ao buscar ranking de usuários por custo" });
+  }
+}

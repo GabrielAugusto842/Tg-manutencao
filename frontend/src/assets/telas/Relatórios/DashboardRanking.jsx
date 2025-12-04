@@ -1,23 +1,22 @@
-import React from "react";
+import RankingSetorCustos from "./RankingSetorCustos";
+import RankingMaquinasCustos from "./RankingMaquinasCustos"; 
 import RankingMaquinasOrdens from "./RankingMaquinasOrdens";
-import RankingMaquinasCustos from "./RankingMaquinasCustos"; // futuro card
-import "./RankingStyles.css";
+import RankingSetorOrdens from "./RankingSetorOrdens";// novo card
+import RankingUsuariosOrdens from "./RankingUsuariosOrdens";
+import RankingUsuariosCustos from "./RankingUsuariosCustos";
 
 export default function DashboardRanking({ mes, ano, idSetor }) {
   return (
     <div className="dashboard-container">
-      {/* Título geral do dashboard */}
       <h1 className="page-title">Dashboard de Rankings</h1>
 
-      {/* Grid de cards */}
       <div className="dashboard-kpi-grid">
-        {/* Card: Máquinas com mais ordens */}
         <RankingMaquinasOrdens mes={mes} ano={ano} idSetor={idSetor} />
-
-        {/* Card: Máquinas com mais custos */}
+        <RankingSetorOrdens mes={mes} ano={ano} />
+        <RankingUsuariosOrdens mes={mes} ano={ano}  />
         <RankingMaquinasCustos mes={mes} ano={ano} idSetor={idSetor} />
-
-        {/* Aqui você pode adicionar outros cards */}
+        <RankingSetorCustos mes={mes} ano={ano} />
+        <RankingUsuariosCustos mes={mes} ano={ano}  /> 
       </div>
     </div>
   );
