@@ -1,0 +1,94 @@
+/* Container principal do dashboard */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(1000px, 3fr)); /* largura mínima 320px por card */
+  gap: 24px; /* espaço entre os cards */
+  padding: 20px;
+}
+
+/* Para 3 cards por linha, podemos definir um max-width razoável */
+.dashboard-container > .ranking-card {
+  max-width: 350px;
+}
+
+/* Título geral do dashboard */
+.page-title {
+  grid-column: 1 / -1; /* ocupa toda a largura do grid */
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Card de ranking */
+.ranking-card, .kpi-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 32px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* garante que o card ocupe o espaço do grid */
+}
+
+/* Cabeçalho do card */
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-emoji {
+  font-size: 2rem;
+  margin-right: 12px;
+}
+
+.card-subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Lista de ranking */
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Item do ranking */
+.ranking-item {
+  display: flex;
+  justify-content: space-between; /* nome à esquerda, valor à direita */
+  align-items: center;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  padding: 4px 0;
+}
+
+/* Índice do ranking */
+.rank-index {
+  font-weight: bold;
+  width: 30px;
+  margin-right: 8px;
+  text-align: left;
+}
+
+/* Nome da máquina */
+.rank-name {
+  flex: 1;
+  text-align: left;
+}
+
+/* Valor do ranking (ordens ou custo) */
+.rank-value {
+  font-weight: bold;
+  color: #d9534f; /* destaque em vermelho */
+}
+
+/* Mensagem quando não há dados */
+.nenhum-dado, .text-gray-500 {
+  color: #999;
+  text-align: center;
+  padding: 16px 0;
+}

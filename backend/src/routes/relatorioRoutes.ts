@@ -9,8 +9,10 @@ import {
  getBacklogOsDetalhado,
  getMTTRAnual, 
  getMTBFAnual, // Importação da nova função
- getMTTAAnual
-} from "../controllers/relatorioController";
+ getMTTAAnual, 
+ getRankingMaquinasOrdens,
+ getRankingMaquinasCusto
+} from "../controllers/RelatorioController";
 
 const router = express.Router();
 
@@ -35,8 +37,11 @@ router.get("/mttr-anual", getMTTRAnual);
 
 router.get("/mtbf-anual", getMTBFAnual);
 
-router.get("/mtta-anual", getMTTAAnual)
+router.get("/mtta-anual", getMTTAAnual);
 
+router.get("/ranking/maquinas-ordens", getRankingMaquinasOrdens);
+
+router.get("/ranking/maquinas-custos", getRankingMaquinasCusto);
 
 
 export default router;

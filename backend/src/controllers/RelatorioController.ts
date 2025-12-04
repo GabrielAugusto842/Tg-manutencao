@@ -718,3 +718,109 @@ res.json(finalData);
  }
 }
 
+
+export async function getRankingMaquinasOrdens(req: Request, res: Response) {
+  try {
+    let { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
+      idSetor?: string;
+    };
+
+    const hoje = new Date();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
+
+    if (isNaN(mesNum) || mesNum < 1 || mesNum > 12) {
+      return res.status(400).json({ erro: "Mês inválido." });
+    }
+
+    // Datas do mês
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const params: any[] = [dataInicial, dataFinal];
+    let where = `WHERE o.data_abertura BETWEEN ? AND ?`;
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+      SELECT 
+        m.nome AS maquina,
+        COUNT(o.id_ord_serv) AS total_ordens
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY m.id_maquina, m.nome
+      ORDER BY total_ordens DESC
+      LIMIT 5
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    res.json(rows); // retorna todas as máquinas ordenadas pelo total de ordens
+
+  } catch (err) {
+    console.error("Erro ao calcular ranking de máquinas:", err);
+    res.status(500).json({ erro: "Erro ao buscar ranking de máquinas" });
+  }
+}
+
+export async function getRankingMaquinasCusto(req: Request, res: Response) {
+  try {
+    let { mes, ano, idSetor } = req.query as {
+      mes?: string;
+      ano?: string;
+      idSetor?: string;
+    };
+
+    const hoje = new Date();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
+
+    if (isNaN(mesNum) || mesNum < 1 || mesNum > 12) {
+      return res.status(400).json({ erro: "Mês inválido." });
+    }
+
+    // Define datas de início e fim do mês
+    const dataInicial = new Date(anoNum, mesNum - 1, 1, 0, 0, 0);
+    const dataFinal = new Date(anoNum, mesNum, 0, 23, 59, 59, 999);
+
+    const params: any[] = [dataInicial, dataFinal];
+    let where = `WHERE o.data_termino IS NOT NULL AND o.custo IS NOT NULL AND o.data_termino BETWEEN ? AND ?`;
+
+    if (idSetor) {
+      where += " AND m.id_setor = ?";
+      params.push(idSetor);
+    }
+
+    const query = `
+      SELECT 
+        m.nome AS maquina,
+        SUM(o.custo) AS total_custo
+      FROM ordem_servico o
+      JOIN maquina m ON m.id_maquina = o.id_maquina
+      ${where}
+      GROUP BY m.id_maquina, m.nome
+      ORDER BY total_custo DESC
+      LIMIT 5
+    `;
+
+    const [rows]: any = await db.query(query, params);
+
+    // Garante que o custo venha como número
+   const ranking = rows.map((row: any) => ({
+  maquina: row.maquina,
+  totalCusto: parseFloat(row.total_custo) || 0
+}));
+
+
+    res.json(ranking);
+  } catch (err) {
+    console.error("Erro ao calcular ranking de máquinas por custo:", err);
+    res.status(500).json({ erro: "Erro ao buscar ranking de máquinas por custo" });
+  }
+}
