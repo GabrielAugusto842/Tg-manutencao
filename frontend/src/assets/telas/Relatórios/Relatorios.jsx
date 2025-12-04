@@ -1,90 +1,96 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import DashboardGeral from "./DashboardGeral.jsx";
+import DashboardRanking from "./DashboardRanking.jsx";
 import "./Relatorios.css";
 
-// URL da sua API (Adapte conforme necessário)
 const API_URL = "http://localhost:3002/api/setores";
 
 export default function Relatorios() {
-  // 1. Estados para os filtros de Data
-  const [dataInicial, setDataInicial] = useState("");
-  const [dataFinal, setDataFinal] = useState("");
-
-  // 2. Novo estado para o Setor
+  const [mes, setMes] = useState("");
+  const [ano, setAno] = useState("");
+  const [tipoRelatorio, setTipoRelatorio] = useState("dashboard-geral");
   const [idSetorSelecionado, setIdSetorSelecionado] = useState("");
-
-  // 3. Estado para armazenar a lista de setores
   const [setores, setSetores] = useState([]);
   const [carregandoSetores, setCarregandoSetores] = useState(true);
 
-  // Lógica para buscar os setores na montagem do componente
+  // Carrega setores
   useEffect(() => {
     const buscarSetores = async () => {
       try {
-        // Supondo que a API retorne a lista de setores
         const response = await fetch(API_URL, {
-          headers: {
-            // Inclua a autorização, se necessário
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-
-        if (!response.ok) {
-          throw new Error("Falha ao carregar a lista de setores.");
-        }
-
+        if (!response.ok) throw new Error("Falha ao carregar setores.");
         const data = await response.json();
-
-        // Assumindo que a API retorna um array de objetos { idSetor: number, nomeSetor: string }
         setSetores(data);
       } catch (error) {
         console.error("Erro ao buscar setores:", error);
-        // Você pode querer exibir um erro na tela
       } finally {
         setCarregandoSetores(false);
       }
     };
-
     buscarSetores();
-  }, []); // Executa apenas uma vez na montagem
+  }, []);
+
+  const anoAtual = new Date().getFullYear();
 
   return (
     <Layout title="Relatórios">
       <div className="relatorios-page-container">
         <header className="relatorios-header">
-          <div className="relatorios-actions">
-            {/* futuros botões: exportar, filtros salvos, etc. */}
-          </div>
+          <div className="relatorios-actions"></div>
         </header>
 
-        {/* Container de Filtros */}
+        {/* FILTROS */}
         <div className="relatorios-filtros-container">
-          {/* Filtro Data Inicial */}
+          {/* Mês */}
           <div className="filtro-grupo">
-            <label>Data Inicial</label>
-            <input
-              type="date"
-              value={dataInicial}
-              onChange={(e) => setDataInicial(e.target.value)}
+            <label>Mês</label>
+            <select
+              value={mes}
+              onChange={(e) => setMes(e.target.value)}
               className="filtro-input"
+            >
+              <option value="">Todos</option>
+              {[...Array(12)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {new Date(0, i).toLocaleString("pt-BR", { month: "long" })}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Ano */}
+          <div className="filtro-grupo">
+            <label>Ano</label>
+            <input
+              type="number"
+              value={ano}
+              onChange={(e) => setAno(e.target.value)}
+              className="filtro-input"
+              placeholder={anoAtual.toString()}
+              min="2000"
+              max="2100"
             />
           </div>
 
-          {/* Filtro Data Final */}
+          {/* Tipo de relatório */}
           <div className="filtro-grupo">
-            <label>Data Final</label>
-            <input
-              type="date"
-              value={dataFinal}
-              onChange={(e) => setDataFinal(e.target.value)}
+            <label>Tipo de Relatório</label>
+            <select
+              value={tipoRelatorio}
+              onChange={(e) => setTipoRelatorio(e.target.value)}
               className="filtro-input"
-            />
+            >
+              <option value="dashboard-geral">Dashboard - Métricas Gerais</option>
+              <option value="ranking">Ranking de Ordens</option>
+            </select>
           </div>
 
-          {/* 🎯 NOVO FILTRO: Setor */}
+          {/* Setor */}
           <div className="filtro-grupo">
-            <label>Filtrar por Setor</label>
+            <label>Setor</label>
             <select
               value={idSetorSelecionado}
               onChange={(e) => setIdSetorSelecionado(e.target.value)}
@@ -92,32 +98,35 @@ export default function Relatorios() {
               disabled={carregandoSetores}
             >
               <option value="">Todos os Setores</option>
-              {/* Renderiza a lista de setores */}
-              {setores.length > 0 ? (
-                setores.map((setor) => (
-                  <option key={setor.idSetor} value={setor.idSetor}>
-                    {setor.nomeSetor}
-                  </option>
-                ))
-              ) : (
-                <option disabled>
-                  {carregandoSetores
-                    ? "Carregando..."
-                    : "Nenhum setor encontrado"}
-                </option>
-              )}
+              {setores.length > 0
+                ? setores.map((setor) => (
+                    <option key={setor.idSetor} value={setor.idSetor}>
+                      {setor.nomeSetor}
+                    </option>
+                  ))
+                : (
+                    <option disabled>{carregandoSetores ? "Carregando..." : "Nenhum setor"}</option>
+                  )}
             </select>
           </div>
-          {/* Fim do Novo Filtro */}
         </div>
 
+        {/* RELATÓRIO */}
         <main className="relatorio-display-area">
-          {/* 4. Passa o idSetorSelecionado como prop para o DashboardGeral */}
-          <DashboardGeral
-            dataInicial={dataInicial}
-            dataFinal={dataFinal}
-            idSetor={idSetorSelecionado} // Propriedade chave para o filtro
-          />
+          {tipoRelatorio === "dashboard-geral" && (
+            <DashboardGeral
+              mes={mes}
+              ano={ano}
+              idSetor={idSetorSelecionado}
+            />
+          )}
+          {tipoRelatorio === "ranking" && (
+            <DashboardRanking
+              mes={mes}
+              ano={ano}
+              idSetor={idSetorSelecionado}
+            />
+          )}
         </main>
       </div>
     </Layout>

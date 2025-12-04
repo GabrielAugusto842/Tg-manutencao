@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MttrResumoCard from "./MttrResumoCard.jsx";
 import MtbfResumoCard from "./MtbfResumoCard.jsx";
-import OsConcluidasResumoCard from "./OsConcluidasResumoCard.jsx";
 import MttaResumoCard from "./MttaResumoCard.jsx";
 import MttrAnualChart from "./MttrAnualChart.jsx";
 import MtbfAnualChart from "./MtbfAnualChart.jsx";
@@ -10,8 +9,8 @@ import MttaAnualChart from "./MttaAnualChart.jsx";
 import "./DashboardGeral.css";
 import { useBacklog } from "./backlog";
 import BacklogIntegradoCard from "./BacklogIntegrado.jsx";
-
-export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
+export default function DashboardGeral({ mes, ano, idSetor })
+ {
   /* ------------------- META MTTR ------------------- */
   const [metaHoras, setMetaHoras] = useState(4);
   const [metaMinutos, setMetaMinutos] = useState(0);
@@ -49,8 +48,8 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
       <div className="dashboard-kpi-grid pula-linha-export">
         {/* ---------------------- MTTR ---------------------- */}
         <MttrResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
           metaHoras={metaHoras}
           setMetaHoras={setMetaHoras}
@@ -61,8 +60,8 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
 
         {/* ---------------------- MTBF ----------------------- */}
         <MtbfResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
           metaMtbfHoras={metaMtbfHoras}
           setMetaMtbfHoras={setMetaMtbfHoras}
@@ -73,8 +72,8 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
 
         {/* ---------------------- MTTA (CORRIGIDO) ----------------------- */}
         <MttaResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
           metaHoras={metaMttaHoras}
           setMetaHoras={setMetaMttaHoras}
@@ -87,8 +86,8 @@ export default function DashboardGeral({ dataInicial, dataFinal, idSetor }) {
 
         {/* ----------------- CUSTO TOTAL ----------------- */}
         <CustoTotalResumoCard
-          dataInicial={dataInicial}
-          dataFinal={dataFinal}
+          mes={mes}
+          ano={ano}
           idSetor={idSetor}
         />
 

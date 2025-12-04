@@ -3,8 +3,6 @@ import {
  getMTTRGeral,
  getMTTRPorMaquina,
  getMTBFGeral,
- getDisponibilidadeGeral,
- getOsConcluidasGeral,
  getCustoTotalGeral,
  getMTTAGeral,
  getBacklogOsGeral, // Importação da nova função
@@ -25,12 +23,6 @@ router.get("/mttr-maquina", getMTTRPorMaquina);
 
 // --- MTBF ---
 router.get("/mtbf-geral", getMTBFGeral);
-
-// --- DISPONIBILIDADE ---
-router.get("/disponibilidade-geral", getDisponibilidadeGeral);
-
-// --- OS CONCLUÍDAS ---
-router.get("/os-concluidas-geral", getOsConcluidasGeral);
 
 // --- CUSTO ---
 router.get("/custo-total-geral", getCustoTotalGeral);

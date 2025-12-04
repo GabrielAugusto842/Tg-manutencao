@@ -6,8 +6,8 @@ import DashboardMTTA from "./DashboardMTTA.jsx";
 const API_URL = "http://localhost:3002/api/relatorios";
 
 export default function MttaResumoCard({
-  dataInicial,
-  dataFinal,
+  mes,
+  ano,
   idSetor,
   metaHoras,
   setMetaHoras,
@@ -29,8 +29,8 @@ export default function MttaResumoCard({
 
       try {
         const params = new URLSearchParams();
-        if (dataInicial) params.append("dataInicial", dataInicial);
-        if (dataFinal) params.append("dataFinal", dataFinal);
+        if (mes) params.append("mes", mes);
+        if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
         const query = params.toString() ? `?${params.toString()}` : "";
@@ -51,7 +51,7 @@ export default function MttaResumoCard({
     };
 
     fetchMTTA();
-  }, [dataInicial, dataFinal, idSetor]);
+  }, [mes, ano, idSetor]);
 
   if (carregando) return <div className="kpi-card loading">Carregando MTTA...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;

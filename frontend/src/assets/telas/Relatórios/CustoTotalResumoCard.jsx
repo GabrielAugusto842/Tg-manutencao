@@ -2,24 +2,21 @@ import React, { useState, useEffect } from "react";
 import "./DashboardGeral.css";
 
 const API_URL = "http://localhost:3002/api/relatorios";
-const CUSTO_META = 2000.0; // Definindo a meta de custo
 
-// Função para determinar a cor com base no valor em relação à meta
-const getCustoColor = (custoTotal, custoMeta) => {
-  if (custoTotal >= custoMeta) {
-    return "#cc1818ff"; // Vermelho, quando ultrapassa a meta
-  }
-  return "#0ebc0eff"; // Verde, quando está abaixo da meta
-};
-
-export default function CustoTotalGeralResumoCard({
-  dataInicial,
-  dataFinal,
-  idSetor,
-}) {
+export default function CustoTotalGeralResumoCard({ mes, ano, idSetor }) {
   const [custoTotal, setCustoTotal] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+
+  // Meta salva no navegador
+  const [metaCusto, setMetaCusto] = useState(
+    Number(localStorage.getItem("metaCusto")) || 2000
+  );
+
+  // Cor baseada na meta definida pelo usuário
+  const getCustoColor = (valor, meta) => {
+    return valor >= meta ? "#cc1818ff" : "#0ebc0eff";
+  };
 
   useEffect(() => {
     const fetchWithRetry = async (url, options, retries = 3) => {
@@ -38,88 +35,81 @@ export default function CustoTotalGeralResumoCard({
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
-      throw new Error("Falha na requisição após várias tentativas.");
+      throw new Error("Falha ao buscar dados.");
     };
 
-    const buscarCustoTotal = async () => {
+    const buscar = async () => {
       setCarregando(true);
-      setErro(null);
       try {
         const params = new URLSearchParams();
-        if (dataInicial) params.append("dataInicial", dataInicial);
-        if (dataFinal) params.append("dataFinal", dataFinal);
+        if (mes) params.append("mes", mes);
+        if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
         const headers = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         };
 
-        const resposta = await fetchWithRetry(
-          `${API_URL}/custo-total-geral${query}`,
+        const resp = await fetchWithRetry(
+          `${API_URL}/custo-total-geral?${params.toString()}`,
           { headers }
         );
-        if (!resposta.ok)
-          throw new Error("Erro ao buscar custo total de manutenção");
 
-        const dados = await resposta.json();
+        const dados = await resp.json();
         setCustoTotal(dados?.custoTotal ?? 0);
       } catch (e) {
-        console.error("Erro ao buscar Custo Total:", e);
         setErro(e.message);
       } finally {
         setCarregando(false);
       }
     };
 
-    buscarCustoTotal();
-  }, [dataInicial, dataFinal, idSetor]);
+    buscar();
+  }, [mes, ano, idSetor]);
+
+  function alterarMeta(e) {
+    const novoValor = Number(e.target.value);
+    setMetaCusto(novoValor);
+    localStorage.setItem("metaCusto", novoValor);
+  }
 
   if (carregando)
-    return (
-      <div className="kpi-card loading">
-        <div className="spinner">🔄</div> Carregando Custo Total...
-      </div>
-    );
+    return <div className="kpi-card loading">Carregando...</div>;
 
   if (erro)
-    return (
-      <div className="kpi-card error">
-        <p className="error-message">Erro: {erro}</p>
-      </div>
-    );
-
-  // Verifica a cor do custo com base na meta
-  const custoColor = getCustoColor(custoTotal, CUSTO_META);
+    return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
     <div className="kpi-card custo-total">
       <h4 className="card-titulo">Custo Total de Manutenção</h4>
 
       <div className="kpi-content centralizado">
-        <div className="kpi-valor-principal">
-          <span className="valor-indicador" style={{ color: custoColor }}>
-            {custoTotal.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </span>
+        <span
+          className="valor-indicador"
+          style={{ color: getCustoColor(custoTotal, metaCusto) }}
+        >
+          {custoTotal.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </span>
 
-          <p className="card-meta">Total de Custos</p>
-        </div>
+        <p className="card-meta ">Total de Custos </p>
       </div>
 
-      {/* Meta abaixo do valor */}
-      <p
-        className="card-meta"
-        style={{ textAlign: "center", marginTop: "8px" }}
-      >
-        Limite:{" "}
-        {CUSTO_META.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        })}
-      </p>
+      {/* Campo de meta igual aos outros cards */}
+      <div className="custo-meta-container-inline">
+        <label>Limite:</label>
+        <div className="input-time-card">
+          <input
+            type="number"
+            min="0"
+            value={metaCusto}
+            onChange={alterarMeta}
+          />
+          <span>R$</span>
+        </div>
+      </div>
     </div>
   );
 }

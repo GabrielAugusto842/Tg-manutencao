@@ -24,9 +24,12 @@ const formatMinutos = (minutes) => {
 const formatChartData = (data) => {
   return data.map((item) => ({
     ...item,
-    mttaMinutos: item.mtta ? Math.round(item.mtta) : 0, // já em minutos
+    mttaHoras: item.mttaHoras ? parseFloat(item.mttaHoras) : 0,
+    mttaMinutos: item.mttaHoras ? Math.round(item.mttaHoras * 60) : 0, // só para exibir no gráfico
   }));
 };
+
+
 
 /**
  * Componente MTTA Anual
