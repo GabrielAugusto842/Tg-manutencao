@@ -111,12 +111,53 @@ function VisualizarSetoresContent() {
     return <p>Carregando Setores...</p>;
   }
 
+// ---------------------- //
+// ---- EXPORTAR CSV ---- //
+// ---------------------- //
+const exportarCSV = () => {
+  // Usa os mesmos filtros aplicados na tabela
+  const filtrados = setores.filter((s) =>
+    s.nomeSetor?.toLowerCase().includes(filtroNome.toLowerCase())
+  );
+
+  // Cabeçalho CSV
+  const header = ["Nome do Setor", "Descrição"];
+
+  // Linhas CSV
+  const linhas = filtrados.map((s) => [
+    s.nomeSetor,
+    s.descricao
+  ]);
+
+  // Gera o CSV unindo cabeçalho + linhas
+  const csv = [
+    header.join(","), 
+    ...linhas.map((l) => l.join(","))
+  ].join("\n");
+
+  // BOM CORRIGE ACENTOS!!
+  const BOM = "\uFEFF";
+
+  const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "relatorio_setores.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
   /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
   return (
     <div id="print-area">
-      <div className="visualizar-setores-page no-print">
+
+      <div className="visualizar-setores-page ">
         {/* 🔍 CAMPO DE PESQUISA */}
-        <div className="filtros-container">
+
+      <div className="opcoes-header">
+        <div className="filtros-container no-print">
           <input
             type="text"
             placeholder="Pesquisar pelo nome do setor..."
@@ -131,15 +172,15 @@ function VisualizarSetoresContent() {
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
 
-      <div className="botao-pdf-wrapper no-print">
-        {" "}
-        <button
-          onClick={() => window.print()}
-          className="botao-pdf-setor" /* Classe para o estilo ultra-compacto */
-        >
-          📥 EXPORTAR PDF{" "}
-        </button>{" "}
+      <div className="export-group no-print">
+        <button className="botao-csv" onClick={exportarCSV}>
+            🗒️ EXPORTAR CSV
+        </button>
+        <button className="botao-pdf" onClick={() => window.print()}>
+          📥 EXPORTAR PDF
+        </button>
       </div>
+    </div>
 
       {setoresFiltrados.length === 0 ? (
         <p>Nenhum setor encontrado.</p>
@@ -150,7 +191,7 @@ function VisualizarSetoresContent() {
               <tr>
                 <th>Nome do Setor</th>
                 <th>Descrição</th>
-                <th class="no-print">Ações</th>
+                <th className="no-print">Ações</th>
               </tr>
             </thead>
 

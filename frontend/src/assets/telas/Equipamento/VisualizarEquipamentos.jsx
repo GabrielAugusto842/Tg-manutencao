@@ -109,7 +109,7 @@ function VisualizarEquipamentosContent() {
     });
     // Cabeçalho
     const header = [
-      "nome",
+      "nome", 
       "marca",
       "modelo",
       "numero_serie",
@@ -195,8 +195,8 @@ function VisualizarEquipamentosContent() {
         {/*-----------------------------------
          BOTÕES DE EXPORTAÇÃO (PDF + CSV) 
         -----------------------------------*/}
-        <div className="export-group no-print" onClick={exportarCSV}>
-          <button className="botao-csv">
+        <div className="export-group no-print">
+          <button className="botao-csv" onClick={exportarCSV}>
             🗒️ EXPORTAR CSV
           </button>
           

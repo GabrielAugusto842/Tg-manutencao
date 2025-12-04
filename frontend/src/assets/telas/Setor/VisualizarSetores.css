@@ -254,6 +254,16 @@ body,
    9. EXPORT PDF E IMPRESSÃO
    ==================================================================== */
 
+/* Agrupa CSV + PDF lado a lado */
+
+.export-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  white-space: nowrap;
+  margin-left: 20px; /* Espaço entre filtros e botões */
+}
+
 /* IMPRIMIR */
 @media print {
   /* some TUDO */
@@ -262,12 +272,13 @@ body,
   }
 
   @media print {
-  header {
-    display: none !important;
+    header {
+      display: none !important;
+    }
   }
-}
   /* mostra só a área desejada */
-  #print-area, #print-area * {
+  #print-area,
+  #print-area * {
     visibility: visible;
   }
 
@@ -280,14 +291,19 @@ body,
   }
 
   /* remove elementos indesejados */
-  .no-print, header, nav, .filtros, .menu-lateral {
+  .no-print,
+  header,
+  nav,
+  .filtros,
+  .menu-lateral {
     display: none !important;
     visibility: hidden !important;
   }
 }
 
 @media print {
-  html, body {
+  html,
+  body {
     height: auto !important;
     overflow: visible !important;
   }
@@ -298,12 +314,8 @@ body,
   }
 }
 
-.botao-pdf-setor {
-  /* Posição para o Canto Superior Direito */
-  position: absolute !important;
-  top: 105px !important; /* Move para cima */
-  right: 80px !important; /* Move para a direita */
-  z-index: 10 !important;
+.botao-pdf,
+.botao-csv {
   /* Aparência Ultra Compacta */
   background-color: #f3f4f6 !important;
   color: #4b5563 !important;
@@ -326,17 +338,52 @@ body,
   white-space: nowrap !important;
 }
 
-.botao-pdf-setor:hover {
+.botao-pdf:hover,
+.botao-csv:hover {
   background-color: #e5e7eb !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
-.botao-pdf-setor:focus {
+.botao-pdf:focus, 
+.botao-csv:focus {
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
-.botao-pdf-setor span {
+.botao-pdf span, .botao-csv span {
   font-size: 0.7rem !important;
+}
+
+
+
+/* Responsividade para telas menores */
+@media (max-width: 1400px) {
+  .opcoes-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    width: 80%;
+    min-width: 300px;
+    gap: 5px;
+  }
+  .filtro-input,.filtro-select{
+    width: 80%;
+    text-align: center;
+  }
+
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .export-group {
+    flex-direction: column;
+    gap: 5px;
+  }
 }

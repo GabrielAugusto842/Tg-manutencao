@@ -139,8 +139,56 @@ function VisualizarUsuariosContent({ navigate }) {
   if (carregando) return <p>Carregando usuários...</p>;
 
   /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
+  
+// ------------------ //
+// -- EXPORTAR CSV -- //
+// ------------------ //
+const exportarCSV = () => {
+  // Aplica os mesmos filtros usados na tabela
+  const filtrados = usuarios.filter((u) => {
+    const busca = filtroBusca.toLowerCase();
+    return (
+      (u.nome.toLowerCase().includes(busca) ||
+        u.email.toLowerCase().includes(busca)) &&
+      (filtroCargo ? u.cargo === filtroCargo : true) &&
+      (filtroSetor ? u.setor === filtroSetor : true)
+    );
+  });
+
+  // Cabeçalho CSV
+  const header = ["nome", "email", "cargo", "setor"];
+
+  // Linhas CSV
+  const linhas = filtrados.map((u) => [
+    u.nome,
+    u.email,
+    u.cargo,
+    u.setor,
+  ]);
+
+  // Monta o CSV
+  const csv = [
+    header.join(","),           // Cabeçalho
+    ...linhas.map((l) => l.join(",")) // Linhas
+  ].join("\n");
+
+  // Correção de acentuação (UTF-8 com BOM)
+  const BOM = "\uFEFF";
+
+  const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "relatorio_usuarios.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+  
   return (
     <div className="visualizar-usuarios-page" id="print-area">
+
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
@@ -150,50 +198,56 @@ function VisualizarUsuariosContent({ navigate }) {
       {/* ===================== */}
       {/* 🔍 ÁREA DE FILTROS   */}
       {/* ===================== */}
-      <div className="filtros-container no-print">
-        <input
-          type="text"
-          placeholder="Buscar nome ou e-mail..."
-          className="filtro-input"
-          value={filtroBusca}
-          onChange={(e) => setFiltroBusca(e.target.value)}
-        />
+      <div className="opcoes-header">
+        <div className="filtros-container no-print">
+          <input
+            type="text"
+            placeholder="Buscar nome ou e-mail..."
+            className="filtro-input"
+            value={filtroBusca}
+            onChange={(e) => setFiltroBusca(e.target.value)}
+          />
 
-        <select
-          className="filtro-select no-print"
-          value={filtroCargo}
-          onChange={(e) => setFiltroCargo(e.target.value)}
-        >
-          <option value="">Cargo (Todos)</option>
-          {opcoesCargo.map((cargo) => (
-            <option key={cargo.id} value={cargo.nome}>
-              {cargo.nome}
-            </option>
-          ))}
-        </select>
+          <select
+            className="filtro-select no-print"
+            value={filtroCargo}
+            onChange={(e) => setFiltroCargo(e.target.value)}
+          >
+            <option value="">Cargo (Todos)</option>
+            {opcoesCargo.map((cargo) => (
+              <option key={cargo.id} value={cargo.nome}>
+                {cargo.nome}
+              </option>
+            ))}
+          </select>
 
-        <select
-          className="filtro-select no-print"
-          value={filtroSetor}
-          onChange={(e) => setFiltroSetor(e.target.value)}
-        >
-          <option value="">Setor (Todos)</option>
-          {opcoesSetor.map((setor) => (
-            <option key={setor.id} value={setor.nome}>
-              {setor.nome}
-            </option>
-          ))}
-        </select>
-      </div>
+          <select
+            className="filtro-select no-print"
+            value={filtroSetor}
+            onChange={(e) => setFiltroSetor(e.target.value)}
+          >
+            <option value="">Setor (Todos)</option>
+            {opcoesSetor.map((setor) => (
+              <option key={setor.id} value={setor.nome}>
+                {setor.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+     
+      
+        {/*-----------------------------------
+         BOTÕES DE EXPORTAÇÃO (PDF + CSV) 
+        -----------------------------------*/}
+        <div className="export-group no-print">
+          <button className="botao-csv" onClick={exportarCSV}>
+              🗒️ EXPORTAR CSV
+          </button>
 
-      <div className="botao-pdf-wrapper no-print">
-        {" "}
-        <button
-          onClick={() => window.print()}
-          className="botao-pdf-usuario" /* Classe para o estilo ultra-compacto */
-        >
-          📥 EXPORTAR PDF{" "}
-        </button>{" "}
+          <button onClick={() => window.print()}className="botao-pdf">
+            📥 EXPORTAR PDF{" "}
+          </button>{" "}
+        </div>
       </div>
 
       {/* ===================== */}

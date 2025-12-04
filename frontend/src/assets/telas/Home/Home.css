@@ -87,9 +87,44 @@
 }
 
 /* Responsividade */
+
+
+/* Só mostra quando a tela for maior que 1024px */
+
+
+/* Desktop grande */
+
+ @media (max-width: 1280px)  {
+  .navbar .navbar-title {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 1024px)  {
+  .navbar .navbar-title {
+    font-size: 32px;
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
+  .navbar .navbar-title {
+    font-size: 24px;
+  }
+
   .cards-container {
     flex-direction: column;
   }
 }
- 
+
+/* Celulares */
+@media (max-width: 580px) {
+  .navbar .navbar-title {
+    font-size: 20px;
+  }
+
+  .navbar .navbar{
+    padding: 0 20px;
+  }
+}
+
