@@ -15,7 +15,6 @@
 }
 
 .navbar-title {
-  font-size: 48px;
   font-weight: bold;
   color: #fff;
 }
@@ -237,7 +236,13 @@
 
 /* Responsividade Navbar */
 
+
+
 @media (max-width: 1024px) {
+  .navbar-title{
+    font-size: 48px;
+    text-align: center;
+  }
   .layout-sidebar {
     display: none;
   --sidebar-width: 0;
@@ -249,8 +254,28 @@
   }
 }
 
+@media (max-width: 768px) {
+  .navbar-title{
+    font-size: 36px;
+  }
+
+}
+
+@media (max-width: 580px) {
+  .navbar-title{
+    font-size: 20px;
+  }
+  .navbar{
+    padding: 0 30px;
+  }  
+}
+
 /* Só mostra quando a tela for maior que 1024px */
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
+  .navbar-title{
+    font-size: 48px;
+  }
+
   .sidebar {
   display: flex;
 }

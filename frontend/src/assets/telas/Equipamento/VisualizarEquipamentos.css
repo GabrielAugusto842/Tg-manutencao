@@ -257,7 +257,7 @@ body,
   margin-bottom: 5px;
   align-items: center;
   background: #fff;
-  padding: 0px;
+  padding: 10px;
   border-radius: 12px;
   border: 1px solid #dfe3e9;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -418,8 +418,15 @@ body,
 @media (max-width: 768px) {
   .filtros-container {
     flex-direction: column;
+    width: 80%;
+    min-width: 300px;
     gap: 5px;
   }
+  .filtro-input,.filtro-select{
+    width: 80%;
+    text-align: center;
+  }
+
 }
 
 /* Responsividade para telas menores */

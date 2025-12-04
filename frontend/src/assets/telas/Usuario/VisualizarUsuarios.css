@@ -224,6 +224,7 @@ body,
   border-radius: 12px;
   border: 1px solid #dfe3e9;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: min-content;
 }
 
 .filtro-input {
@@ -256,9 +257,29 @@ body,
   padding: 0;
 }
 
+
+/* Container geral: filtros à esquerda, botões à direita */
+.opcoes-header {
+  display: flex;
+  justify-content: space-between; /* Filtros à esquerda, export à direita */
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 0;
+}
+
 /* ====================================================================
    8. EXPORT PDF E IMPRESSÃO
    ==================================================================== */
+
+/* Agrupa CSV + PDF lado a lado */
+.export-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  white-space: nowrap;
+  margin-left: 20px; /* Espaço entre filtros e botões */
+}
 
 /* IMPRIMIR */
 @media print {
@@ -310,12 +331,8 @@ body,
   }
 }
 
-.botao-pdf-usuario {
-  /* Posição para o Canto Superior Direito */
-  position: absolute !important;
-  top: 105px !important; /* Move para cima */
-  right: 80px !important; /* Move para a direita */
-  z-index: 10 !important;
+.botao-pdf,
+.botao-csv {
   /* Aparência Ultra Compacta */
   background-color: #f3f4f6 !important;
   color: #4b5563 !important;
@@ -338,17 +355,52 @@ body,
   white-space: nowrap !important;
 }
 
-.botao-pdf-usuario:hover {
+.botao-pdf:hover,
+.botao-csv:hover {
   background-color: #e5e7eb !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
-.botao-pdf-usuario:focus {
+.botao-pdf:focus, 
+.botao-csv:focus {
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
-.botao-pdf-usuario span {
+.botao-pdf span, .botao-csv span {
   font-size: 0.7rem !important;
+}
+
+
+
+/* Responsividade para telas menores */
+@media (max-width: 1400px) {
+  .opcoes-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    width: 80%;
+    min-width: 300px;
+    gap: 5px;
+  }
+  .filtro-input,.filtro-select{
+    width: 80%;
+    text-align: center;
+  }
+
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .export-group {
+    flex-direction: column;
+    gap: 5px;
+  }
 }
