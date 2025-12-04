@@ -19,6 +19,6 @@ router.get("/", osController.getAllOrdServ);
 router.post("/", osController.createOrdServ);
 router.put("/:id", osController.updateOrdServ);
 router.put("/finalizar/:id", osController.finalizarOrdServ);
-router.delete("/:id", osController.deleteOrdServ);
+router.delete("/:id", osController.deletarOS);
 
 export default router;

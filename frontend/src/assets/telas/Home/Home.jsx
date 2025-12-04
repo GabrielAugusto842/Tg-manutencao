@@ -5,8 +5,11 @@ import "./Home.css";
 
 // Para usar ícones do FontAwesome, você pode importar a biblioteca
 import { FaUserPlus, FaCogs, FaIndustry } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
   const [totais, setTotais] = useState({
     abertas: 0,
     andamento: 0,
@@ -101,7 +104,10 @@ function Home() {
         {/* Cards para Administrador e Gerente */}
         {usuario.cargo === "Administrador" && (
           <div className="cards-container">
-            <div className="card card-admin card-usuarios">
+            <div
+              className="card card-admin card-usuarios"
+              onClick={() => navigate("/usuario/cadastrar")}
+            >
               <div className="card-content">
                 <div className="card-title">
                   <FaUserPlus className="card-icon" />
@@ -113,7 +119,10 @@ function Home() {
               </div>
             </div>
 
-            <div className="card card-admin card-maquinas">
+            <div
+              className="card card-admin card-maquinas"
+              onClick={() => navigate("/equipamentos/cadastrar")}
+            >
               <div className="card-content">
                 <div className="card-title">
                   <FaCogs className="card-icon" />
@@ -125,7 +134,10 @@ function Home() {
               </div>
             </div>
 
-            <div className="card card-admin card-setores">
+            <div
+              className="card card-admin card-setores"
+              onClick={() => navigate("/setores/cadastrar")}
+            >
               <div className="card-content">
                 <div className="card-title">
                   <FaIndustry className="card-icon" />

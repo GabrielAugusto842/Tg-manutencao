@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { OrdServRepository } from "../repositories/OrdServRepository";
 import { db } from "../config/db";
+import { OkPacket } from "mysql2";
 
 export class OrdServController {
   constructor(private ordServRepo: OrdServRepository) {}
@@ -173,21 +174,33 @@ export class OrdServController {
     }
   };
 
-  deleteOrdServ = async (req: Request, res: Response): Promise<Response> => {
+  deletarOS = async (req: Request, res: Response): Promise<Response> => {
+    const idOrdServ = Number(req.params.id);
+
+    if (isNaN(idOrdServ)) {
+      return res.status(400).json({ mensagem: "ID de OS inválido." });
+    }
+
     try {
-      const idOrdServ = req.params.id;
-      const deleted = await this.ordServRepo.deleteOrdServ(Number(idOrdServ));
+      const deleted = await this.ordServRepo.deleteOrdServ(idOrdServ);
+
       if (!deleted) {
+        // Se a exclusão retornar false, a OS não foi encontrada (ou não foi modificada)
         return res
           .status(404)
-          .json({ error: "Ordem de serviço não encontrada ou já excluída" });
+          .json({
+            mensagem:
+              "Ordem de Serviço não encontrada ou não pôde ser excluída",
+          });
       }
-      return res.json({ message: "Ordem de serviço excluída com sucesso" });
+
+      return res.status(200).json({
+        mensagem: `OS ${idOrdServ} deletada com sucesso!`,
+        afetados: 1,
+      });
     } catch (error) {
-      console.error("Erro ao excluir ordem de serviço:", error);
-      return res
-        .status(500)
-        .json({ error: "Erro ao excluir ordem de serviço" });
+      console.error("Erro ao deletar OS:", error);
+      return res.status(500).json({ mensagem: "Erro ao deletar OS" });
     }
   };
 
