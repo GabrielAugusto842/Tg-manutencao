@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import api from "../../Services/api.jsx";
 import "../../telas/Equipamento/CadastrarEquipamentos.css";
 
@@ -13,7 +14,7 @@ function CadastrarEquipamentos() {
   const [tag, setTag] = useState("");
   const [producaoPorHora, setProducaoPorHora] = useState("");
   const [disponibilidadeMes, setDisponibilidadeMes] = useState("");
-
+  const navigate = useNavigate();
   const [setorNome, setSetorNome] = useState("");
   const [idSetor, setIdSetor] = useState(null);
   const [opcoesSetor, setOpcoesSetor] = useState([]);
@@ -72,6 +73,10 @@ function CadastrarEquipamentos() {
 
       console.log("Equipamento cadastrado com sucesso:", response.data);
       setMensagem("Equipamento cadastrado com sucesso!");
+
+      setTimeout(() => {
+  navigate("/equipamentos/visualizar");
+}, 1500);
 
       setNome("");
       setMarca("");

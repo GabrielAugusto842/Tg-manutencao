@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import axios from "axios";
+import {useNavigate } from "react-router-dom";
 import api from "../../Services/api.jsx";
 import "../../telas/Usuario/CadastrarUsuario.css?=1.0.3";
 
@@ -13,6 +14,7 @@ function CadastrarUsuario() {
   const [nome, setNome] = useState("");
   const [idCargo, setIdCargo] = useState(null);
   const [idSetor, setIdSetor] = useState(null);
+  const navigate = useNavigate();
 
   const [opcoesCargo, setOpcoesCargo] = useState([]);
 
@@ -90,6 +92,10 @@ function CadastrarUsuario() {
 
       console.log("Usuário cadastrado com sucesso:", response.data);
       setMensagem("Usuário cadastrado com sucesso!");
+
+       setTimeout(() => {
+  navigate("/usuario/visualizar");
+}, 1500);
 
       // Opcional: Limpar o formulário após o sucesso
       setEmail("");

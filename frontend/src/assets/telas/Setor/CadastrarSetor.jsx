@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Setor/CadastrarSetor.css?=1.0.2";
 import api from "../../Services/api.jsx";
+import { useNavigate } from "react-router-dom";
 
 function CadastrarSetor() {
   const [descricao, setDescricao] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [nomeSetor, setNomeSetor] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,10 @@ function CadastrarSetor() {
 
       console.log("Setor cadastrado com sucesso:", response.data);
       setMensagem(`Setor '${nomeSetor}' cadastrado com sucesso!`);
+
+        setTimeout(() => {
+  navigate("/setores/visualizar");
+}, 1500);
 
       setNomeSetor("");
       setDescricao("");

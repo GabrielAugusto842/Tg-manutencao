@@ -46,6 +46,7 @@ function App() {
         <Route path="/usuario/visualizar" element={<VisualizarUsuarios />} />
         <Route path="/usuario/editar/:id" element={<EditarUsuario />} />
 
+
         {/* Equipamentos */}
         <Route
           path="/equipamentos/cadastrar"

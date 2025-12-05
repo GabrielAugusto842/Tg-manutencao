@@ -110,7 +110,12 @@ function VisualizarUsuariosContent({ navigate }) {
   // ==========================
   //   EDITAR E DELETAR
   // ==========================
-  const handleEditar = (id) => navigate(`/usuario/editar/${id}`);
+  const handleEditar = (id) => {
+  console.log("Editando usuário com ID:", id);
+  navigate(`/usuario/editar/${id}`);
+};
+
+
 
   const handleDeletar = async (id) => {
     const usuario = usuarios.find((u) => u.id_usuario === id);
