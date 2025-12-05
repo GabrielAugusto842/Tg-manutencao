@@ -1,0 +1,102 @@
+/* Container principal */
+.preencher-os-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  margin-top: 100px;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Título da página */
+.preencher-os-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+/* Informações da ordem */
+.preencher-os-container p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #555555;
+}
+
+.preencher-os-container strong {
+  color: #000000;
+}
+
+/* Inputs e textarea */
+.preencher-os-container input,
+.preencher-os-container textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.preencher-os-container input:focus,
+.preencher-os-container textarea:focus {
+  border-color: #0051ff;
+  box-shadow: 0 0 5px rgba(0, 81, 255, 0.3);
+  outline: none;
+}
+
+/* Botão finalizar */
+.preencher-os-container .btn-finalizar {
+  padding: 12px 25px;
+  background-color: #19b93f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.preencher-os-container .btn-finalizar:hover {
+  background-color: #218838;
+  transform: scale(1.02);
+}
+
+/* Mensagens de erro e sucesso */
+.preencher-os-container .erro {
+  color: #dc3545;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.preencher-os-container .sucesso {
+  color: #28a745;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .preencher-os-container {
+    padding: 15px;
+  }
+
+  .preencher-os-container h2 {
+    font-size: 20px;
+  }
+
+  .preencher-os-container input,
+  .preencher-os-container textarea {
+    font-size: 14px;
+  }
+
+  .preencher-os-container .btn-finalizar {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+}

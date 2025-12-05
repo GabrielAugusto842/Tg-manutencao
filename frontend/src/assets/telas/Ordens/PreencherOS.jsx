@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
+import "./PreencherOS.css";
+
 
 const API_URL = "http://localhost:3002/api/os";
 
@@ -89,55 +91,44 @@ export default function PreencherOS() {
 
   return (
     <Layout title="Preencher Ordem de Serviço">
-      <div className="container">
-        <h2>Máquina: {ordem.nomeMaquina}</h2>
+      <div className="preencher-os-container">
+  <h2>Máquina: {ordem.nomeMaquina}</h2>
 
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
-        {mensagemSucesso && <p style={{ color: "green" }}>{mensagemSucesso}</p>}
+  <p>
+    <strong>Descrição (Problema):</strong> {ordem.descricao}
+  </p>
+  <p>
+    <strong>Data Abertura:</strong>{" "}
+    {formatarDataBrasil(ordem.dataAbertura)}
+  </p>
 
-        <p>
-          <strong>Descrição (Problema):</strong> {ordem.descricao}
-        </p>
-        <p>
-          <strong>Data Abertura:</strong>{" "}
-          {formatarDataBrasil(ordem.dataAbertura)}
-        </p>
+  <div>
+    <label>Solução aplicada:</label>
+    <textarea
+      value={solucao}
+      onChange={(e) => setSolucao(e.target.value)}
+      rows={5}
+    />
+  </div>
 
-        <div style={{ marginTop: 20 }}>
-          <label>Solução aplicada:</label>
-          <textarea
-            value={solucao}
-            onChange={(e) => setSolucao(e.target.value)}
-            rows={5}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div>
+  <div>
+    <label>Custo (opcional):</label>
+    <input
+      type="number"
+      value={custo}
+      onChange={(e) => setCusto(e.target.value)}
+    />
+  </div>
 
-        <div style={{ marginTop: 20 }}>
-          <label>Custo (opcional):</label>
-          <input
-            type="number"
-            value={custo}
-            onChange={(e) => setCusto(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div>
+  <button className="btn-finalizar" onClick={finalizarOrdem}>
+    Finalizar Ordem
+  </button>
 
-        <button
-          onClick={finalizarOrdem}
-          style={{
-            marginTop: 20,
-            padding: "10px 20px",
-            background: "green",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            fontSize: 16,
-          }}
-        >
-          Finalizar Ordem
-        </button>
-      </div>
+  {/* Mensagens de erro ou sucesso aparecem **abaixo do botão** */}
+  {erro && <p className="erro" style={{ marginTop: "15px" }}>{erro}</p>}
+  {mensagemSucesso && <p className="sucesso" style={{ marginTop: "15px" }}>{mensagemSucesso}</p>}
+</div>
+
     </Layout>
   );
 }

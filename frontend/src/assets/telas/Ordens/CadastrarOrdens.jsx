@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/CadastrarOrdens.css";
+import { useNavigate } from "react-router-dom";
 import api from "../../Services/api.jsx";
 
 function CadastrarOrdemServico() {
@@ -12,6 +13,7 @@ function CadastrarOrdemServico() {
   const [maquinasFiltradas, setMaquinasFiltradas] = useState([]);
   const [setores, setSetores] = useState([]);
   const [mensagem, setMensagem] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -77,6 +79,10 @@ useEffect(() => {
       setMensagem(
         "Ordem de Serviço cadastrada com sucesso! Ela está aberta para manutenção."
       );
+
+            setTimeout(() => {
+  navigate("/ordens/visualizar");
+}, 1500);
 
       // reset campos
       setDescricao("");

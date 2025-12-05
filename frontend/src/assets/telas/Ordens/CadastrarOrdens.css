@@ -121,7 +121,7 @@
   width: 100%;
   cursor: pointer;
 
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .form-button:hover {

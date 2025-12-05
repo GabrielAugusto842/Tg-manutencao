@@ -100,7 +100,7 @@ function CadastrarEquipamentos() {
   };
 
   return (
-    <Layout title="Cadastro de Equipamento">
+    <Layout title="Cadastro de Máquinas">
       <div className="form-container-equipamentos">
         <form onSubmit={handleSubmit}>
           {/* LINHA 1: Nome e Marca (Duas Colunas) */}
