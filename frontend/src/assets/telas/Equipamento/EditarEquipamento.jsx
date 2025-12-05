@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
 import api from "../../Services/api.jsx";
 import "./EditarEquipamento.css";
@@ -24,6 +24,7 @@ function EditarEquipamento() {
   const [opcoesSetor, setOpcoesSetor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
+  const navigate = useNavigate();
 
   // Handler genérico de input
   const handleInputChange = (e) => {
@@ -117,6 +118,8 @@ function EditarEquipamento() {
       await api.put(`/maquina/${id}`, dadosAtualizados);
 
       alert("Equipamento atualizado com sucesso!");
+
+      navigate("/equipamentos/visualizar");
     } catch (error) {
       console.error("Falha na atualização:", error);
       // Tente logar a resposta do erro se possível para obter a mensagem de validação

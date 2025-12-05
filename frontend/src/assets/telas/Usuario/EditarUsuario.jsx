@@ -1,213 +1,114 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
-import "./EditarUsuario.css";
+import api from "../../Services/api.jsx";
+import "../../telas/Setor/EditarSetor.css";
 
-const API_URL = "http://localhost:3002/api/user";
-const API_CARGOS = "http://localhost:3002/api/cargo";
-const API_SETORES = "http://localhost:3002/api/setores";
-
-function EditarUsuario() {
+function EditarSetor() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Estados
-  const [usuario, setUsuario] = useState(null);
+  // Estado do formulário
   const [dadosFormulario, setDadosFormulario] = useState({
-    nome: "",
-    email: "",
-    novaSenha: "",
+    nomeSetor: "",
+    descricao: "",
   });
 
-  const [idCargo, setIdCargo] = useState(null);
-  const [idSetor, setIdSetor] = useState(null);
-  const [opcoesCargo, setOpcoesCargo] = useState([]);
-  const [opcoesSetor, setOpcoesSetor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Handler genérico de input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setDadosFormulario((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Fetch usuário
-  const buscarUsuario = useCallback(async () => {
+  const buscarSetor = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/id/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      const res = await api.get(`/setores/${id}`);
+      setDadosFormulario({
+        nomeSetor: res.data.nomeSetor || "",
+        descricao: res.data.descricao || "",
       });
-      if (!res.ok) throw new Error("Usuário não encontrado.");
-      const dados = await res.json();
-      setUsuario(dados);
-      setIdCargo(dados.id_cargo);
-      setIdSetor(dados.id_setor);
-      setDadosFormulario({ nome: dados.nome || "", email: dados.email || "" });
     } catch (e) {
-      setErro(e.message);
+      setErro("Erro ao buscar setor: " + (e.response?.data?.error || e.message));
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  // Fetch cargos
-  const carregarCargos = useCallback(async () => {
-    try {
-      const res = await fetch(API_CARGOS, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
-      const formatados = data.map((c) => ({ id: c.idCargo, nome: c.cargo }));
-      setOpcoesCargo(formatados);
-    } catch (err) {
-      console.error("Erro ao carregar cargos:", err);
-    }
-  }, []);
-
-  // Fetch setores
-  const carregarSetores = useCallback(async () => {
-    try {
-      const res = await fetch(API_SETORES, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
-      const formatados = data
-        .map((s) => ({ id: s.idSetor, nome: s.nomeSetor }))
-        .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i); // Remove duplicados
-      setOpcoesSetor(formatados);
-    } catch (err) {
-      console.error("Erro ao carregar setores:", err);
-    }
-  }, []);
-
-  // Carregar tudo ao montar
   useEffect(() => {
-    buscarUsuario();
-    carregarCargos();
-    carregarSetores();
-  }, [buscarUsuario, carregarCargos, carregarSetores]);
+    buscarSetor();
+  }, [buscarSetor]);
 
-  // Salvar alterações
   const handleSalvar = async (e) => {
     e.preventDefault();
+    setErro(null);
+
+    if (!dadosFormulario.nomeSetor || !dadosFormulario.descricao) {
+      alert("Por favor, preencha o nome do setor e a descrição.");
+      return;
+    }
+
+    const dadosAtualizados = {
+      setor: dadosFormulario.nomeSetor,
+      descricao: dadosFormulario.descricao,
+    };
+
     try {
-      // 1. Extrai os valores do formulário. Usa || "" como segurança, embora o estado deva ter "novaSenha": ""
-      const nome = dadosFormulario.nome || "";
-      const email = dadosFormulario.email || "";
-      const novaSenha = dadosFormulario.novaSenha || ""; // 2. Monta o objeto de dados *limpo*
+      console.log("Enviando dados:", dadosAtualizados);
+      await api.put(`/setores/${id}`, dadosAtualizados);
 
-      const dadosAtualizados = {
-        nome: nome,
-        email: email,
-        id_cargo: idCargo,
-        id_setor: idSetor,
-      }; // 3. Adiciona a senha APENAS se o campo foi preenchido.
-
-      if (novaSenha.trim() !== "") {
-        // O backend espera o campo 'senha', não 'novaSenha'
-        dadosAtualizados.senha = novaSenha;
-      } // 4. Requisição PUT
-
-      const res = await fetch(`${API_URL}/id/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(dadosAtualizados),
-      });
-
-      if (!res.ok) {
-        const errorData = await res
-          .json()
-          .catch(() => ({ error: "Erro desconhecido" }));
-        throw new Error(errorData.error || "Erro ao salvar usuário.");
-      }
-
-      alert("Usuário atualizado com sucesso!");
+      alert(`Setor '${dadosFormulario.nomeSetor}' atualizado com sucesso!`);
+      navigate("/setores/visualizar");
     } catch (e) {
-      console.error(e);
-      alert("Falha ao atualizar usuário: " + e.message);
+      console.error("Falha na atualização:", e);
+      alert("Falha ao atualizar setor: " + (e.response?.data?.error || "Erro desconhecido"));
     }
   };
 
-  // Render
-  if (loading) return <p>Carregando dados do usuário...</p>;
-  if (erro) return <p style={{ color: "red" }}>Erro: {erro}</p>;
-  if (!usuario) return <p>Nenhum usuário encontrado com este ID.</p>;
+  if (loading) return <p className="msg-carregando">Carregando dados do setor...</p>;
+  if (erro) return <p className="msg-erro">{erro}</p>;
 
   return (
-    <Layout title={`Editar Usuário: ${usuario.nome}`}>
-      {/* Aplica a classe do contêiner/card */}
-      <div className="edicao-usuario-container">
-        {/* Aplica a classe do formulário */}
-        <form onSubmit={handleSalvar} className="edicao-usuario-form">
-          <label>
-            Nome:
+    <Layout title={`Editar Setor: ${dadosFormulario.nomeSetor}`}>
+      <div className="editar-setor-container">
+        <form className="editar-setor-form" onSubmit={handleSalvar}>
+          <div className="form-group full-width">
+            <label htmlFor="nomeSetor">
+              Nome do Setor: <span className="required">*</span>
+            </label>
             <input
               type="text"
-              name="nome"
-              value={dadosFormulario.nome}
+              id="nomeSetor"
+              name="nomeSetor"
+              value={dadosFormulario.nomeSetor}
               onChange={handleInputChange}
+              required
             />
-          </label>
+          </div>
 
-          <label>
-            Email:
-            <input
-              type="text"
-              name="email"
-              value={dadosFormulario.email}
+          <div className="form-group full-width">
+            <label htmlFor="descricao">
+              Descrição: <span className="required">*</span>
+            </label>
+            <textarea
+              id="descricao"
+              name="descricao"
+              value={dadosFormulario.descricao}
               onChange={handleInputChange}
+              rows="4"
+              required
             />
-          </label>
+          </div>
 
-          <label>
-            Nova Senha (opcional):
-            <input
-              type="password"
-              name="novaSenha"
-              value={dadosFormulario.novaSenha}
-              onChange={handleInputChange}
-              placeholder="Deixe vazio para não alterar"
-            />
-          </label>
-
-          <label>
-            Cargo:
-            <select
-              value={idCargo || ""}
-              onChange={(e) => setIdCargo(Number(e.target.value))}
-            >
-              <option value="">Selecione um cargo</option>
-              {opcoesCargo.map((cargo) => (
-                <option key={cargo.id} value={cargo.id}>
-                  {cargo.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            Setor:
-            <select
-              value={idSetor || ""}
-              onChange={(e) => setIdSetor(Number(e.target.value))}
-            >
-              <option value="">Selecione um setor</option>
-              {opcoesSetor.map((setor) => (
-                <option key={setor.id} value={setor.id}>
-                  {setor.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <button type="submit">Salvar Alterações</button>
+          <button type="submit" className="botao-salvar-setor">
+            Salvar Alterações
+          </button>
         </form>
       </div>
     </Layout>
   );
 }
 
-export default EditarUsuario;
+export default EditarSetor;

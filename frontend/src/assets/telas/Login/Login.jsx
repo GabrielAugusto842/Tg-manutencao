@@ -105,7 +105,10 @@ const Login = () => {
                 <button type="submit">Entrar</button>
                 {errorMessage && (
                   <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">
-                    {errorMessage}
+                    {errorMessage && (
+  <p className="error-message">{errorMessage}</p>
+)}
+
                   </p>
                 )}
               </form>

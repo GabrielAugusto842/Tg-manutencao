@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
 import api from "../../Services/api.jsx";
 import "../../telas/Setor/EditarSetor.css";
@@ -13,6 +13,7 @@ function EditarSetor() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   const [mensagem, setMensagem] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -58,15 +59,23 @@ function EditarSetor() {
       descricao: setorDescricao,
     };
 
-    try {
-      await api.put(`/setores/${id}`, dadosAtualizados);
-      setSetorOriginal((prev) => ({ ...prev, ...dadosAtualizados }));
-      setMensagem(`Setor '${setorNome}' atualizado com sucesso!`);
-      setErro(null);
-    } catch (e) {
-      const errorMsg = e.response?.data?.error || "Erro desconhecido ao salvar.";
-      setMensagem("Falha ao atualizar setor: " + errorMsg);
-    }
+try {
+  setErro(null); // Limpa erro antigo
+  await api.put(`/setores/${id}`, dadosAtualizados);
+
+  setSetorOriginal((prev) => ({ ...prev, ...dadosAtualizados }));
+  setMensagem(`Setor '${setorNome}' atualizado com sucesso!`);
+
+  setTimeout(() => {
+    navigate("/setores/visualizar");
+  }, 1500);
+
+} catch (e) {
+  const errorMsg = e.response?.data?.error || "Erro desconhecido ao salvar.";
+  setMensagem("Falha ao atualizar setor: " + errorMsg);
+}
+
+
   };
 
   if (loading) return <p className="msg-carregando">Carregando dados do setor...</p>;
@@ -115,12 +124,13 @@ function EditarSetor() {
 
         {mensagem && (
           <p
-            className={`message-feedback ${
-              mensagem.includes("sucesso") ? "success" : "error"
-            }`}
-          >
-            {mensagem}
-          </p>
+  className={`message-feedback ${
+    mensagem.includes("sucesso") ? "success" : "error"
+  }`}
+>
+  {mensagem}
+</p>
+
         )}
       </div>
     </Layout>

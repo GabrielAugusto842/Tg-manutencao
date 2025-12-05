@@ -179,3 +179,11 @@
     padding: 20px;
   }
 }
+
+.error-message {
+  margin-top: 15px; /* abaixa um pouco */
+  color: red;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
