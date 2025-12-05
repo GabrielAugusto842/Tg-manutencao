@@ -26,6 +26,8 @@
   margin-bottom: 30px;
 }
 
+
+
 /* Container de Filtros (Data Inicial e Data Final) */
 .relatorios-filtros-container {
   display: flex;
@@ -58,4 +60,32 @@
   text-shadow: none; /* Remove qualquer sombra de texto herdada ou padrão */
 
   transition: border-color 0.2s;
+}
+
+
+.botao-pdf-relatorio {
+  background: #f3f4f6; /* Cinza claro */
+  color: #4b5563; /* Cinza médio */
+  border: 1px solid #d1d5db; /* Borda suave */
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra bem sutil */
+}
+
+
+
+.botao-pdf-relatorio:hover {
+  background: #e5e7eb; /* Cinza um pouco mais escuro */
+  color: #374151; /* Cor reforçada */
+  border-color: #cbd5e1;
+}
+
+.botao-pdf-relatorio:active {
+  transform: scale(0.97); /* Feedback ao clicar */
 }

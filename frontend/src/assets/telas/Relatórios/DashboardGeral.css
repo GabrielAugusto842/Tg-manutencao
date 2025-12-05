@@ -91,7 +91,7 @@
 }
 
 .kpi-valor-centralizado .valor-indicador {
-  font-size: 1.7rem;
+  font-size: 1.7rem !;
   font-weight: 800;
   line-height: 1.1;
   display: block;
@@ -103,6 +103,13 @@
   color: #000000;
   margin-top: 2px;
   text-shadow: none;
+}
+
+.kpi-card.custo-total .valor-indicador {
+  margin-top: 20px !important;
+  font-size: 3rem !important; /* maior */
+  font-weight: 900;
+  text-align: center;
 }
 
 /* =======================================
@@ -254,9 +261,6 @@
     margin-top: 12px;
   }
 }
-
-
-
 
 /* Status */
 .status.aberta {
@@ -542,18 +546,19 @@
 
 /* Para que o gráfico anual fique em uma linha própria e ocupe toda a largura */
 .dashboard-kpi-grid.full-width-chart {
-    display: flex;
-    /* Faz o card do gráfico ocupar toda a largura da grade */
-    grid-column: 1 / -1; 
-    margin-top: 20px;
-    padding: 0; /* Remove padding duplicado se houver */
+  display: flex;
+  /* Faz o card do gráfico ocupar toda a largura da grade */
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  padding: 0; /* Remove padding duplicado se houver */
 }
 
 /* Estilo para garantir que o card do gráfico use 100% do espaço */
 .kpi-card.chart-card.full-width {
-    width: 100%;
-    padding: 15px; /* Adiciona padding interno */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 15px; /* Adiciona padding interno */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 /* ===== AJUSTES ESPECÍFICOS PARA O CARD DE CUSTO TOTAL ===== */
@@ -563,14 +568,14 @@
 
 .kpi-card.custo-total .kpi-valor-principal {
   margin-top: 5px;
-  text-align: center;
+  text-align: center !important;
 }
 
 .kpi-card.custo-total .valor-indicador {
   margin-top: 20px !important;
-  font-size: 3rem !important;  /* maior */
+  font-size: 3rem !important; /* maior */
   font-weight: 900;
-  text-align: center;
+  text-align: center !important;
 }
 
 .kpi-card.custo-total .card-meta {
@@ -579,7 +584,6 @@
   text-align: center !important; /* CENTRALIZA */
   width: 100%;
 }
-
 
 /* ===== CONTAINER DO LIMITE ===== */
 .custo-meta-container-inline {
@@ -621,3 +625,51 @@
   font-weight: 600;
   color: #6b7280;
 }
+
+.botao-exportar-geral {
+  background: #f3f4f6; /* Cinza claro */
+  color: #4b5563; /* Cinza médio */
+  border: 1px solid #d1d5db; /* Borda suave */
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra bem sutil */
+}
+
+.botao-exportar-geral:hover {
+  background: #e5e7eb; /* Cinza um pouco mais escuro */
+  color: #374151; /* Cor reforçada */
+  border-color: #cbd5e1;
+}
+
+.botao-exportar-geral:active {
+  transform: scale(0.97); /* Feedback ao clicar */
+}
+
+/* Cards MTTR/MTBF/MTTA */
+.kpi-card.mttr .kpi-valor-principal.kpi-valor-grande span,
+.kpi-card.mtbf .kpi-valor-principal.kpi-valor-grande span,
+.kpi-card.mtta .kpi-valor-principal.kpi-valor-grande span {
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.kpi-card.custo-total .kpi-content.centralizado {
+  display: flex;
+  font-size: 3rem !important;
+  flex-direction: column;
+  font-weight: 900;
+  align-items: center; /* centraliza horizontalmente */
+  justify-content: center; /* centraliza verticalmente se necessário */
+  text-align: center;
+  gap: 8px; /* espaçamento entre valor e meta */
+}
+
+
+
+

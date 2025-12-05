@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import DashboardGeral from "./DashboardGeral.jsx";
 import DashboardRanking from "./DashboardRanking.jsx";
-import "./Relatorios.css";
 import DashboardMaquinas from "./DashboardMaquinas.jsx";
+import "./Relatorios.css";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const API_URL = "http://localhost:3002/api/setores";
 
@@ -14,6 +16,8 @@ export default function Relatorios() {
   const [idSetorSelecionado, setIdSetorSelecionado] = useState("");
   const [setores, setSetores] = useState([]);
   const [carregandoSetores, setCarregandoSetores] = useState(true);
+
+  const anoAtual = new Date().getFullYear();
 
   // Carrega setores
   useEffect(() => {
@@ -34,14 +38,40 @@ export default function Relatorios() {
     buscarSetores();
   }, []);
 
-  const anoAtual = new Date().getFullYear();
+  // Função de exportar PDF
+  const exportRelatorioPDF = () => {
+    const input = document.querySelector(".relatorio-display-area");
+    if (!input) return;
+
+    html2canvas(input, { scale: 2, useCORS: true }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      let heightLeft = pdfHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+
+      while (heightLeft > 0) {
+        position = heightLeft - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+      }
+
+      pdf.save("relatorio.pdf");
+    });
+  };
 
   return (
     <Layout title="Relatórios">
       <div className="relatorios-page-container">
-        <header className="relatorios-header">
-          <div className="relatorios-actions"></div>
-        </header>
+        {/* Header com botão de exportar PDF */}
+        <header className="relatorios-header"></header>
 
         {/* FILTROS */}
         <div className="relatorios-filtros-container">
@@ -88,7 +118,7 @@ export default function Relatorios() {
                 Dashboard - Métricas Gerais
               </option>
               <option value="ranking">Ranking de Ordens</option>
-              <option value="dashboard-maquinas"> Métricas por Máquinas</option>
+              <option value="dashboard-maquinas">Métricas por Máquinas</option>
             </select>
           </div>
 
@@ -117,23 +147,34 @@ export default function Relatorios() {
           </div>
         </div>
 
-        {/* RELATÓRIO */}
         <main className="relatorio-display-area">
           {tipoRelatorio === "dashboard-geral" && (
-            <DashboardGeral mes={mes} ano={ano} idSetor={idSetorSelecionado} />
+            <DashboardGeral
+              mes={mes}
+              ano={ano}
+              idSetor={idSetorSelecionado}
+              exportPDF={exportRelatorioPDF} // passamos a função como prop
+            />
           )}
+
           {tipoRelatorio === "ranking" && (
             <DashboardRanking
               mes={mes}
               ano={ano}
               idSetor={idSetorSelecionado}
+              exportPDF={exportRelatorioPDF} // passamos a função como prop
+            />
+          )}
+
+          {tipoRelatorio === "dashboard-maquinas" && (
+            <DashboardMaquinas
+              mes={mes}
+              ano={ano}
+              idSetor={idSetorSelecionado}
+              exportPDF={exportRelatorioPDF} // passamos a função como prop
             />
           )}
         </main>
-
-        {tipoRelatorio === "dashboard-maquinas" && (
-          <DashboardMaquinas mes={mes} ano={ano} idSetor={idSetorSelecionado} />
-        )}
       </div>
     </Layout>
   );

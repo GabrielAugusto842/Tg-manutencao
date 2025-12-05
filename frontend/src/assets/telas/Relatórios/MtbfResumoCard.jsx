@@ -1,5 +1,3 @@
-// src/componentes/Relatorios/MtbfResumoCard.jsx
-
 import React, { useState, useEffect } from "react";
 import { formatHoras, getMtbfColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
@@ -15,17 +13,18 @@ export default function MtbfResumoCard({
   setMetaMtbfHoras,
   metaMtbfMinutos,
   setMetaMtbfMinutos,
-  metaMTBF, // meta em decimal (horas)
+  metaMTBF,
+  onDataFetched,
 }) {
   const [mtbfGeral, setMtbfGeral] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
-  const [aviso, setAviso] = useState(""); // Novo estado para mensagens do backend
+  const [aviso, setAviso] = useState("");
 
-  const meta = metaMTBF ?? 200; // default
+  const meta = metaMTBF ?? 200;
 
   useEffect(() => {
-    const buscarMTBF = async () => {
+    const fetchMTBF = async () => {
       setCarregando(true);
       setErro(null);
       setAviso("");
@@ -36,18 +35,30 @@ export default function MtbfResumoCard({
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
+        const resposta = await fetch(
+          `${API_URL}/mtbf-geral?${params.toString()}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-        const res = await fetch(`${API_URL}/mtbf-geral${query}`, { headers });
-        if (!res.ok) throw new Error("Erro ao buscar MTBF geral");
+        if (!resposta.ok) throw new Error("Erro ao buscar MTBF");
 
-        const dados = await res.json();
+        const dados = await resposta.json();
 
-        setMtbfGeral(dados?.mtbf ?? 0);
-        setAviso(dados?.aviso ?? ""); // captura aviso do backend, se houver
+        setMtbfGeral(dados.mtbf ?? 0);
+        setAviso(dados.aviso || "");
+
+        if (onDataFetched) {
+          onDataFetched({
+            indicador: "MTBF",
+            valor: dados.mtbf ?? null,
+            aviso: dados.aviso || "",
+            meta: metaMTBF,
+          });
+        }
       } catch (e) {
         setErro(e.message);
       } finally {
@@ -55,8 +66,8 @@ export default function MtbfResumoCard({
       }
     };
 
-    buscarMTBF();
-  }, [mes, ano, idSetor]);
+    fetchMTBF();
+  }, [mes, ano, idSetor, metaMTBF]);
 
   if (carregando)
     return <div className="kpi-card loading">Carregando MTBF...</div>;
@@ -65,33 +76,21 @@ export default function MtbfResumoCard({
   return (
     <div className="kpi-card mtbf">
       <h4 className="card-titulo">MTBF Geral no Período</h4>
-
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
-          <span
-            className="valor-indicador"
-            style={{ color: getMtbfColor(mtbfGeral, meta) }}
-          >
-            {mtbfGeral > 0 ? formatHoras(mtbfGeral) : "—"}
+          <span style={{ color: getMtbfColor(mtbfGeral ?? 0, meta) }}>
+            {mtbfGeral !== null ? formatHoras(mtbfGeral) : "—"}
           </span>
-          <p className="card-meta">
-            Meta (Acima de): {formatHoras(meta)}
-          </p>
+          <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
           {aviso && <p className="card-aviso">{aviso}</p>}
         </div>
-
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
-          <DashboardMTBF mtbfValue={mtbfGeral} valorMeta={meta} />
+          <DashboardMTBF mtbfValue={mtbfGeral ?? 0} valorMeta={meta} />
         </div>
       </div>
 
-      {/* INPUTS DA META */}
-      <div
-        className="mttr-meta-container-inline no-print"
-        style={{ marginTop: "28px" }}
-      >
+      <div className="mttr-meta-container-inline no-print">
         <label className="font-semibold mr-2">Definir Meta:</label>
-
         <div className="input-time-card">
           <input
             type="number"
@@ -103,7 +102,6 @@ export default function MtbfResumoCard({
           />
           <span>h</span>
         </div>
-
         <div className="input-time-card">
           <input
             type="number"

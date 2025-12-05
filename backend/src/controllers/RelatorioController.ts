@@ -60,19 +60,16 @@ export async function getMTTRGeral(req: Request, res: Response) {
 
     const agora = new Date();
 
-    // Converte os parâmetros de forma segura
     const m = mes && !isNaN(Number(mes)) ? Number(mes) : agora.getMonth() + 1;
     const y = ano && !isNaN(Number(ano)) ? Number(ano) : agora.getFullYear();
 
     const mesValido = Math.min(Math.max(m, 1), 12);
 
-    // 📅 Define início e fim do mês com base NO TÉRMINO da OS
     const dataInicial = new Date(y, mesValido - 1, 1, 0, 0, 0);
     const dataFinal = new Date(y, mesValido, 0, 23, 59, 59, 999);
 
     const params: any[] = [dataInicial, dataFinal];
 
-    // 📌 Agora filtramos SOMENTE POR DATA DE TÉRMINO
     let where = `
       WHERE o.data_inicio IS NOT NULL
         AND o.data_termino IS NOT NULL
@@ -84,7 +81,6 @@ export async function getMTTRGeral(req: Request, res: Response) {
       params.push(idSetor);
     }
 
-    // 📌 Calculo do MTTR direto no banco usando AVG()
     const query = `
       SELECT 
         COUNT(*) AS total_os,
@@ -100,13 +96,15 @@ export async function getMTTRGeral(req: Request, res: Response) {
     const mediaMinutos = rows[0]?.mttr_minutos ?? 0;
 
     if (totalOs === 0) {
-      return res.json({ mttr: 0 });
+      return res.json({
+        mttr: 0,
+        mensagem: "Não há ordens de serviço no período.",
+      });
     }
 
-    // Converte minutos para horas
     const mttrHoras = mediaMinutos / 60;
 
-    res.json({ mttr: Number(mttrHoras.toFixed(2)) });
+    res.json({ mttr: Number(mttrHoras.toFixed(2)), mensagem: null });
   } catch (err) {
     console.error("Erro ao calcular MTTR Geral:", err);
     res.status(500).json({ erro: "Erro ao calcular MTTR Geral" });
@@ -444,6 +442,7 @@ export async function getMTTAGeral(req: Request, res: Response) {
     res.json({
       totalOs,
       mttaHoras: Number(mttaHoras.toFixed(2)),
+      mensagem: totalOs === 0 ? "Nenhuma ordem de serviço encontrada no período" : undefined,
     });
   } catch (err) {
     console.error("Erro ao calcular MTTA Geral:", err);

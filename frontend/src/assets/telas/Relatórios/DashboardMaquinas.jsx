@@ -12,7 +12,7 @@ import CustoMaquinaResumoCard from "./CustoMaquinaResumoCard.jsx";
 
 const API_URL = "http://localhost:3002/api/maquina";
 
-export default function DashboardMaquinas({ mes, ano, idSetor }) {
+export default function DashboardMaquinas({ mes, ano, idSetor, exportPDF }) {
   const [maquinas, setMaquinas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [metricas, setMetricas] = useState({});
@@ -81,6 +81,12 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         🏭 Indicadores por Máquina
       </h2>
+
+      <div className="mb-6">
+        <button onClick={exportPDF} className="botao-pdf-relatorio">
+          📄 Exportar PDF
+        </button>
+      </div>
 
       <button onClick={exportarCSV} className="botao-exportar">
         📄 Exportar CSV

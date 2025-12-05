@@ -13,19 +13,22 @@ export default function MttaResumoCard({
   setMetaHoras,
   metaMinutos,
   setMetaMinutos,
-  metaMTTA, // Meta em horas decimais
+  metaMTTA,
+  onDataFetched,
 }) {
   const [mtta, setMtta] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [aviso, setAviso] = useState("");
 
-  const metaDefault = metaMTTA || 0.5; // Meta padrão: 30 min = 0.5 horas
-  const metaDecimal = (metaHoras || 0) + (metaMinutos || 0) / 60 || metaDefault;
+  const metaDecimal =
+    (metaHoras || 0) + (metaMinutos || 0) / 60 || metaMTTA || 0.5;
 
   useEffect(() => {
     const fetchMTTA = async () => {
       setCarregando(true);
       setErro(null);
+      setAviso("");
 
       try {
         const params = new URLSearchParams();
@@ -33,16 +36,29 @@ export default function MttaResumoCard({
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-
-        const resposta = await fetch(`${API_URL}/mtta-geral${query}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const resposta = await fetch(
+          `${API_URL}/mtta-geral?${params.toString()}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         if (!resposta.ok) throw new Error("Erro ao buscar MTTA");
         const dados = await resposta.json();
 
-        setMtta(dados?.mttaHoras ?? 0);
+        setMtta(dados.mttaHoras ?? 0);
+        setAviso(dados.mensagem || "");
+
+        if (onDataFetched) {
+          onDataFetched({
+            indicador: "MTTA",
+            valor: dados.mttaHoras ?? null,
+            aviso: dados.mensagem || "",
+            meta: metaMTTA,
+          });
+        }
       } catch (e) {
         setErro(e.message);
       } finally {
@@ -51,34 +67,32 @@ export default function MttaResumoCard({
     };
 
     fetchMTTA();
-  }, [mes, ano, idSetor]);
+  }, [mes, ano, idSetor, metaMTTA]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando MTTA...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando MTTA...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
     <div className="kpi-card mttr">
       <h4 className="card-titulo">MTTA Geral no Período</h4>
-
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
-          <span
-            className="valor-indicador"
-            style={{ color: getMttaColor(mtta, metaDecimal) }}
-          >
-            {formatHoras(mtta)}
+          <span style={{ color: getMttaColor(mtta, metaDecimal) }}>
+            {!aviso ? formatHoras(mtta) : "—"}
           </span>
-          <p className="card-meta">Meta (Abaixo de): {formatHoras(metaDecimal)}</p>
+          <p className="card-meta">
+            Meta (Abaixo de): {formatHoras(metaDecimal)}
+          </p>
+          {aviso && <p className="card-aviso">{aviso}</p>}
         </div>
-
         <div className="kpi-grafico-rosca kpi-grafico-mttr">
           <DashboardMTTA mttaValue={mtta} valorMeta={metaDecimal} />
         </div>
       </div>
 
-      <div className="mttr-meta-container-inline no-print" style={{ marginTop: "26px" }}>
+      <div className="mttr-meta-container-inline no-print">
         <label className="font-semibold mr-2">Definir Meta:</label>
-
         <div className="input-time-card">
           <input
             type="number"
@@ -88,7 +102,6 @@ export default function MttaResumoCard({
           />
           <span>h</span>
         </div>
-
         <div className="input-time-card">
           <input
             type="number"
