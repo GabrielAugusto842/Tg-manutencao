@@ -174,94 +174,77 @@ export async function getMTTRMaquina(req: Request, res: Response) {
 
 export async function getMTBFGeral(req: Request, res: Response) {
   try {
-    let { mes, ano, idSetor } = req.query as {
+    const { mes, ano, idSetor } = req.query as {
       mes?: string;
       ano?: string;
       idSetor?: string;
     };
 
     const hoje = new Date();
-    const anoNum =
-      ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
-    const mesNum =
-      mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano && !isNaN(Number(ano)) ? Number(ano) : hoje.getFullYear();
+    const mesNum = mes && !isNaN(Number(mes)) ? Number(mes) : hoje.getMonth() + 1;
 
     if (mesNum < 1 || mesNum > 12) {
       return res.status(400).json({ erro: "Mês inválido." });
     }
 
     const mesIndex = mesNum - 1;
-    const totalDaysInMonth = new Date(anoNum, mesIndex + 1, 0).getDate();
-
-    // 1. Período de Filtro: Limites do MÊS DE INTERESSE (pela data de TÉRMINO)
+    // O MTBF será calculado apenas para falhas dentro do mês
     const inicioFiltro = new Date(anoNum, mesIndex, 1, 0, 0, 0);
     const fimFiltro = new Date(anoNum, mesIndex + 1, 0, 23, 59, 59, 999);
 
     const params: any[] = [inicioFiltro, fimFiltro];
 
-    let where = `
- WHERE o.data_inicio IS NOT NULL
- AND o.data_termino IS NOT NULL
-AND o.data_termino BETWEEN ? AND ?
- `;
+    let filtro = ` WHERE o.data_abertura BETWEEN ? AND ? `;
     if (idSetor) {
-      where += " AND m.id_setor = ?";
+      filtro += " AND m.id_setor = ? ";
       params.push(idSetor);
     }
 
-    // 2. Query: Busca Contagem de Falhas, Downtime Total e Contagem de Máquinas Afetadas
+    // Query com PARTITION BY para calcular intervalo entre falhas por máquina
     const query = `
- SELECT 
- COUNT(o.id_ord_serv) AS failure_count,
- IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS downtime_hours,
- COUNT(DISTINCT m.id_maquina) AS num_maquinas_afetadas
- FROM ordem_servico o
- JOIN maquina m ON o.id_maquina = m.id_maquina
- ${where}
- `;
+      WITH falhas AS (
+        SELECT 
+          o.id_maquina,
+          o.data_abertura AS falha,
+          LAG(o.data_abertura) OVER (PARTITION BY o.id_maquina ORDER BY o.data_abertura) AS falha_anterior
+        FROM ordem_servico o
+        JOIN maquina m ON m.id_maquina = o.id_maquina
+        ${filtro}
+      ),
+      intervalos AS (
+        SELECT TIMESTAMPDIFF(MINUTE, falha_anterior, falha)/60 AS horas_entre_falhas
+        FROM falhas
+        WHERE falha_anterior IS NOT NULL
+      )
+      SELECT AVG(horas_entre_falhas) AS mtbf, COUNT(*) AS total_intervalos
+      FROM intervalos;
+    `;
 
     const [rows]: any = await db.query(query, params);
+    let mtbf = parseFloat(rows[0]?.mtbf);
+    const total_intervalos = parseInt(rows[0]?.total_intervalos, 10) || 0;
 
-    const failureCount = parseInt(rows[0]?.failure_count || 0, 10);
-    const downtimeHours = parseFloat(rows[0]?.downtime_hours || 0);
-    const numMaquinasAfetadas = parseInt(
-      rows[0]?.num_maquinas_afetadas || 0,
-      10
-    );
+    if (isNaN(mtbf)) mtbf = 0;
 
-    // Se não houver máquinas afetadas, assumimos 1 para o cálculo base do Tempo Disponível,
-    // mas o cálculo só é relevante se houver falhas.
-    const numMaquinasParaUptime =
-      numMaquinasAfetadas > 0 ? numMaquinasAfetadas : 1;
-
-    // Tempo Máximo Disponível: Dias * 24h * Nº de Máquinas no escopo
-    const totalAvailableHours = totalDaysInMonth * 24 * numMaquinasParaUptime;
-
-    // Up Time = Total Disponível - Downtime
-    const upTimeHours = Math.max(0, totalAvailableHours - downtimeHours);
-
-    // --- Retorno ---
-    if (failureCount <= 0) {
+    if (total_intervalos === 0) {
       return res.status(200).json({
-        mtbf: 0, // 🎯 CORREÇÃO: Retorna 0 para MTBF em vez do totalAvailableHours
-        totalHorasOperacionais: Number(upTimeHours.toFixed(2)), // Retorna o Up Time, mesmo que failureCount seja 0
-        countFalhas: 0,
-        aviso: "Nenhuma falha registrada. MTBF zerado.",
+        mtbf: 0,
+        aviso: "Não há falhas suficientes para calcular MTBF (precisa de 2 ou mais no período)."
       });
     }
 
-    const mtbf = upTimeHours / failureCount;
-
-    res.json({
+    return res.status(200).json({
       mtbf: Number(mtbf.toFixed(2)),
-      totalHorasOperacionais: Number(upTimeHours.toFixed(2)),
-      countFalhas: failureCount,
+      quantidade_intervalos: total_intervalos
     });
+
   } catch (err) {
     console.error("Erro ao calcular MTBF Geral:", err);
     res.status(500).json({ erro: "Erro ao calcular MTBF Geral" });
   }
 }
+
 
 export async function getMTBFMaquina(req: Request, res: Response) {
   try {
@@ -293,40 +276,52 @@ export async function getMTBFMaquina(req: Request, res: Response) {
       params.push(idSetor);
     }
 
+    // ✔ MTBF REAL: diferenças entre FALHAS consecutivas (data_abertura)
     const query = `
-  WITH eventos AS (
-    SELECT 
-      o.id_maquina,
-      o.data_abertura,
-      o.data_termino,
-      LAG(o.data_termino) OVER (
-        PARTITION BY o.id_maquina
-        ORDER BY o.data_abertura
-      ) AS ultima_fechada
-    FROM ordem_servico o
-    JOIN maquina m ON m.id_maquina = o.id_maquina
-    ${where}
-  )
-  SELECT
-    m.id_maquina,
-    m.nome AS maquina,
-    CASE
-      WHEN COUNT(e.data_abertura) <= 1 THEN 0
-      ELSE AVG(DATEDIFF(e.data_abertura, e.ultima_fechada))
-    END AS mtbf_dias
-  FROM eventos e
-  JOIN maquina m ON m.id_maquina = e.id_maquina
-  GROUP BY m.id_maquina, m.nome
-`;
+      WITH falhas AS (
+        SELECT
+          o.id_maquina,
+          o.data_abertura AS falha,
+          LAG(o.data_abertura) OVER (
+            PARTITION BY o.id_maquina
+            ORDER BY o.data_abertura
+          ) AS falha_anterior
+        FROM ordem_servico o
+        JOIN maquina m ON m.id_maquina = o.id_maquina
+        ${where}
+      ),
+      intervalos AS (
+        SELECT 
+          TIMESTAMPDIFF(HOUR, falha_anterior, falha) AS horas_entre_falhas
+        FROM falhas
+        WHERE falha_anterior IS NOT NULL
+      )
+      SELECT 
+        m.id_maquina,
+        m.nome AS maquina,
+        IFNULL(AVG(i.horas_entre_falhas), 0) AS mtbf_horas
+      FROM maquina m
+      LEFT JOIN intervalos i ON i.horas_entre_falhas IS NOT NULL
+      WHERE m.id_maquina = ?
+      GROUP BY m.id_maquina, m.nome;
+    `;
 
-    const [rows] = await db.query<RowDataPacket[]>(query, params);
+    params.push(idMaquina); // para o último WHERE
 
-    res.json({ mtbf: rows[0]?.mtbf_dias ?? 0 });
+    const [rows]: any = await db.query(query, params);
+
+    res.json({
+      id_maquina: rows[0]?.id_maquina,
+      maquina: rows[0]?.maquina,
+      mtbf_horas: rows[0]?.mtbf_horas ?? 0,
+    });
+
   } catch (err) {
     console.error("Erro ao buscar MTBF da máquina:", err);
     res.status(500).json({ erro: "Erro interno do servidor" });
   }
 }
+
 
 // -------------------------------------------
 // CUSTO TOTAL DE MANUTENÇÃO (NOVO RELATÓRIO)
@@ -678,13 +673,16 @@ export async function getMTTRAnual(req: Request, res: Response) {
 
 export async function getMTBFAnual(req: Request, res: Response) {
   try {
-    const { ano, idSetor } = req.query;
+    const { ano, idSetor } = req.query as {
+      ano?: string;
+      idSetor?: string;
+    };
     const params: any[] = [];
 
     const targetYear = Number(ano) || new Date().getFullYear();
 
-    let where = "WHERE o.data_termino IS NOT NULL";
-    where += " AND YEAR(o.data_termino) = ?";
+    // Filtro baseado no ano de abertura para considerar todas as falhas no ano
+    let where = "WHERE o.data_abertura IS NOT NULL AND YEAR(o.data_abertura) = ?";
     params.push(targetYear);
 
     if (idSetor) {
@@ -692,90 +690,70 @@ export async function getMTBFAnual(req: Request, res: Response) {
       params.push(idSetor);
     }
 
-    // 1. Query: Busca Downtime, Contagem de Falhas E Contagem de Máquinas Afetadas por Mês.
+    // Query com LAG() para calcular MTBF real, filtrando intervalos internos ao mesmo mês
     const query = `
- SELECT 
- MONTH(o.data_termino) AS mes_num,
- IFNULL(SUM(TIMESTAMPDIFF(HOUR, o.data_inicio, o.data_termino)), 0) AS downtime_hours,
- COUNT(*) AS failure_count,
-        COUNT(DISTINCT m.id_maquina) AS num_maquinas_afetadas
-FROM ordem_servico o
- JOIN maquina m ON m.id_maquina = o.id_maquina
- ${where}
- GROUP BY mes_num
- ORDER BY mes_num ASC
- `;
+      WITH falhas_do_ano AS (
+        SELECT 
+          o.id_maquina,
+          o.data_abertura AS falha_atual,
+          LAG(o.data_abertura) OVER (PARTITION BY o.id_maquina ORDER BY o.data_abertura) AS falha_anterior
+        FROM ordem_servico o
+        JOIN maquina m ON m.id_maquina = o.id_maquina
+        ${where}
+      ),
+      intervalos AS (
+        SELECT 
+          MONTH(falha_atual) AS mes_num,
+          TIMESTAMPDIFF(MINUTE, falha_anterior, falha_atual) / 60.0 AS horas_entre_falhas
+        FROM falhas_do_ano
+        WHERE falha_anterior IS NOT NULL
+          AND MONTH(falha_anterior) = MONTH(falha_atual)  -- Intervalos internos ao mesmo mês
+      )
+      SELECT 
+        mes_num,
+        AVG(horas_entre_falhas) AS mtbf_real,
+        COUNT(*) AS total_intervalos
+      FROM intervalos
+      GROUP BY mes_num
+      ORDER BY mes_num ASC
+    `;
 
     const [rows]: any = await db.query(query, params);
 
-    // 2. PÓS-PROCESSAMENTO: Cria estrutura de 12 meses
     const monthNames = [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
+      "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez",
     ];
 
-    // Estrutura auxiliar para calcular o MTBF
     const fullYearData = Array.from({ length: 12 }, (_, i) => {
-      const totalDaysInMonth = new Date(targetYear, i + 1, 0).getDate();
       return {
         mes_num: i + 1,
         periodo: `${monthNames[i]}/${String(targetYear).slice(2)}`,
-        totalDaysInMonth: totalDaysInMonth,
         mtbf: 0.0,
       };
     });
 
-    // 3. Mescla os resultados e calcula o MTBF
     const finalData = fullYearData.map((monthData) => {
       const dbRow = rows.find((row: any) => row.mes_num === monthData.mes_num);
 
       if (dbRow) {
-        const downtimeHours = parseFloat(dbRow.downtime_hours);
-        const failureCount = parseInt(dbRow.failure_count, 10);
-        const numMaquinas = parseInt(dbRow.num_maquinas_afetadas, 10);
-
-        // 🎯 CÁLCULO CORRETO DE UP TIME: Total de horas disponíveis = Dias * 24h * Nº de Máquinas
-        const totalAvailableHours =
-          monthData.totalDaysInMonth * 24 * numMaquinas;
-
-        let mtbf = 0.0;
-
-        if (failureCount > 0) {
-          // Up Time (Horas Operacionais) = Total Disponível - Downtime
-          const upTimeHours = Math.max(0, totalAvailableHours - downtimeHours);
-
-          // MTBF = Up Time / Número de Falhas
-          mtbf = upTimeHours / failureCount;
-        }
+        const mtbfReal = parseFloat(dbRow.mtbf_real);
 
         return {
           ...monthData,
-          mtbf: Number(mtbf.toFixed(2)),
+          mtbf: Number(mtbfReal.toFixed(2)),
         };
       }
 
-      return {
-        ...monthData,
-        mtbf: 0.0,
-      };
+      return monthData;
     });
 
     res.json(finalData);
   } catch (err) {
-    console.error("Erro ao buscar MTBF Anual:", err);
-    res.status(500).json({ erro: "Erro ao calcular MTBF Anual" });
+    console.error("Erro ao buscar MTBF Anual (Intervalos Internos):", err);
+    res.status(500).json({ erro: "Erro ao calcular MTBF Anual (Intervalos Internos)" });
   }
 }
+
 
 // -------------------------------------------
 // MTTA Anual (Mean Time To Acknowledge) por mês

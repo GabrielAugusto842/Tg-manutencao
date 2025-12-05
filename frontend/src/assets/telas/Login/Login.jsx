@@ -102,9 +102,6 @@ const Login = () => {
                   />
                   <FaLock className="icon" />
                 </div>
-                <div className="recall-forget">
-                  <a href="#">Esqueci minha senha</a>
-                </div>
                 <button type="submit">Entrar</button>
                 {errorMessage && (
                   <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">
