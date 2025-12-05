@@ -3,7 +3,13 @@ import { formatHoras } from "../../Services/formatters";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function MttrMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) {
+export default function MttrMaquinaResumoCard({
+  mes,
+  ano,
+  idSetor,
+  idMaquina,
+  onValorCarregado, // <-- NOVO!
+}) {
   const [mttr, setMttr] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -31,7 +37,14 @@ export default function MttrMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
         if (!resp.ok) throw new Error("Erro ao buscar MTTR da máquina");
 
         const dados = await resp.json();
-        setMttr(dados?.mttr ?? 0);
+        const valor = dados?.mttr ?? 0;
+
+        setMttr(valor);
+
+        // 🔥 DEVOLVE O VALOR AO COMPONENTE PAI
+        if (onValorCarregado) {
+          onValorCarregado("MTTR", idMaquina, valor);
+        }
       } catch (e) {
         console.error("Erro MTTR Máquina:", e);
         setErro(e.message);
@@ -50,7 +63,7 @@ export default function MttrMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
       {carregando && <p>Carregando...</p>}
       {erro && <p className="erro-kpi">{erro}</p>}
       {!carregando && !erro && (
-        <p className="kpi-valor-simples">{formatHoras(mttr ?? 0)}</p>
+        <p className="kpi-valor-simples">{formatHoras((mttr ?? 0) / 60)}</p>
       )}
     </div>
   );

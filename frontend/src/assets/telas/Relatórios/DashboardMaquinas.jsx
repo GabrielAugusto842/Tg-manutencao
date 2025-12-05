@@ -15,6 +15,17 @@ const API_URL = "http://localhost:3002/api/maquina";
 export default function DashboardMaquinas({ mes, ano, idSetor }) {
   const [maquinas, setMaquinas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [metricas, setMetricas] = useState({});
+
+  function atualizarMetricas(tipo, idMaquina, valor) {
+    setMetricas((prev) => ({
+      ...prev,
+      [idMaquina]: {
+        ...prev[idMaquina],
+        [tipo]: valor,
+      },
+    }));
+  }
 
   // Carrega todas as máquinas
   useEffect(() => {
@@ -40,19 +51,46 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
 
   if (loading) return <p>Carregando máquinas...</p>;
 
+  function exportarCSV() {
+    let linhas = [];
+    linhas.push("Maquina;MTTR;MTBF;MTTA;Custo");
+
+    maquinas.forEach((maq) => {
+      const m = metricas[maq.idMaquina] || {};
+
+      linhas.push(
+        `${maq.nome};` +
+          `${((m.MTTR ?? 0) / 60).toFixed(2)};` +
+          `${((m.MTBF ?? 0) / 60).toFixed(2)};` +
+          `${((m.MTTA ?? 0) / 60).toFixed(2)};` +
+          `${(m.Custo ?? 0).toFixed(2)}`
+      );
+    });
+
+    const csvContent = linhas.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "metricas_por_maquina.csv";
+    link.click();
+  }
+
   return (
     <div className="w-full px-4 py-6">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         🏭 Indicadores por Máquina
       </h2>
 
+      <button onClick={exportarCSV} className="botao-exportar">
+        📄 Exportar CSV
+      </button>
+
       <div className="lista-maquinas">
         {maquinas.map((maq) => (
           <div key={maq.idMaquina} className="maquina-card-container">
             <div className="maquina-header">
               <h3 className="titulo-maquina">{maq.nome}</h3>
-
-              
             </div>
 
             <div className="dashboard-kpi-grid-maquinas">
@@ -61,7 +99,7 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
                 ano={ano}
                 idSetor={idSetor}
                 idMaquina={maq.idMaquina}
-                mostrarTitulo={false}
+                onValorCarregado={atualizarMetricas}
               />
 
               <MtbfMaquinaResumoCard
@@ -70,6 +108,7 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
                 idSetor={idSetor}
                 idMaquina={maq.idMaquina}
                 mostrarTitulo={false}
+                onValorCarregado={atualizarMetricas}
               />
 
               <MttaMaquinaResumoCard
@@ -78,6 +117,7 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
                 idSetor={idSetor}
                 idMaquina={maq.idMaquina}
                 mostrarTitulo={false}
+                onValorCarregado={atualizarMetricas}
               />
 
               <CustoMaquinaResumoCard
@@ -86,6 +126,7 @@ export default function DashboardMaquinas({ mes, ano, idSetor }) {
                 idSetor={idSetor}
                 idMaquina={maq.idMaquina}
                 mostrarTitulo={false}
+                onValorCarregado={atualizarMetricas}
               />
             </div>
           </div>

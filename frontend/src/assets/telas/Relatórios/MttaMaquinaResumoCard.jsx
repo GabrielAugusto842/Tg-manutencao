@@ -3,7 +3,13 @@ import { formatHoras } from "../../Services/formatters";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function MttaMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) {
+export default function MttaMaquinaResumoCard({
+  mes,
+  ano,
+  idSetor,
+  idMaquina,
+  onValorCarregado, // ← ADICIONADO
+}) {
   const [mtta, setMtta] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -31,7 +37,14 @@ export default function MttaMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
         if (!resp.ok) throw new Error("Erro ao buscar MTTA da máquina");
 
         const dados = await resp.json();
-        setMtta(dados?.mtta ?? 0);
+        const valor = dados?.mtta ?? 0;
+
+        setMtta(valor);
+
+        // 🔥 Envia o valor para o Dashboard
+        if (onValorCarregado) {
+          onValorCarregado("MTTA", idMaquina, valor);
+        }
       } catch (e) {
         console.error("Erro MTTA Máquina:", e);
         setErro(e.message);
@@ -50,7 +63,7 @@ export default function MttaMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
       {carregando && <p>Carregando...</p>}
       {erro && <p className="erro-kpi">{erro}</p>}
       {!carregando && !erro && (
-        <p className="kpi-valor-simples">{formatHoras(mtta ?? 0)}</p>
+        <p className="kpi-valor-simples">{formatHoras((mtta ?? 0) / 60)}</p>
       )}
     </div>
   );

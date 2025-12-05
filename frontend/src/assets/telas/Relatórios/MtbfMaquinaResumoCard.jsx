@@ -3,7 +3,13 @@ import { formatHoras } from "../../Services/formatters";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function MtbfMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) {
+export default function MtbfMaquinaResumoCard({ 
+  mes, 
+  ano, 
+  idSetor, 
+  idMaquina,
+  onValorCarregado   // ← ADICIONADO
+}) {
   const [mtbf, setMtbf] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -31,7 +37,15 @@ export default function MtbfMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
         if (!resp.ok) throw new Error("Erro ao buscar MTBF da máquina");
 
         const dados = await resp.json();
-        setMtbf(dados?.mtbf ?? 0);
+        const valor = dados?.mtbf ?? 0;
+
+        setMtbf(valor);
+
+        // 🔥 envia para o dashboard
+        if (onValorCarregado) {
+          onValorCarregado("MTBF", idMaquina, valor);
+        }
+
       } catch (e) {
         console.error("Erro MTBF Máquina:", e);
         setErro(e.message);
@@ -50,7 +64,7 @@ export default function MtbfMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) 
       {carregando && <p>Carregando...</p>}
       {erro && <p className="erro-kpi">{erro}</p>}
       {!carregando && !erro && (
-        <p className="kpi-valor-simples">{formatHoras(mtbf ?? 0)}</p>
+        <p className="kpi-valor-simples">{formatHoras((mtbf ?? 0) / 60)}</p>
       )}
     </div>
   );

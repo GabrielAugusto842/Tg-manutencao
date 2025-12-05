@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 
 const API_URL = "http://localhost:3002/api/relatorios";
 
-export default function CustoMaquinaResumoCard({ mes, ano, idSetor, idMaquina }) {
+export default function CustoMaquinaResumoCard({
+  mes,
+  ano,
+  idSetor,
+  idMaquina,
+  onValorCarregado, // ← **ADICIONADO**
+}) {
   const [custo, setCusto] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -30,7 +36,14 @@ export default function CustoMaquinaResumoCard({ mes, ano, idSetor, idMaquina })
         if (!resp.ok) throw new Error("Erro ao buscar custo da máquina");
 
         const dados = await resp.json();
-        setCusto(dados?.custo ?? 0);
+        const valor = dados?.custo ?? 0;
+
+        setCusto(valor);
+
+        // 🔥 envia para o DashboardMaquinas
+        if (onValorCarregado) {
+          onValorCarregado("CUSTO", idMaquina, valor);
+        }
       } catch (e) {
         console.error("Erro Custo Máquina:", e);
         setErro(e.message);
@@ -49,7 +62,7 @@ export default function CustoMaquinaResumoCard({ mes, ano, idSetor, idMaquina })
       {carregando && <p>Carregando...</p>}
       {erro && <p className="erro-kpi">{erro}</p>}
       {!carregando && !erro && (
-        <p className="kpi-valor-simples">R$ {custo.toFixed(2)}</p>
+        <p className="kpi-valor-simples">R$ {Number(custo).toFixed(2)}</p>
       )}
     </div>
   );
