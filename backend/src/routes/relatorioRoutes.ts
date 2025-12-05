@@ -1,31 +1,32 @@
 import express from "express";
 import {
- getMTTRGeral,
- getMTTRPorMaquina,
- getMTBFGeral,
- getCustoTotalGeral,
- getMTTAGeral,
- getBacklogOsGeral, // Importação da nova função
- getBacklogOsDetalhado,
- getMTTRAnual, 
- getMTBFAnual, // Importação da nova função
- getMTTAAnual, 
- getRankingMaquinasOrdens,
- getRankingMaquinasCusto,
- getRankingSetoresOrdens,
- getRankingSetoresCusto,
- getRankingUsuariosOrdens,
- getRankingUsuariosCusto
+  getMTTRGeral,
+  getMTTRMaquina,
+  getMTBFGeral,
+  getCustoTotalGeral,
+  getMTTAGeral,
+  getBacklogOsGeral, // Importação da nova função
+  getBacklogOsDetalhado,
+  getMTTRAnual,
+  getMTBFAnual, // Importação da nova função
+  getMTTAAnual,
+  getRankingMaquinasOrdens,
+  getRankingMaquinasCusto,
+  getRankingSetoresOrdens,
+  getRankingSetoresCusto,
+  getRankingUsuariosOrdens,
+  getRankingUsuariosCusto,
+  getMTBFMaquina,
+  getMTTAMaquina,
+  getCustoMaquina,
 } from "../controllers/RelatorioController";
 
 const router = express.Router();
-
 
 router.get("/mtta-geral", getMTTAGeral);
 
 // --- MTTR ---
 router.get("/mttr-geral", getMTTRGeral);
-router.get("/mttr-maquina", getMTTRPorMaquina);
 
 // --- MTBF ---
 router.get("/mtbf-geral", getMTBFGeral);
@@ -55,5 +56,12 @@ router.get("/ranking/usuarios-ordens", getRankingUsuariosOrdens);
 
 router.get("/ranking/usuarios-custos", getRankingUsuariosCusto);
 
+router.get("/mttr-maquina", getMTTRMaquina);
+
+router.get("/mtbf-maquina", getMTBFMaquina);
+
+router.get("/mtta-maquina", getMTTAMaquina);
+
+router.get("/custo-maquina", getCustoMaquina);
 
 export default router;

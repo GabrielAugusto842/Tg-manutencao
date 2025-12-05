@@ -3,6 +3,7 @@ import Layout from "../../componentes/Layout/Layout";
 import DashboardGeral from "./DashboardGeral.jsx";
 import DashboardRanking from "./DashboardRanking.jsx";
 import "./Relatorios.css";
+import DashboardMaquinas from "./DashboardMaquinas.jsx";
 
 const API_URL = "http://localhost:3002/api/setores";
 
@@ -83,8 +84,11 @@ export default function Relatorios() {
               onChange={(e) => setTipoRelatorio(e.target.value)}
               className="filtro-input"
             >
-              <option value="dashboard-geral">Dashboard - Métricas Gerais</option>
+              <option value="dashboard-geral">
+                Dashboard - Métricas Gerais
+              </option>
               <option value="ranking">Ranking de Ordens</option>
+              <option value="dashboard-maquinas"> Métricas por Máquinas</option>
             </select>
           </div>
 
@@ -98,15 +102,17 @@ export default function Relatorios() {
               disabled={carregandoSetores}
             >
               <option value="">Todos os Setores</option>
-              {setores.length > 0
-                ? setores.map((setor) => (
-                    <option key={setor.idSetor} value={setor.idSetor}>
-                      {setor.nomeSetor}
-                    </option>
-                  ))
-                : (
-                    <option disabled>{carregandoSetores ? "Carregando..." : "Nenhum setor"}</option>
-                  )}
+              {setores.length > 0 ? (
+                setores.map((setor) => (
+                  <option key={setor.idSetor} value={setor.idSetor}>
+                    {setor.nomeSetor}
+                  </option>
+                ))
+              ) : (
+                <option disabled>
+                  {carregandoSetores ? "Carregando..." : "Nenhum setor"}
+                </option>
+              )}
             </select>
           </div>
         </div>
@@ -114,11 +120,7 @@ export default function Relatorios() {
         {/* RELATÓRIO */}
         <main className="relatorio-display-area">
           {tipoRelatorio === "dashboard-geral" && (
-            <DashboardGeral
-              mes={mes}
-              ano={ano}
-              idSetor={idSetorSelecionado}
-            />
+            <DashboardGeral mes={mes} ano={ano} idSetor={idSetorSelecionado} />
           )}
           {tipoRelatorio === "ranking" && (
             <DashboardRanking
@@ -128,6 +130,10 @@ export default function Relatorios() {
             />
           )}
         </main>
+
+        {tipoRelatorio === "dashboard-maquinas" && (
+          <DashboardMaquinas mes={mes} ano={ano} idSetor={idSetorSelecionado} />
+        )}
       </div>
     </Layout>
   );
