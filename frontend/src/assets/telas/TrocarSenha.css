@@ -1,6 +1,8 @@
+
 .trocar-senha-container {
-  max-width: 400px;
-  margin: 60px auto;
+  width: 90%;       /* Ocupa até 90% da tela */
+  max-width: 600px; /* Mas não ultrapassa 600px */
+  margin: 200px auto;
   padding: 30px;
   background: #fff;
   border-radius: 8px;
