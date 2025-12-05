@@ -153,7 +153,7 @@ function VisualizarOrdensContent({ user }) {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (!resposta.ok) throw new Error("Erro ao excluir a ordem");
-      setMensagemSucesso(`Ordem ${id} excluída com sucesso!`);
+      setMensagemSucesso(`Ordem excluída com sucesso!`);
       setOrdens((prev) => prev.filter((o) => o.idOrdServ !== id));
     } catch (e) {
       setErro(e.message);

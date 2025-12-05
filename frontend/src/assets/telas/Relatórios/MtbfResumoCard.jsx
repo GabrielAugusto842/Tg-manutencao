@@ -78,9 +78,11 @@ export default function MtbfResumoCard({
       <h4 className="card-titulo">MTBF Geral no Período</h4>
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
-          <span style={{ color: getMtbfColor(mtbfGeral ?? 0, meta) }}>
-            {mtbfGeral !== null ? formatHoras(mtbfGeral) : "—"}
-          </span>
+        <span style={{ color: getMtbfColor(mtbfGeral ?? 0, meta) }}>
+  {!aviso ? formatHoras(mtbfGeral) : "—"}
+</span>
+
+
           <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
           {aviso && <p className="card-aviso">{aviso}</p>}
         </div>
