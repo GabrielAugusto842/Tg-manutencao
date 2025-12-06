@@ -138,6 +138,10 @@ export default function MttrAnualChart({ idSetor }) {
           />
         </LineChart>
       </ResponsiveContainer>
+
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        O MTTR é o tempo médio entre a abertura e a conclusão de uma ordem de serviço
+      </p>
     </div>
   );
 }
