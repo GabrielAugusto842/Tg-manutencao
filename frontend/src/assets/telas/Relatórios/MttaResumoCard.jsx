@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { formatHoras, getMttaColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
 import DashboardMTTA from "./DashboardMTTA.jsx";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function MttaResumoCard({
   mes,
@@ -36,17 +35,11 @@ export default function MttaResumoCard({
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const resposta = await fetch(
-          `${API_URL}/mtta-geral?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const resp = await api.get("/relatorios/mtta-geral", {
+          params: params,
+        });
 
-        if (!resposta.ok) throw new Error("Erro ao buscar MTTA");
-        const dados = await resposta.json();
+        const dados = resp.data;
 
         setMtta(dados.mttaHoras ?? 0);
         setAviso(dados.mensagem || "");

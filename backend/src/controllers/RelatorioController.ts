@@ -1011,31 +1011,43 @@ export async function getCustoMaquina(req: Request, res: Response) {
       return res.status(400).json({ erro: "idMaquina é obrigatório" });
     }
 
-    let where = "WHERE o.id_maquina = ?";
+    const hoje = new Date();
+    const mesNum = mes ? Number(mes) : hoje.getMonth() + 1;
+    const anoNum = ano ? Number(ano) : hoje.getFullYear();
+
+    // 🛑 REMOVIDO: dataInicial e dataFinal não são mais necessários com o filtro MONTH/YEAR.
+
+    let where =
+      "WHERE o.id_maquina = ? AND o.data_termino IS NOT NULL AND o.custo IS NOT NULL";
     const params: any[] = [idMaquina];
 
-    if (mes) {
-      where += " AND MONTH(o.data_termino) = ?";
-      params.push(mes);
-    }
-    if (ano) {
-      where += " AND YEAR(o.data_termino) = ?";
-      params.push(ano);
-    }
+    // 🚨 Filtro de MÊS e ANO é inserido aqui:
+    where += " AND MONTH(o.data_termino) = ? ";
+    params.push(mesNum);
+
+    where += " AND YEAR(o.data_termino) = ? ";
+    params.push(anoNum);
+
+    // Filtro idSetor
     if (idSetor) {
       where += " AND m.id_setor = ?";
       params.push(idSetor);
     }
 
     const query = `
-      SELECT 
-        m.nome AS maquina,
-        IFNULL(SUM(o.custo), 0) AS custoTotal
-      FROM ordem_servico o
-      JOIN maquina m ON m.id_maquina = o.id_maquina
-      ${where}
-      GROUP BY m.id_maquina, m.nome
-    `;
+SELECT 
+    m.nome AS maquina,
+    IFNULL(SUM(o.custo), 0) AS custoTotal
+FROM ordem_servico o
+JOIN maquina m ON m.id_maquina = o.id_maquina
+${where} /* 🔑 USAR a variável WHERE construída */
+GROUP BY m.id_maquina, m.nome
+ `;
+
+    console.log("--- DEBUG CUSTO MAQUINA ---");
+    console.log("SQL executado:", query);
+    console.log("Parâmetros (idMaquina, mes, ano, ...):", params);
+    console.log("---------------------------");
 
     const [rows] = await db.query<RowDataPacket[]>(query, params);
 

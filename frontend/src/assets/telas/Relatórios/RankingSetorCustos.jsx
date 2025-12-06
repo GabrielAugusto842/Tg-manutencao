@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RankingStyles.css";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function RankingSetorCustos({ mes, ano }) {
   const [dados, setDados] = useState([]);
@@ -18,14 +17,11 @@ export default function RankingSetorCustos({ mes, ano }) {
         if (mes) params.append("mes", mes);
         if (ano) params.append("ano", ano);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const resp = await fetch(`${API_URL}/ranking/setores-custos${query}`, {
-          headers: { "Content-Type": "application/json" },
-        });
+        const resp = await api.get("/relatorios/ranking/setores-custos", {
+          params: params, // Headers de autenticação e Content-Type são tratados pelo interceptor do Axios
+        }); // 🚀 CORREÇÃO 2: Acessa os dados diretamente de resp.data
 
-        if (!resp.ok) throw new Error("Erro ao buscar ranking de setores por custo.");
-
-        const dadosApi = await resp.json();
+        const dadosApi = resp.data;
         setDados(dadosApi);
       } catch (e) {
         console.error("Erro ao carregar ranking de setores por custo:", e);
@@ -38,7 +34,8 @@ export default function RankingSetorCustos({ mes, ano }) {
     carregarDados();
   }, [mes, ano]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando ranking...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando ranking...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -57,7 +54,11 @@ export default function RankingSetorCustos({ mes, ano }) {
               <span className="rank-index">{index + 1}º</span>
               <span className="rank-name">{item.nomeSetor}</span>
               <span className="rank-value">
-                R$ {item.totalCusto.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                R${" "}
+                {item.totalCusto.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </li>
           ))}

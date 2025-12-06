@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
+import api from "../../Services/api.jsx";
 
-const API_URL = "http://localhost:3002/api/relatorios";
-
-// backlog.jsx
 export function useBacklog(idSetor) {
   const [backlog, setBacklog] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,17 +12,12 @@ export function useBacklog(idSetor) {
       setError(null);
       try {
         const params = idSetor ? `?idSetor=${idSetor}` : "";
-        const token = localStorage.getItem("token");
 
-        const response = await fetch(`http://localhost:3002/api/relatorios/backlog-os-detalhado${params}`, {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-        });
+        const response = await api.get(
+          `/relatorios/backlog-os-detalhado${params}`
+        );
 
-        if (!response.ok) throw new Error(`Erro ao carregar backlog: ${response.status}`);
-        const data = await response.json();
+        const data = response.data;
         setBacklog((data || []).sort((a, b) => b.idade_dias - a.idade_dias));
       } catch (err) {
         console.error(err);
@@ -38,4 +31,3 @@ export function useBacklog(idSetor) {
 
   return { backlog, loading, error };
 }
-

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { formatHoras } from "../../Services/formatters";
+import api from "../../Services/api.jsx";
 
-const API_URL = "http://localhost:3002/api/relatorios";
-
-export default function MtbfMaquinaResumoCard({ 
-  mes, 
-  ano, 
-  idSetor, 
+export default function MtbfMaquinaResumoCard({
+  mes,
+  ano,
+  idSetor,
   idMaquina,
-  onValorCarregado   // ← ADICIONADO
+  onValorCarregado, // ← ADICIONADO
 }) {
   const [mtbf, setMtbf] = useState(null);
   const [carregando, setCarregando] = useState(true);
@@ -26,26 +25,18 @@ export default function MtbfMaquinaResumoCard({
         if (idSetor !== "") params.append("idSetor", idSetor);
         if (idMaquina !== "") params.append("idMaquina", idMaquina);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+        const resp = await api.get("/relatorios/mtbf-maquina", {
+          params: params, // O Axios cuida da query string e dos cabeçalhos
+        }); // 🚀 CORREÇÃO 2: Acessa os dados diretamente de resp.data (sem resp.ok ou resp.json())
 
-        const resp = await fetch(`${API_URL}/mtbf-maquina${query}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (!resp.ok) throw new Error("Erro ao buscar MTBF da máquina");
-
-        const dados = await resp.json();
+        const dados = resp.data;
         const valor = dados?.mtbf ?? 0;
 
         setMtbf(valor);
 
-        // 🔥 envia para o dashboard
         if (onValorCarregado) {
           onValorCarregado("MTBF", idMaquina, valor);
         }
-
       } catch (e) {
         console.error("Erro MTBF Máquina:", e);
         setErro(e.message);
@@ -55,7 +46,7 @@ export default function MtbfMaquinaResumoCard({
     };
 
     buscarMTBFMaquina();
-  }, [mes, ano, idSetor, idMaquina]);
+  }, [mes, ano, idSetor, idMaquina, onValorCarregado]);
 
   return (
     <div className="kpi-card">

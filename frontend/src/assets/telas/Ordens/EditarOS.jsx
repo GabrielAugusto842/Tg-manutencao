@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../componentes/Layout/Layout";
 import api from "../../Services/api";
-import "./EditarOS.css"; // Estilos para a página de edição
+import "./EditarOS.css";
 
 function EditarOS() {
   const { id } = useParams();
@@ -20,7 +20,6 @@ function EditarOS() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Buscar Ordem de Serviço
   const buscarOrdemServico = useCallback(async () => {
     try {
       const res = await api.get(`/os/${id}`);
@@ -61,7 +60,6 @@ function EditarOS() {
   }, [buscarOrdemServico]);
 
   // Função para salvar a O.S.
-  // Função para salvar a O.S.
   const handleSalvar = async (e) => {
     e.preventDefault();
 
@@ -93,17 +91,14 @@ function EditarOS() {
     }
   };
 
-  // Exibe um carregamento ou mensagem de erro
   if (loading) return <p>Carregando dados da O.S...</p>;
   if (erro) return <p style={{ color: "red" }}>{erro}</p>;
   if (!ordemServico) return <p>Ordem de serviço não encontrada.</p>;
 
-  // Define o estado de edição baseado no status da O.S.
   const isAberta = ordemServico.status === "Aberta";
   const isEmAndamento = ordemServico.status === "Em andamento";
   const isFinalizada = ordemServico.status === "Finalizado";
 
-  // Desabilita os campos conforme as regras
   const descricaoDisabled = false; // Descrição sempre pode ser editada
   const manutentorDisabled = !isEmAndamento; // Manutentor só pode ser editado se "Em andamento"
   const solucaoDisabled = !isFinalizada; // Solução só pode ser editada se "Finalizado"
@@ -209,7 +204,7 @@ function EditarOS() {
               </p>
               <select
                 name="manutentor"
-                value={dadosFormulario.manutentor} // ID do manutentor
+                value={dadosFormulario.manutentor}
                 onChange={(e) => {
                   const novoManutentor = e.target.value;
                   setDadosFormulario({

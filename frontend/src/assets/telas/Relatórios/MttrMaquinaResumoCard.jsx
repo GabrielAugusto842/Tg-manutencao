@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatHoras } from "../../Services/formatters";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function MttrMaquinaResumoCard({
   mes,
@@ -26,17 +25,12 @@ export default function MttrMaquinaResumoCard({
         if (idSetor !== "") params.append("idSetor", idSetor);
         if (idMaquina !== "") params.append("idMaquina", idMaquina);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+       
+        const resp = await api.get("/relatorios/mttr-maquina", {
+          params: params,
+        }); 
 
-        const resp = await fetch(`${API_URL}/mttr-maquina${query}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (!resp.ok) throw new Error("Erro ao buscar MTTR da máquina");
-
-        const dados = await resp.json();
+        const dados = resp.data;
         const valor = dados?.mttr ?? 0;
 
         setMttr(valor);
@@ -54,7 +48,7 @@ export default function MttrMaquinaResumoCard({
     };
 
     buscarMTTRMaquina();
-  }, [mes, ano, idSetor, idMaquina]);
+  }, [mes, ano, idSetor, idMaquina, onValorCarregado]);
 
   return (
     <div className="kpi-card">

@@ -7,8 +7,6 @@ import "./EditarEquipamento.css";
 function EditarEquipamento() {
   const { id } = useParams();
 
-  const API_SETORES = "http://localhost:3002/api/setores";
-
   // Estados
   const [equipamento, setEquipamento] = useState(null);
   const [dadosFormulario, setDadosFormulario] = useState({
@@ -62,10 +60,10 @@ function EditarEquipamento() {
   // Buscar setores
   const carregarSetores = useCallback(async () => {
     try {
-      const res = await fetch(API_SETORES, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
+      const res = await api.get("/setores");
+
+      const data = res.data;
+
       const formatados = data
         .map((s) => ({ id: s.idSetor, nome: s.nomeSetor }))
         .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i); // Remove duplicados
@@ -75,7 +73,6 @@ function EditarEquipamento() {
     }
   }, []);
 
-  // Carregar tudo ao montar
   useEffect(() => {
     buscarEquipamento();
     carregarSetores();
@@ -84,45 +81,34 @@ function EditarEquipamento() {
   const handleSalvar = async (e) => {
     e.preventDefault();
     try {
+
       // 1. Trata producaoPorHora: Converte para Número ou usa null.
-      // O nome da chave 'producaoPorHora' está em camelCase no estado, então vamos usá-lo.
       const producao =
         dadosFormulario.producaoPorHora.trim() !== ""
           ? Number(dadosFormulario.producaoPorHora)
           : null;
 
-      // 2. Trata idSetor: Garante que é um número ou null.
       const setorId = idSetor !== null ? Number(idSetor) : null;
 
       const dadosAtualizados = {
-        // Campos de string
         nome: dadosFormulario.nome,
         marca: dadosFormulario.marca,
         modelo: dadosFormulario.modelo || null,
-
-        // MUDANÇA CRUCIAL 1: Ajusta a chave para camelCase para coincidir com o Repository/Controller
         numeroSerie: dadosFormulario.numero_serie,
-
         tag: dadosFormulario.tag || null,
-
-        // O nome da chave no payload deve ser o mesmo esperado pelo Controller/Repository
         producaoHora: producao,
         disponibilidadeMes: Number(dadosFormulario.disponibilidadeMes),
-
-        // MUDANÇA CRUCIAL 2: Ajusta a chave para camelCase para coincidir com o Repository/Controller
         idSetor: setorId,
       };
-
-      console.log("Enviando dados:", dadosAtualizados); // VERIFIQUE ESTE LOG!
 
       await api.put(`/maquina/${id}`, dadosAtualizados);
 
       alert("Equipamento atualizado com sucesso!");
-
       navigate("/equipamentos/visualizar");
+
     } catch (error) {
       console.error("Falha na atualização:", error);
-      // Tente logar a resposta do erro se possível para obter a mensagem de validação
+
       alert("Falha ao atualizar equipamento.");
     }
   };

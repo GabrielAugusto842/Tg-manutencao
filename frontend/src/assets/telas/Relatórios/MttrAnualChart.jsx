@@ -11,30 +11,19 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
-// Assumindo que esta função existe e formata um número (horas) para string (ex: "3h 30m")
-
-
+import api from "../../Services/api.jsx";
+import "./DashboardGeral.css";
 
 const formatHoras = (hours) => {
-  if (typeof hours !== 'number' || isNaN(hours) || hours < 0) {
-    return '0h 0m';
+  if (typeof hours !== "number" || isNaN(hours) || hours < 0) {
+    return "0h 0m";
   }
   const h = Math.floor(hours);
   const m = Math.round((hours - h) * 60);
   return `${h}h ${m}m`;
 };
 
-
-
-import "./DashboardGeral.css"; // Reutiliza estilos de card
-
-const API_URL = "http://localhost:3002/api/relatorios";
-
-// Função utilitária para formatar os dados da API para o Recharts
 const formatChartData = (data) => {
-  // O controlador já garante os 12 meses e o formato 'periodo'.
-  // Aqui apenas garantimos que 'mttr' é um número válido.
   return data.map((item) => ({
     ...item,
     mttr: item.mttr ?? 0,
@@ -64,19 +53,11 @@ export default function MttrAnualChart({ idSetor }) {
         // Se houver setor selecionado, ele também deve ser usado no filtro anual
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
-
-        const resposta = await fetch(`${API_URL}/mttr-anual${query}`, {
-          headers,
+        const resp = await api.get("/relatorios/mttr-anual", {
+          params: params,
         });
 
-        if (!resposta.ok)
-          throw new Error("Erro ao buscar dados de MTTR anual.");
-
-        const dados = await resposta.json();
+        const dados = resp.data;
         setDataAnual(formatChartData(dados));
       } catch (e) {
         console.error("Erro ao buscar MTTR anual:", e);

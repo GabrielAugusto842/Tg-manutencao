@@ -9,18 +9,16 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import api from "../../Services/api.jsx";
 
-const API_URL = "http://localhost:3002/api/relatorios";
-
-// Converte minutos em string "Xh Ym"
 const formatMinutos = (minutes) => {
-  if (typeof minutes !== "number" || isNaN(minutes) || minutes < 0) return "0h 0m";
+  if (typeof minutes !== "number" || isNaN(minutes) || minutes < 0)
+    return "0h 0m";
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${h}h ${m}m`;
 };
 
-// Formata dados da API para Recharts
 const formatChartData = (data) => {
   return data.map((item) => ({
     ...item,
@@ -28,8 +26,6 @@ const formatChartData = (data) => {
     mttaMinutos: item.mttaHoras ? Math.round(item.mttaHoras * 60) : 0, // só para exibir no gráfico
   }));
 };
-
-
 
 /**
  * Componente MTTA Anual
@@ -52,17 +48,11 @@ export default function MttaAnualChart({ idSetor }) {
         params.append("ano", anoAtual.toString());
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const headers = {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        };
+        const resp = await api.get("/relatorios/mtta-anual", {
+          params: params,
+        }); 
 
-        const resposta = await fetch(`${API_URL}/mtta-anual${query}`, { headers });
-
-        if (!resposta.ok)
-          throw new Error("Erro ao buscar dados de MTTA anual.");
-
-        const dados = await resposta.json();
+        const dados = resp.data;
         setDataAnual(formatChartData(dados));
       } catch (e) {
         console.error("Erro ao buscar MTTA anual:", e);
@@ -93,7 +83,10 @@ export default function MttaAnualChart({ idSetor }) {
 
   if (!hasData)
     return (
-      <div className="kpi-card chart-card" style={{ height: "300px", textAlign: "center" }}>
+      <div
+        className="kpi-card chart-card"
+        style={{ height: "300px", textAlign: "center" }}
+      >
         <h4 className="card-titulo">MTTA Anual ({anoAtual})</h4>
         <p className="mt-4 text-gray-500">Sem dados de MTTA para o período.</p>
       </div>
@@ -141,7 +134,8 @@ export default function MttaAnualChart({ idSetor }) {
 
       <p className="text-xs text-gray-500 mt-2 text-center">
         O MTTA é calculado como o Tempo Total de Reconhecimento dividido pelo
-        Número de Falhas no mês. Valores pequenos agora aparecem corretamente em minutos.
+        Número de Falhas no mês. Valores pequenos agora aparecem corretamente em
+        minutos.
       </p>
     </div>
   );

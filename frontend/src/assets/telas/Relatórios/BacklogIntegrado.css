@@ -48,8 +48,8 @@
 
 .grafico-titulo {
   font-weight: bold;
-  font-size: 1.1rem; /* título maior */
-  margin-bottom: 16px; /* menos espaçamento para o gráfico */
+  font-size: 1.1rem; 
+  margin-bottom: 16px; 
   text-align: center;
 }
 
@@ -68,7 +68,7 @@
 .status.aguardando-aprovacao { background:#FEF3C7; color:#B45309; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
 .status.desconhecido { background:#E5E7EB; color:#374151; padding:2px 6px; border-radius:4px; font-size:0.75rem; }
 
-/* Links */
+
 .os-link {
   text-decoration: none;
   color: #1d4ed8;
@@ -79,7 +79,7 @@
   text-decoration: underline;
 }
 
-/* Descrição curta */
+
 .os-descricao {
   display: block;
   max-height: 50px;
@@ -90,7 +90,6 @@
   margin-top: 1px;
 }
 
-/* Tooltip à direita */
 .col-os {
   position: relative;
 }
@@ -115,36 +114,34 @@
   display: block;
 }
 
-/* Tabela */
-/* Força a tabela a respeitar a largura disponível */
+
 .tabela-os {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed; /* importante! */
 }
 
-/* Permite quebra de linha em células longas */
 .tabela-os th, .tabela-os td {
   padding: 8px 6px;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
   font-size: 0.875rem;
   word-wrap: break-word; /* quebra palavras longas */
-  overflow-wrap: break-word; /* compatibilidade */
+  overflow-wrap: break-word; 
 }
 
-/* Descrição longa liberada, mas quebra linha */
+
 .os-descricao {
   display: block;
-  max-height: none; /* libera altura */
+  max-height: none; 
   overflow: visible;
   text-overflow: unset;
-  white-space: normal; /* permite quebrar linha */
+  white-space: normal; 
   line-height: 1.4rem;
   margin-top: 2px;
 }
 
-/* Tooltip não interfere na largura da tabela */
+
 .os-tooltip {
   display: none;
   position: absolute;

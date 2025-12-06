@@ -1,22 +1,27 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, TrendingDown } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartTooltip } from "recharts";
+import { Loader2, TrendingDown } from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip as RechartTooltip,
+} from "recharts";
 import "./BacklogIntegrado.css";
 
-const CHART_COLORS = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#6366F1'];
+const CHART_COLORS = ["#EF4444", "#F59E0B", "#10B981", "#3B82F6", "#6366F1"];
 
 export default function BacklogIntegradoCard({ backlog = [], loading, error }) {
-
   const getStatusClass = (status) => {
     switch (status) {
       case "Aberta":
-      case "Pendente": return "status aberta";
-      case "Em Andamento": return "status andamento";
-      case "Finalizado": return "status finalizado";
-      case "Aguardando Peças": return "status aguardando-pecas";
-      case "Aguardando Aprovação": return "status aguardando-aprovacao";
-      default: return "status desconhecido";
+      case "Em Andamento":
+        return "status andamento";
+      case "Finalizado":
+        return "status finalizado";
+      default:
+        return "status desconhecido";
     }
   };
 
@@ -26,7 +31,10 @@ export default function BacklogIntegradoCard({ backlog = [], loading, error }) {
       acc[setor] = (acc[setor] || 0) + 1;
       return acc;
     }, {});
-    return Object.entries(distribution).map(([name, value]) => ({ name, value }));
+    return Object.entries(distribution).map(([name, value]) => ({
+      name,
+      value,
+    }));
   }, [backlog]);
 
   if (loading) {
@@ -71,28 +79,41 @@ export default function BacklogIntegradoCard({ backlog = [], loading, error }) {
                 {backlog.map((os) => (
                   <tr key={os.id_ord_serv}>
                     <td>{os.idade_dias}d</td>
-                  <td className="col-os">
-  <Link to={`/ordens/${os.id_ord_serv}`} className="os-link">
-    {os.nome_maquina} 
-  </Link>
-  <br/>
-  <span className="os-descricao">
-    {os.descricao.length > 30 ? os.descricao.slice(0,30)+"..." : os.descricao}
-  </span>
+                    <td className="col-os">
+                      <Link
+                        to={`/ordens/${os.id_ord_serv}`}
+                        className="os-link"
+                      >
+                        {os.nome_maquina}
+                      </Link>
+                      <br />
+                      <span className="os-descricao">
+                        {os.descricao.length > 30
+                          ? os.descricao.slice(0, 30) + "..."
+                          : os.descricao}
+                      </span>
 
-  <div className="os-tooltip">
-    <strong>OS {os.id_ord_serv}</strong><br/>
-    <b>Descrição:</b> {os.descricao}<br/>
-    <b>Abertura:</b> {new Date(os.data_abertura).toLocaleString()}<br/>
-    <b>Máquina:</b> {os.nome_maquina} ({os.tag_maquina})<br/>
-    <b>Setor:</b> {os.nome_setor}<br/>
-    <b>Status:</b> {os.status}
-  </div>
-</td>
+                      <div className="os-tooltip">
+                        <strong>OS {os.id_ord_serv}</strong>
+                        <br />
+                        <b>Descrição:</b> {os.descricao}
+                        <br />
+                        <b>Abertura:</b>{" "}
+                        {new Date(os.data_abertura).toLocaleString()}
+                        <br />
+                        <b>Máquina:</b> {os.nome_maquina} ({os.tag_maquina})
+                        <br />
+                        <b>Setor:</b> {os.nome_setor}
+                        <br />
+                        <b>Status:</b> {os.status}
+                      </div>
+                    </td>
 
                     <td>{os.nome_setor}</td>
                     <td>
-                      <span className={getStatusClass(os.status)}>{os.status}</span>
+                      <span className={getStatusClass(os.status)}>
+                        {os.status}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -114,18 +135,25 @@ export default function BacklogIntegradoCard({ backlog = [], loading, error }) {
                   outerRadius={60}
                 >
                   {sectorDistribution.map((entry, index) => (
-                    <Cell key={index} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    <Cell
+                      key={index}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
+                    />
                   ))}
                 </Pie>
-                <RechartTooltip 
+                <RechartTooltip
                   formatter={(value, name, props) => [
-                    `${value} OS (${((value/backlog.length)*100).toFixed(1)}%)`,
-                    props.payload.name
+                    `${value} OS (${((value / backlog.length) * 100).toFixed(
+                      1
+                    )}%)`,
+                    props.payload.name,
                   ]}
                 />
               </PieChart>
             </ResponsiveContainer>
-          ) : <p className="text-gray-400 text-xs">Sem dados</p>}
+          ) : (
+            <p className="text-gray-400 text-xs">Sem dados</p>
+          )}
         </div>
       </div>
     </div>

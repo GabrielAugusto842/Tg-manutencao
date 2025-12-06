@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RankingStyles.css";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function RankingSetorOrdens({ mes, ano }) {
   const [dados, setDados] = useState([]);
@@ -18,15 +17,13 @@ export default function RankingSetorOrdens({ mes, ano }) {
         if (mes) params.append("mes", mes);
         if (ano) params.append("ano", ano);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const resp = await fetch(`${API_URL}/ranking/setores-ordens${query}`, {
-          headers: { "Content-Type": "application/json" },
-        });
+        const resp = await api.get("/relatorios/ranking/setores-ordens", {
+          params: params, // Headers de autenticação e Content-Type são tratados pelo interceptor do Axios
+        }); // 🚀 CORREÇÃO 2: Acessa os dados diretamente de resp.data
 
-        if (!resp.ok) throw new Error("Erro ao buscar ranking de setores.");
-
-        const dadosApi = await resp.json();
+        const dadosApi = resp.data;
         setDados(dadosApi);
+        
       } catch (e) {
         console.error("Erro ao carregar ranking de setores:", e);
         setErro(e.message || "Falha desconhecida ao buscar dados.");
@@ -38,7 +35,8 @@ export default function RankingSetorOrdens({ mes, ano }) {
     carregarDados();
   }, [mes, ano]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando ranking...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando ranking...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -56,7 +54,9 @@ export default function RankingSetorOrdens({ mes, ano }) {
             <li key={index} className="ranking-item">
               <span className="rank-index">{index + 1}º</span>
               <span className="rank-name">{item.nomeSetor}</span>
-              <span className="rank-value">{item.totalOrdens.toLocaleString()}</span>
+              <span className="rank-value">
+                {item.totalOrdens.toLocaleString()}
+              </span>
             </li>
           ))}
         </ul>

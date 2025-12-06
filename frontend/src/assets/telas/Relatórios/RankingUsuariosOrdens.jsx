@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RankingStyles.css";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function RankingUsuariosOrdens({ mes, ano, idSetor }) {
   const [dados, setDados] = useState([]);
@@ -17,15 +16,13 @@ export default function RankingUsuariosOrdens({ mes, ano, idSetor }) {
         const params = new URLSearchParams();
         if (mes) params.append("mes", mes);
         if (ano) params.append("ano", ano);
+        if (idSetor) params.idSetor = idSetor;
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const resp = await fetch(`${API_URL}/ranking/usuarios-ordens${query}`, {
-          headers: { "Content-Type": "application/json" },
+        const resp = await api.get("/relatorios/ranking/usuarios-ordens", {
+          params: params,
         });
 
-        if (!resp.ok) throw new Error("Erro ao buscar ranking de usuários por ordens.");
-
-        const dadosApi = await resp.json();
+        const dadosApi = resp.data;
         setDados(dadosApi);
       } catch (e) {
         console.error("Erro ao carregar ranking de usuários:", e);
@@ -36,9 +33,10 @@ export default function RankingUsuariosOrdens({ mes, ano, idSetor }) {
     };
 
     carregarDados();
-  }, [mes, ano]);
+  }, [mes, ano, idSetor]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando ranking...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando ranking...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (

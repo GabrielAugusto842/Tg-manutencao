@@ -17,12 +17,12 @@
   display: flex;
   gap: 20px;
   margin-bottom: 30px;
-  flex-wrap: wrap; /* permite quebrar linha em telas pequenas */
+  flex-wrap: wrap;
 }
 
 .card {
   flex: 1;
-  min-width: 200px; /* evita que fique muito pequeno em telas pequenas */
+  min-width: 200px;
   padding: 25px;
   border-radius: 16px;
   color: white;
@@ -76,7 +76,7 @@
 
 /* Ícones nos cards */
 .card-icon {
-  font-size: 50px; /* Ajuste o tamanho do ícone */
+  font-size: 50px;
   margin-bottom: 10px;
 }
 
@@ -86,21 +86,13 @@
   gap: 15px;
 }
 
-/* Responsividade */
-
-
-/* Só mostra quando a tela for maior que 1024px */
-
-
-/* Desktop grande */
-
- @media (max-width: 1280px)  {
+@media (max-width: 1280px) {
   .navbar .navbar-title {
     font-size: 34px;
   }
 }
 
-@media (max-width: 1024px)  {
+@media (max-width: 1024px) {
   .navbar .navbar-title {
     font-size: 32px;
   }
@@ -123,8 +115,7 @@
     font-size: 20px;
   }
 
-  .navbar .navbar{
+  .navbar .navbar {
     padding: 0 20px;
   }
 }
-

@@ -17,13 +17,9 @@ body,
 .app-container-principal {
   height: 100vh;
   width: 100vw;
-  display: flex; /* Define o layout como flexível */
-  overflow: hidden; /* CRUCIAL: Impede qualquer rolagem na tela principal */
+  display: flex;
+  overflow: hidden;
 }
-
-/* ====================================================================
-   3. LAYOUT DA PÁGINA E CONTAINER DA TABELA
-   ==================================================================== */
 
 .visualizar-equipamentos-page {
   width: 100%;
@@ -35,27 +31,13 @@ body,
   overflow-x: auto;
   max-height: calc(100vh - 160px);
   overflow-y: auto;
-
-  /* 🔵 Fundo levemente transparente, combinando com o sidebar */
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(4px);
-
-  /* 🔲 Borda suave estilo “cartão moderno” */
   border: 1px solid rgba(255, 255, 255, 0.25);
-
-  /* 🔳 Cantos suaves */
   border-radius: 12px;
-
-  /* 🌫 Sombra leve para dar profundidade e flutuação */
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);
-
-  /* Espaço interno bonito */
   padding: 5px;
 }
-
-/* ====================================================================
-   4. ESTILOS BASE DA TABELA
-   ==================================================================== */
 
 .tabela-equipamentos {
   width: 100%;
@@ -66,20 +48,15 @@ body,
 
 .tabela-equipamentos thead {
   background-color: #84a8e5;
-  /* IMPLEMENTAÇÃO DA LINHA FIXA */
   position: sticky;
-  top: 0; /* Gruda no topo do container de rolagem */
-  z-index: 10; /* Garante que fique acima das linhas do corpo */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para destacar quando fixo */
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
 }
 
 .tabela-equipamentos tr {
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
-
-/* --------------------------------------------------------------------
-   5. CABEÇALHO E DIMENSIONAMENTO DE COLUNAS
-   -------------------------------------------------------------------- */
 
 .tabela-equipamentos th {
   background-color: #84a8e5;
@@ -130,12 +107,6 @@ body,
   width: 6%;
 }
 
-/* Ações (Precisa de espaço para os dois botões) */
-
-/* --------------------------------------------------------------------
-   6. CÉLULAS E INTERAÇÃO
-   -------------------------------------------------------------------- */
-
 .tabela-equipamentos td {
   border: 1px solid #dcdcdc;
   padding: 12px 10px;
@@ -160,32 +131,24 @@ body,
 }
 
 .tabela-equipamentos tr:nth-child(even) {
-  background-color: #f7f7f7; /* Zebrado leve */
+  background-color: #f7f7f7;
 }
 
 .tabela-equipamentos tr:hover {
-  background-color: #c9e2ff; /* Destaque ao passar o mouse */
+  background-color: #c9e2ff;
   border-color: #a0c9f8;
 }
 
-/* --------------------------------------------------------------------
-   7. ESTILOS DE AÇÃO (ÚLTIMA COLUNA E BOTÕES)
-   -------------------------------------------------------------------- */
-
 .tabela-equipamentos td:last-child {
-  /* Mantenha display: flex, gap, justify-content: center, etc. */
   white-space: normal;
   display: flex;
   gap: 15px;
   justify-content: center;
   align-items: center;
-  padding: 18px; /* Padding reduzido para ícones */
-
-  /* 🟢 NOVO: Remove explicitamente o border-bottom (a linha que você via) e o border-right */
+  padding: 18px;
   border-bottom: none;
   border-right: none;
-
-  border-left: none; /* Já estava */
+  border-left: none;
 }
 
 .tabela-equipamentos td button {
@@ -201,8 +164,8 @@ body,
 }
 
 .tabela-equipamentos td button:hover {
-  transform: scale(1.25); /* Cresce suavemente */
-  opacity: 0.8; /* Fica levemente mais suave */
+  transform: scale(1.25);
+  opacity: 0.8;
 }
 
 .tabela-equipamentos td button {
@@ -213,16 +176,15 @@ body,
 }
 
 .btn-editar {
-  color: #1d7eea !important; /* Azul bonito */
+  color: #1d7eea !important;
 }
 
 .btn-editar:hover {
   opacity: 0.7;
 }
 
-/* 🎨 DELETAR – apenas ícone vermelho */
 .btn-deletar {
-  color: #d63031 !important; /* Vermelho moderno */
+  color: #d63031 !important;
 }
 
 .btn-deletar:hover {
@@ -287,30 +249,21 @@ body,
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
 
-
-/* Container geral: filtros à esquerda, botões à direita */
 .opcoes-header {
   display: flex;
-  justify-content: space-between; /* Filtros à esquerda, export à direita */
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   margin-bottom: 10px;
   padding: 10px 0;
 }
 
-
-
-/* ====================================================================
-   8. EXPORT PDF E IMPRESSÃO
-   ==================================================================== */
-
-/* Agrupa CSV + PDF lado a lado */
 .export-group {
   display: flex;
   gap: 10px;
   align-items: center;
   white-space: nowrap;
-  margin-left: 20px; /* Espaço entre filtros e botões */
+  margin-left: 20px;
 }
 
 /* IMPRIMIR */
@@ -325,13 +278,11 @@ body,
       display: none !important;
     }
   }
-  /* mostra só a área desejada */
+
   #print-area,
   #print-area * {
     visibility: visible;
   }
-
-  /* posiciona no topo da página impressa */
   #print-area {
     position: absolute;
     left: 0;
@@ -339,7 +290,6 @@ body,
     width: 100%;
   }
 
-  /* remove elementos indesejados */
   .no-print,
   header,
   nav,
@@ -357,7 +307,6 @@ body,
     overflow: visible !important;
   }
 
-  /* remove qualquer rolagem interna */
   * {
     overflow: visible !important;
   }
@@ -365,20 +314,15 @@ body,
 
 .botao-pdf,
 .botao-csv {
-  /* Aparência Ultra Compacta */
   background-color: #f3f4f6 !important;
   color: #4b5563 !important;
   font-weight: 700 !important;
-  font-size: 1.2rem !important; /* Fonte MÍNIMA */
-  padding: 3px 6px !important; /* Espaçamento MÍNIMO */
-  border-radius: 3px !important; /* Bordas MÍNIMAS */
+  font-size: 1.2rem !important;
+  padding: 3px 6px !important;
+  border-radius: 3px !important;
   border: 1px solid #d1d5db !important;
-
-  /* Garante que ele não ocupe espaço desnecessário */
   height: auto !important;
   width: auto !important;
-
-  /* Outras propriedades */
   transition: all 0.2s ease;
   cursor: pointer;
   display: inline-flex !important;
@@ -393,20 +337,17 @@ body,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
-.botao-pdf:focus, 
+.botao-pdf:focus,
 .botao-csv:focus {
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
 }
 
-/* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
-.botao-pdf span, .botao-csv span {
+.botao-pdf span,
+.botao-csv span {
   font-size: 0.7rem !important;
 }
 
-
-
-/* Responsividade para telas menores */
 @media (max-width: 1400px) {
   .opcoes-header {
     flex-direction: column;
@@ -414,7 +355,6 @@ body,
   }
 }
 
-/* Responsividade para telas menores */
 @media (max-width: 768px) {
   .filtros-container {
     flex-direction: column;
@@ -422,14 +362,13 @@ body,
     min-width: 300px;
     gap: 5px;
   }
-  .filtro-input,.filtro-select{
+  .filtro-input,
+  .filtro-select {
     width: 80%;
     text-align: center;
   }
-
 }
 
-/* Responsividade para telas menores */
 @media (max-width: 768px) {
   .export-group {
     flex-direction: column;

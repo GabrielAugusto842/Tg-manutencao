@@ -13,12 +13,9 @@ function VisualizarEquipamentosContent() {
 
   const navigate = useNavigate();
 
-  // 🔎 FILTROS
   const [filtroNome, setFiltroNome] = useState("");
   const [filtroSerie, setFiltroSerie] = useState("");
   const [filtroSetor, setFiltroSetor] = useState("");
-
-  // 🔎 Opções de setores
   const [opcoesSetor, setOpcoesSetor] = useState([]);
 
   useEffect(() => {
@@ -94,10 +91,6 @@ function VisualizarEquipamentosContent() {
     }
   };
 
-    // ------------------ //
-    // -- EXPORTAR CSV -- //
-    // ------------------ //
-    
   const exportarCSV = () => {
     // Pega os dados já filtrados, os mesmos da tabela
     const filtrados = equipamentos.filter((m) => {
@@ -107,18 +100,17 @@ function VisualizarEquipamentosContent() {
         (filtroSetor ? m.setor === filtroSetor : true)
       );
     });
-    // Cabeçalho
     const header = [
-      "nome", 
+      "nome",
       "marca",
       "modelo",
       "numero_serie",
       "tag",
       "producao_hora",
       "dispon_mensal",
-      "setor"
+      "setor",
     ];
-    // Linhas
+
     const linhas = filtrados.map((m) => [
       m.nome,
       m.marca,
@@ -127,13 +119,12 @@ function VisualizarEquipamentosContent() {
       m.tag,
       m.producaoHora ?? "---",
       m.disponibilidadeMes,
-      m.setor
+      m.setor,
     ]);
     // Monta o CSV
-    const csv = [
-      header.join(","),
-      ...linhas.map((l) => l.join(","))
-    ].join("\n");
+    const csv = [header.join(","), ...linhas.map((l) => l.join(","))].join(
+      "\n"
+    );
     // Baixa o arquivo
     const BOM = "\uFEFF";
     const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
@@ -149,16 +140,11 @@ function VisualizarEquipamentosContent() {
 
   return (
     <div className="visualizar-equipamentos-page" id="print-area">
-        
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>
       )}
-
-      {/* ===================== */}
-      {/* 🔍 ÁREA DE FILTROS   */}
-      {/* ===================== */}
 
       <div className="opcoes-header">
         <div className="filtros-container no-print">
@@ -183,11 +169,11 @@ function VisualizarEquipamentosContent() {
             value={filtroSetor}
             onChange={(e) => setFiltroSetor(e.target.value)}
           >
-          <option value="">Setor (Todos)</option>
-          {opcoesSetor.map((setor) => (
-            <option key={setor.id} value={setor.nome}>
-              {setor.nome}
-            </option>
+            <option value="">Setor (Todos)</option>
+            {opcoesSetor.map((setor) => (
+              <option key={setor.id} value={setor.nome}>
+                {setor.nome}
+              </option>
             ))}
           </select>
         </div>
@@ -199,15 +185,12 @@ function VisualizarEquipamentosContent() {
           <button className="botao-csv" onClick={exportarCSV}>
             🗒️ EXPORTAR CSV
           </button>
-          
+
           <button onClick={() => window.print()} className="botao-pdf">
             📥 EXPORTAR PDF
           </button>
         </div>
       </div>
-
-      
-      
 
       {/* ===================== */}
       {/* 📋 TABELA            */}

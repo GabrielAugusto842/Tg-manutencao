@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { formatHoras, getMttrColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
 import DashboardMTTR from "./DashboardMTTR.jsx";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function MttrResumoCard({
   mes,
@@ -35,13 +34,11 @@ export default function MttrResumoCard({
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const resposta = await fetch(`${API_URL}/mttr-geral?${params.toString()}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const resp = await api.get("/relatorios/mttr-geral", {
+          params: params, // Axios cuida da query string // O cabeçalho de Authorization é adicionado pelo interceptor do Axios
+        }); // 🚀 CORREÇÃO 2: Acessa os dados diretamente de resp.data (sem resp.ok ou resp.json())
 
-        if (!resposta.ok) throw new Error("Erro ao buscar MTTR");
-
-        const dados = await resposta.json();
+        const dados = resp.data;
 
         if (dados.mensagem) {
           setMttrGeral(null);
@@ -69,7 +66,8 @@ export default function MttrResumoCard({
     fetchMTTR();
   }, [mes, ano, idSetor, metaMTTR]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando MTTR...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando MTTR...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -103,7 +101,9 @@ export default function MttrResumoCard({
           <input
             type="number"
             value={metaMinutos}
-            onChange={(e) => setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))}
+            onChange={(e) =>
+              setMetaMinutos(Math.min(59, Math.max(0, Number(e.target.value))))
+            }
             min={0}
             max={59}
           />

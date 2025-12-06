@@ -3,8 +3,7 @@ import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Ordens/MinhasOrdens.css";
 import { FaClipboardCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = "http://localhost:3002/api/os";
+import api from "../../Services/api.jsx";
 
 function VisualizarOrdensContent({ user }) {
   const [ordens, setOrdens] = useState([]);
@@ -42,19 +41,16 @@ function VisualizarOrdensContent({ user }) {
       setErro(null);
       setMensagemSucesso(null);
 
-      const resposta = await fetch(`${API_URL}/manutentor/${idUsuario}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const resposta = await api.get(`/os/manutentor/${idUsuario}`);
+      const dados = resposta.data;
 
-      if (!resposta.ok) throw new Error("Erro ao buscar ordens");
-
-      const dados = await resposta.json();
       setOrdens(dados);
     } catch (e) {
-      console.error(e);
-      setErro("Erro ao carregar Ordens de Serviço");
+      console.error("Erro ao buscar ordens:", e);
+      // Ajuste a mensagem de erro para tentar obter o detalhe da API se disponível
+      const mensagem =
+        e.response?.data?.message || "Erro ao carregar Ordens de Serviço";
+      setErro(mensagem);
     } finally {
       setCarregando(false);
     }
@@ -91,7 +87,6 @@ function VisualizarOrdensContent({ user }) {
     )
       return false;
 
-    // Filtra por status (se selecionado)
     if (filtroStatus && o.status !== filtroStatus) return false;
 
     // Filtra por período (apenas se AMBAS as datas forem preenchidas)

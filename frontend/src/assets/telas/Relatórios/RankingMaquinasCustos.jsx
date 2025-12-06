@@ -1,23 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RankingStyles.css";
-
-const API_URL = "http://localhost:3002/api/relatorios";
-
-const fetchWithRetry = async (url, options, retries = 3) => {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const resposta = await fetch(url, options);
-      if (resposta.status === 429 && i < retries - 1) {
-        await new Promise(res => setTimeout(res, Math.pow(2, i) * 1000));
-        continue;
-      }
-      return resposta;
-    } catch (err) {
-      if (i === retries - 1) throw err;
-      await new Promise(res => setTimeout(res, 1000));
-    }
-  }
-};
+import api from "../../Services/api.jsx";
 
 export default function RankingMaquinasCustos({ mes, ano, idSetor }) {
   const [dados, setDados] = useState([]);
@@ -35,15 +18,11 @@ export default function RankingMaquinasCustos({ mes, ano, idSetor }) {
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+        const resp = await api.get("/relatorios/ranking/maquinas-custos", {
+          params: params, // Headers de autenticação e Content-Type são tratados pelo interceptor do Axios
+        }); // 🚀 CORREÇÃO 2: Acessa os dados diretamente de resp.data
 
-        const resp = await fetchWithRetry(`${API_URL}/ranking/maquinas-custos${query}`, {
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!resp.ok) throw new Error("Erro ao buscar ranking de máquinas.");
-
-        const dadosApi = await resp.json();
+        const dadosApi = resp.data;
         setDados(dadosApi);
       } catch (e) {
         console.error("Erro ao carregar ranking:", e);
@@ -56,7 +35,8 @@ export default function RankingMaquinasCustos({ mes, ano, idSetor }) {
     carregarDados();
   }, [mes, ano, idSetor]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando ranking...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando ranking...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -75,10 +55,12 @@ export default function RankingMaquinasCustos({ mes, ano, idSetor }) {
               <span className="rank-index">{index + 1}º</span>
               <span className="rank-name">{item.maquina}</span>
               <span className="rank-value">
-  R$ {item.totalCusto.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-</span>
-
-
+                R${" "}
+                {item.totalCusto.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
             </li>
           ))}
         </ul>

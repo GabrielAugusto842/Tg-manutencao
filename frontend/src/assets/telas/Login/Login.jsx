@@ -11,7 +11,7 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     try {
       setErrorMessage("");
       const res = await api.post("/auth/login", { email, password });
@@ -24,7 +24,7 @@ const Login = () => {
         id_usuario: res.data.user.id,
         nome: res.data.user.nome,
         email: res.data.user.email,
-        cargo: res.data.user.cargo || "", 
+        cargo: res.data.user.cargo || "",
         setor: res.data.user.setor || "",
       };
       localStorage.setItem("user", JSON.stringify(user));
@@ -33,9 +33,6 @@ const Login = () => {
     } catch (error) {
       const status = error.response?.status;
       const msg = error.response?.data?.message || "Ocorreu um erro";
-      setErrorMessage(msg); // mostra mensagem do backend
-
-      // Exibe a mensagem do backend diretamente
       setErrorMessage(msg);
 
       // Limpeza de token só se for 403 (sessão expirada)
@@ -106,9 +103,8 @@ const Login = () => {
                 {errorMessage && (
                   <p className="text-red-500 text-sm whitespace-pre-line text-center mt-4 ">
                     {errorMessage && (
-  <p className="error-message">{errorMessage}</p>
-)}
-
+                      <p className="error-message">{errorMessage}</p>
+                    )}
                   </p>
                 )}
               </form>

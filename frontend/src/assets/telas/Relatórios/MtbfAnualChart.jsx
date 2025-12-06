@@ -10,28 +10,21 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-
 const formatHoras = (hours) => {
-  if (typeof hours !== 'number' || isNaN(hours) || hours < 0) {
-    return '0h 0m';
+  if (typeof hours !== "number" || isNaN(hours) || hours < 0) {
+    return "0h 0m";
   }
   const h = Math.floor(hours);
   const m = Math.round((hours - h) * 60);
   return `${h}h ${m}m`;
 };
 
-// A importação "./DashboardGeral.css" foi removida para resolver o erro de compilação.
-// Certifique-se de que as classes CSS (kpi-card, chart-card etc.) estão disponíveis em seu projeto.
-
 const API_URL = "http://localhost:3002/api/relatorios";
 
-// Função utilitária para formatar os dados da API para o Recharts
 const formatChartData = (data) => {
-  // O controlador já garante os 12 meses.
   return data.map((item) => ({
     ...item,
-    // Usa 'mtbf' do backend e garante que é um número válido (0 se nulo)
-    mtbf: item.mtbf ?? 0, 
+    mtbf: item.mtbf ?? 0,
   }));
 };
 
@@ -67,7 +60,6 @@ export default function MtbfAnualChart({ idSetor }) {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         };
 
-        // Chamar o endpoint corrigido getMTBFAnual
         const resposta = await fetch(`${API_URL}/mtbf-anual${query}`, {
           headers,
         });
@@ -86,7 +78,7 @@ export default function MtbfAnualChart({ idSetor }) {
     };
 
     buscarMtbfAnual();
-  }, [idSetor, anoAtual]); // Refaz a busca ao trocar o setor ou mudar o ano
+  }, [idSetor, anoAtual]);
 
   if (carregando)
     return (
@@ -102,7 +94,6 @@ export default function MtbfAnualChart({ idSetor }) {
       </div>
     );
 
-  // Verifica se há dados válidos, ignorando apenas os zeros padrão
   const hasData = dataAnual.some((item) => item.mtbf > 0);
 
   if (!hasData)
@@ -158,7 +149,8 @@ export default function MtbfAnualChart({ idSetor }) {
       </ResponsiveContainer>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        O MTBF é calculado como (Total de Horas Disponíveis - Tempo de Inatividade) / Número de Falhas no mês.
+        O MTBF é calculado como (Total de Horas Disponíveis - Tempo de
+        Inatividade) / Número de Falhas no mês.
       </p>
     </div>
   );

@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
-/* Fonte aplicada somente nesta tela */
 .edicao-equipamento-container,
 .edicao-equipamento-container * {
   font-family: "Poppins", sans-serif;
@@ -20,7 +19,7 @@
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 colunas */
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
@@ -45,7 +44,6 @@
   color: #000000;
 }
 
-/* Inputs */
 .edicao-equipamento-form input,
 .edicao-equipamento-form select,
 .edicao-equipamento-form textarea {
@@ -58,7 +56,6 @@
   transition: all 0.25s ease;
 }
 
-/* Foco no campo */
 .edicao-equipamento-form input:focus,
 .edicao-equipamento-form select:focus,
 .edicao-equipamento-form textarea:focus {
@@ -66,7 +63,6 @@
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
 }
 
-/* Botão */
 .edicao-equipamento-form button[type="submit"] {
   padding: 14px 20px;
   background: linear-gradient(135deg, #0066ff, #3787ff);
@@ -88,7 +84,6 @@
   transform: scale(0.98);
 }
 
-/* Mensagens */
 .msg-carregando {
   text-align: center;
   padding: 18px;

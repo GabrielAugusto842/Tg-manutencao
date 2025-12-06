@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../componentes/Layout/Layout";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "../../Services/api.jsx";
 import "../../telas/Equipamento/CadastrarEquipamentos.css";
@@ -40,10 +39,10 @@ function CadastrarEquipamentos() {
 
   const handleSetorChange = (e) => {
     const nomeSelecionado = e.target.value;
-    setSetorNome(nomeSelecionado); // Salva o nome para exibição no campo
+    setSetorNome(nomeSelecionado);
 
     const setorObj = opcoesSetor.find((op) => op.nome === nomeSelecionado);
-    setIdSetor(setorObj ? setorObj.id : null); // Salva o ID para o envio
+    setIdSetor(setorObj ? setorObj.id : null);
   };
 
   const handleSubmit = async (e) => {
@@ -66,17 +65,14 @@ function CadastrarEquipamentos() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3002/api/maquina",
-        dadosEquipamento
-      );
+      const response = await api.post("/maquina", dadosEquipamento);
 
       console.log("Equipamento cadastrado com sucesso:", response.data);
       setMensagem("Equipamento cadastrado com sucesso!");
 
       setTimeout(() => {
-  navigate("/equipamentos/visualizar");
-}, 1500);
+        navigate("/equipamentos/visualizar");
+      }, 1500);
 
       setNome("");
       setMarca("");

@@ -21,16 +21,12 @@
   max-width: 1000px;
   padding: 40px;
   margin: 0px auto;
-
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(30px);
-
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-
 }
 
-/* Remover padding duplicado da área do layout */
 .layout-content-wrapper {
   padding-top: 0 !important;
 }
@@ -47,9 +43,6 @@
   flex: 1 1 calc(50% - 20px);
 }
 
-/* ==========================================================
-   CAMPOS — IGUAL AO CADASTRO DE EQUIPAMENTOS
-   ========================================================== */
 .form-group-cadastro-ordens {
   margin-bottom: 15px;
   display: flex;
@@ -80,7 +73,6 @@
   font-size: 16px;
 }
 
-/* Altura padrão */
 .form-group-cadastro-ordens select {
   height: 45px;
 }
@@ -90,7 +82,6 @@
   resize: vertical;
 }
 
-/* Focus */
 .form-group-cadastro-ordens input:focus,
 .form-group-cadastro-ordens select:focus,
 .form-group-cadastro-ordens textarea:focus {
@@ -105,19 +96,14 @@
   font-weight: bold;
 }
 
-/* ==========================================================
-   BOTÕES — IGUAL AO CADASTRO DE EQUIPAMENTOS
-   ========================================================== */
 .form-button {
   background: #0051ff;
   border: none;
   color: white;
   border-radius: 8px;
   height: 60px;
-
   font-weight: 700;
   font-size: 17px;
-
   width: 100%;
   cursor: pointer;
 
@@ -128,9 +114,6 @@
   background: #003ec7;
 }
 
-/* ==========================================================
-   FEEDBACK DE MENSAGEM
-   ========================================================== */
 .message-feedback {
   margin-top: 20px;
   padding: 14px;

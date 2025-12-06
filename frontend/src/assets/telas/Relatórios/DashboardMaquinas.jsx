@@ -1,42 +1,37 @@
-import React, { useEffect, useState } from "react";
-import MttrResumoCard from "./MttrResumoCard.jsx";
-import MtbfResumoCard from "./MtbfResumoCard.jsx";
-import MttaResumoCard from "./MttaResumoCard.jsx";
-import CustoTotalResumoCard from "./CustoTotalResumoCard.jsx";
+import React, { useEffect, useState, useCallback } from "react";
 import "./DashboardGeral.css";
 import "./DashboardMaquina.css";
 import MttrMaquinaResumoCard from "./MttrMaquinaResumoCard.jsx";
 import MtbfMaquinaResumoCard from "./MtbfMaquinaResumoCard.jsx";
 import MttaMaquinaResumoCard from "./MttaMaquinaResumoCard.jsx";
 import CustoMaquinaResumoCard from "./CustoMaquinaResumoCard.jsx";
-
-const API_URL = "http://localhost:3002/api/maquina";
+import api from "../../Services/api.jsx";
 
 export default function DashboardMaquinas({ mes, ano, idSetor, exportPDF }) {
   const [maquinas, setMaquinas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [metricas, setMetricas] = useState({});
 
-  function atualizarMetricas(tipo, idMaquina, valor) {
-    setMetricas((prev) => ({
-      ...prev,
-      [idMaquina]: {
-        ...prev[idMaquina],
-        [tipo]: valor,
-      },
-    }));
-  }
+  const atualizarMetricas = useCallback(
+    (tipo, idMaquina, valor) => {
+      setMetricas((prev) => ({
+        ...prev,
+        [idMaquina]: {
+          ...prev[idMaquina],
+          [tipo]: valor,
+        },
+      }));
+    },
+    [setMetricas]
+  );
 
   // Carrega todas as máquinas
   useEffect(() => {
     const buscarMaquinas = async () => {
       try {
-        const resp = await fetch(API_URL, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await resp.json();
+        const resp = await api.get("/maquina");
+
+        const data = resp.data
         setMaquinas(data);
         console.log("Máquinas recebidas:", data);
       } catch (err) {

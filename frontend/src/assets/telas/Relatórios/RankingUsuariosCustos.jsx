@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./RankingStyles.css";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function RankingUsuariosCustos({ mes, ano, idSetor }) {
   const [dados, setDados] = useState([]);
@@ -17,15 +16,13 @@ export default function RankingUsuariosCustos({ mes, ano, idSetor }) {
         const params = new URLSearchParams();
         if (mes) params.append("mes", mes);
         if (ano) params.append("ano", ano);
+        if (idSetor) params.idSetor = idSetor;
 
-        const query = params.toString() ? `?${params.toString()}` : "";
-        const resp = await fetch(`${API_URL}/ranking/usuarios-custos${query}`, {
-          headers: { "Content-Type": "application/json" },
+        const resp = await api.get("/relatorios/ranking/usuarios-custos", {
+          params: params,
         });
 
-        if (!resp.ok) throw new Error("Erro ao buscar ranking de usuários por custo.");
-
-        const dadosApi = await resp.json();
+        const dadosApi = resp.data;
         setDados(dadosApi);
       } catch (e) {
         console.error("Erro ao carregar ranking de usuários:", e);
@@ -36,9 +33,10 @@ export default function RankingUsuariosCustos({ mes, ano, idSetor }) {
     };
 
     carregarDados();
-  }, [mes, ano ]);
+  }, [mes, ano, idSetor]);
 
-  if (carregando) return <div className="kpi-card loading">Carregando ranking...</div>;
+  if (carregando)
+    return <div className="kpi-card loading">Carregando ranking...</div>;
   if (erro) return <div className="kpi-card error">Erro: {erro}</div>;
 
   return (
@@ -56,7 +54,9 @@ export default function RankingUsuariosCustos({ mes, ano, idSetor }) {
             <li key={index} className="ranking-item">
               <span className="rank-index">{index + 1}º</span>
               <span className="rank-name">{item.nomeUsuario}</span>
-              <span className="rank-value">R$ {item.totalCusto.toFixed(2)}</span>
+              <span className="rank-value">
+                R$ {item.totalCusto.toFixed(2)}
+              </span>
             </li>
           ))}
         </ul>

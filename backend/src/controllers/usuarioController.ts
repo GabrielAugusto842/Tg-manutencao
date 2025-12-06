@@ -125,16 +125,13 @@ export class UsuarioController {
         return res.status(400).json({ error: "ID de usuário inválido" });
       }
 
-      // 1. Captura todos os campos, incluindo o opcional 'senha'
       const { nome, email, id_cargo, id_setor, senha } = req.body;
 
-      // Verifica se o usuário existe (boa prática)
       const usuarioExistente = await this.repository.findById(id_usuario);
       if (!usuarioExistente) {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
-      // 2. Monta o objeto de dados a serem atualizados
       const dadosParaAtualizar: Partial<Usuario> = {
         nome,
         email,
@@ -142,7 +139,6 @@ export class UsuarioController {
         id_setor,
       };
 
-      // 3. 🔑 Lógica para Atualização de Senha
       // Se a senha foi fornecida, hasheia antes de incluir no objeto de atualização
       if (senha && typeof senha === "string" && senha.trim() !== "") {
         const saltRounds = 10;
@@ -150,8 +146,6 @@ export class UsuarioController {
         dadosParaAtualizar.senha = hashedPassword; // Campo 'senha' hasheado
       }
 
-      // 4. Executa a atualização
-      // O seu updateUsuario no Repository deve ser capaz de receber Partial<Usuario>
       this.repository.updateUsuario(id_usuario, dadosParaAtualizar);
 
       return res.json({ message: "Usuário atualizado com sucesso" });

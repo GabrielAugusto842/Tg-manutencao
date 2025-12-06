@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatHoras } from "../../Services/formatters";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function MttaMaquinaResumoCard({
   mes,
@@ -26,17 +25,11 @@ export default function MttaMaquinaResumoCard({
         if (idSetor !== "") params.append("idSetor", idSetor);
         if (idMaquina !== "") params.append("idMaquina", idMaquina);
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+        const resp = await api.get("/relatorios/mtta-maquina", {
+          params: params, 
+        }); 
 
-        const resp = await fetch(`${API_URL}/mtta-maquina${query}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (!resp.ok) throw new Error("Erro ao buscar MTTA da máquina");
-
-        const dados = await resp.json();
+        const dados = resp.data;
         const valor = dados?.mtta ?? 0;
 
         setMtta(valor);
@@ -54,7 +47,7 @@ export default function MttaMaquinaResumoCard({
     };
 
     buscarMTTAMaquina();
-  }, [mes, ano, idSetor, idMaquina]);
+  }, [mes, ano, idSetor, idMaquina,onValorCarregado]);
 
   return (
     <div className="kpi-card">

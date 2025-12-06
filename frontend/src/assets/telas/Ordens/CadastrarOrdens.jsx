@@ -36,27 +36,24 @@ function CadastrarOrdemServico() {
     carregarDados();
   }, []);
 
-useEffect(() => {
-  if (idSetor) {
-    const filtradas = maquinas.filter(
-      (maquina) => String(maquina.idSetor) === String(idSetor)
-    );
-    setMaquinasFiltradas(filtradas);
+  useEffect(() => {
+    if (idSetor) {
+      const filtradas = maquinas.filter(
+        (maquina) => String(maquina.idSetor) === String(idSetor)
+      );
+      setMaquinasFiltradas(filtradas);
 
-    if (
-      !filtradas.find(
-        (m) => String(m.idMaquina || m.id_maquina) === String(idMaquina)
-      )
-    ) {
-      setIdMaquina("");
+      if (
+        !filtradas.find(
+          (m) => String(m.idMaquina || m.id_maquina) === String(idMaquina)
+        )
+      ) {
+        setIdMaquina("");
+      }
+    } else {
+      setMaquinasFiltradas(maquinas);
     }
-  } else {
-    setMaquinasFiltradas(maquinas);
-    // Remover reset de idMaquina
-    // setIdMaquina("");
-  }
-}, [idSetor, maquinas, idMaquina]);
-
+  }, [idSetor, maquinas, idMaquina]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +66,7 @@ useEffect(() => {
     try {
       const dadosOrdemServico = {
         descricao,
-        operacao, // envia true ou false conforme selecionado
+        operacao,
         idMaquina,
       };
 
@@ -80,9 +77,9 @@ useEffect(() => {
         "Ordem de Serviço cadastrada com sucesso! Ela está aberta para manutenção."
       );
 
-            setTimeout(() => {
-  navigate("/ordens/visualizar");
-}, 1500);
+      setTimeout(() => {
+        navigate("/ordens/visualizar");
+      }, 1500);
 
       // reset campos
       setDescricao("");
@@ -106,7 +103,6 @@ useEffect(() => {
         style={{ marginTop: "20px" }}
       >
         <form onSubmit={handleSubmit}>
-
           {/* Máquina */}
           <div className="form-group-cadastro-ordens full-width">
             <label htmlFor="idMaquina">
@@ -190,7 +186,10 @@ useEffect(() => {
             />
           </div>
 
-          <div className="form-group-cadastro-ordens full-width" style={{ marginTop: "30px" }}>
+          <div
+            className="form-group-cadastro-ordens full-width"
+            style={{ marginTop: "30px" }}
+          >
             <button
               type="submit"
               className="form-button primary-button full-width"

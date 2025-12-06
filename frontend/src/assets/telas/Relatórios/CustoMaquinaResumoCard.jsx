@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function CustoMaquinaResumoCard({
   mes,
   ano,
   idSetor,
   idMaquina,
-  onValorCarregado, // ← **ADICIONADO**
+  onValorCarregado,
 }) {
   const [custo, setCusto] = useState(null);
   const [carregando, setCarregando] = useState(true);
@@ -15,32 +14,28 @@ export default function CustoMaquinaResumoCard({
 
   useEffect(() => {
     const buscarCustoMaquina = async () => {
+      if (!idMaquina) {
+        setCusto(0);
+        return;
+      }
+
       setCarregando(true);
       setErro(null);
 
       try {
-        const params = new URLSearchParams();
-        if (mes !== "") params.append("mes", mes);
-        if (ano !== "") params.append("ano", ano);
-        if (idSetor !== "") params.append("idSetor", idSetor);
-        if (idMaquina !== "") params.append("idMaquina", idMaquina);
+        const params = { idMaquina };
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+        if (mes) params.mes = mes;
+        if (ano) params.ano = ano;
+        if (idSetor) params.idSetor = idSetor;
 
-        const resp = await fetch(`${API_URL}/custo-maquina${query}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const resp = await api.get("/relatorios/custo-maquina", { params });
 
-        if (!resp.ok) throw new Error("Erro ao buscar custo da máquina");
-
-        const dados = await resp.json();
-        const valor = dados?.custo ?? 0;
+        const dados = resp.data;
+        const valor = dados?.custoTotal ?? 0; // ← AGORA PEGA CERTO
 
         setCusto(valor);
 
-        // 🔥 envia para o DashboardMaquinas
         if (onValorCarregado) {
           onValorCarregado("CUSTO", idMaquina, valor);
         }
@@ -53,7 +48,7 @@ export default function CustoMaquinaResumoCard({
     };
 
     buscarCustoMaquina();
-  }, [mes, ano, idSetor, idMaquina]);
+  }, [mes, ano, idSetor, idMaquina, onValorCarregado]);
 
   return (
     <div className="kpi-card">

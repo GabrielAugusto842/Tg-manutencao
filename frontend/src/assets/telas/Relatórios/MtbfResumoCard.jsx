@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { formatHoras, getMtbfColor } from "../../Services/formatters";
 import "./DashboardGeral.css";
 import DashboardMTBF from "./DashboardMTBF.jsx";
-
-const API_URL = "http://localhost:3002/api/relatorios";
+import api from "../../Services/api.jsx";
 
 export default function MtbfResumoCard({
   mes,
@@ -35,18 +34,11 @@ export default function MtbfResumoCard({
         if (ano) params.append("ano", ano);
         if (idSetor) params.append("idSetor", idSetor);
 
-        const resposta = await fetch(
-          `${API_URL}/mtbf-geral?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const resp = await api.get("/relatorios/mtbf-geral", {
+          params: params,
+        });
 
-        if (!resposta.ok) throw new Error("Erro ao buscar MTBF");
-
-        const dados = await resposta.json();
+        const dados = resp.data;
 
         setMtbfGeral(dados.mtbf ?? 0);
         setAviso(dados.aviso || "");
@@ -78,10 +70,9 @@ export default function MtbfResumoCard({
       <h4 className="card-titulo">MTBF Geral no Período</h4>
       <div className="kpi-content">
         <div className="kpi-valor-principal kpi-valor-grande">
-        <span style={{ color: getMtbfColor(mtbfGeral ?? 0, meta) }}>
-  {!aviso ? formatHoras(mtbfGeral) : "—"}
-</span>
-
+          <span style={{ color: getMtbfColor(mtbfGeral ?? 0, meta) }}>
+            {!aviso ? formatHoras(mtbfGeral) : "—"}
+          </span>
 
           <p className="card-meta">Meta (Acima de): {formatHoras(meta)}</p>
           {aviso && <p className="card-aviso">{aviso}</p>}

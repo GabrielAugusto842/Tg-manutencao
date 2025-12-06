@@ -1,5 +1,3 @@
-// src/componentes/Relatorios/MtbfComparisonBar.jsx
-
 import React from "react";
 import { formatHoras, getMtbfColor } from "../../Services/formatters";
 
@@ -12,7 +10,7 @@ const calcularEscala = (valorAtual, valorMeta) => {
 export default function MtbfComparisonBar({ valorAtual, valorMeta }) {
   const escala = calcularEscala(valorAtual, valorMeta);
 
-  // Larguras proporcionais
+  
   const larguraAtual = Math.min((valorAtual / escala) * 100, 100);
   const larguraMeta = Math.min((valorMeta / escala) * 100, 100);
 

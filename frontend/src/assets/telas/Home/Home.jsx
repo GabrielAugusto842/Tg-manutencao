@@ -36,6 +36,7 @@ function Home() {
     const carregarDados = async () => {
       try {
         let url = "/os/dashboard";
+
         // Se for manutentor, filtra pela ID do usuário
         if (usuario.cargo === "Manutentor") {
           url += `?id_usuario=${usuario.id_usuario}`;
@@ -43,6 +44,8 @@ function Home() {
 
         // Se for gerente, pega todas as O.S. do mês atual
         if (usuario.cargo === "Gerente de Manutenção") {
+
+
           // Filtra por mês atual. Ajuste a URL conforme necessário para sua API.
           const mesAtual = new Date().getMonth() + 1; // Janeiro = 1, Dezembro = 12
           const anoAtual = new Date().getFullYear();
@@ -52,7 +55,7 @@ function Home() {
         const resp = await api.get(url);
         setTotais(resp.data);
 
-        // Carrega as quantidades para Administrador e Gerente
+  
         if (
           usuario.cargo === "Administrador" ||
           usuario.cargo === "Gerente de Manutenção"
