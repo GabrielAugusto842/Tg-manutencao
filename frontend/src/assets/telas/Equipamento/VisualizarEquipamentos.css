@@ -151,6 +151,34 @@ body,
   border-left: none;
 }
 
+.btn-ativar {
+  background: #2ecc71 !important;
+  color: rgb(52, 241, 0) !important;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-ativar:hover {
+  background: #27ae60;
+}
+
+.btn-inativar {
+  background: #e74c3c !important;
+  color: rgb(247, 7, 7) !important;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-inativar:hover {
+  background: #c0392b !important;
+}
+
 .tabela-equipamentos td button {
   width: 80px;
   padding: 6px 8px;
@@ -180,14 +208,6 @@ body,
 }
 
 .btn-editar:hover {
-  opacity: 0.7;
-}
-
-.btn-deletar {
-  color: #d63031 !important;
-}
-
-.btn-deletar:hover {
   opacity: 0.7;
 }
 

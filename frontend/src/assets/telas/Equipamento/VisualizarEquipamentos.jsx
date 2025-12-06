@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Equipamento/VisualizarEquipamentos.css";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import api from "../../Services/api.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -76,21 +76,6 @@ function VisualizarEquipamentosContent() {
     carregarSetores();
   }, []);
 
-  const handleDeletar = async (id) => {
-    const equipamento = equipamentos.find((e) => e.idMaquina === id);
-
-    if (!window.confirm(`Excluir "${equipamento.nome}"?`)) return;
-
-    try {
-      await api.delete(`/maquina/${id}`);
-      setEquipamentos((prev) => prev.filter((e) => e.idMaquina !== id));
-      setMensagemSucesso(`Máquina "${equipamento.nome}" deletada.`);
-      // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      setErro("Erro ao excluir máquina.");
-    }
-  };
-
   const exportarCSV = () => {
     // Pega os dados já filtrados, os mesmos da tabela
     const filtrados = equipamentos.filter((m) => {
@@ -134,6 +119,40 @@ function VisualizarEquipamentosContent() {
     a.download = "relatorio_equipamentos.csv";
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleAlternarStatus = async (maquina) => {
+    const novoStatus = maquina.ativo ? 0 : 1;
+
+    if (
+      !window.confirm(
+        `Deseja realmente ${novoStatus ? "ATIVAR" : "INATIVAR"} a máquina "${
+          maquina.nome
+        }"?`
+      )
+    )
+      return;
+
+    try {
+      await api.put(`/maquina/${maquina.idMaquina}/status`, {
+        ativo: novoStatus,
+      });
+
+      setEquipamentos((prev) =>
+        prev.map((m) =>
+          m.idMaquina === maquina.idMaquina ? { ...m, ativo: novoStatus } : m
+        )
+      );
+
+      setMensagemSucesso(
+        `Máquina "${maquina.nome}" ${
+          novoStatus ? "ativada" : "inativada"
+        } com sucesso.`
+      );
+      // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      setErro("Erro ao atualizar status da máquina.");
+    }
   };
 
   if (carregando) return <p>Carregando máquinas...</p>;
@@ -242,12 +261,15 @@ function VisualizarEquipamentosContent() {
                     >
                       <FaEdit size={20} />
                     </button>
-
                     <button
-                      className="btn-deletar"
-                      onClick={() => handleDeletar(maquina.idMaquina)}
+                      className={maquina.ativo ? "btn-inativar" : "btn-ativar"}
+                      onClick={() => handleAlternarStatus(maquina)}
                     >
-                      <FaTrash size={20} />
+                      {maquina.ativo ? (
+                        <FaToggleOff size={22} />
+                      ) : (
+                        <FaToggleOn size={22} />
+                      )}
                     </button>
                   </td>
                 </tr>

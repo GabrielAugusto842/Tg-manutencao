@@ -257,7 +257,6 @@ body,
   padding: 0;
 }
 
-
 /* Container geral: filtros à esquerda, botões à direita */
 .opcoes-header {
   display: flex;
@@ -361,18 +360,17 @@ body,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
-.botao-pdf:focus, 
+.botao-pdf:focus,
 .botao-csv:focus {
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
-.botao-pdf span, .botao-csv span {
+.botao-pdf span,
+.botao-csv span {
   font-size: 0.7rem !important;
 }
-
-
 
 /* Responsividade para telas menores */
 @media (max-width: 1400px) {
@@ -390,11 +388,11 @@ body,
     min-width: 300px;
     gap: 5px;
   }
-  .filtro-input,.filtro-select{
+  .filtro-input,
+  .filtro-select {
     width: 80%;
     text-align: center;
   }
-
 }
 
 /* Responsividade para telas menores */
@@ -403,4 +401,32 @@ body,
     flex-direction: column;
     gap: 5px;
   }
+}
+
+.btn-ativar {
+  background: #2ecc71 !important;
+  color: rgb(52, 241, 0) !important;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-ativar:hover {
+  background: #27ae60;
+}
+
+.btn-inativar {
+  background: #e74c3c !important;
+  color: rgb(247, 7, 7) !important;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-inativar:hover {
+  background: #c0392b !important;
 }

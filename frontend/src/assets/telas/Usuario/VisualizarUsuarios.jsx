@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../componentes/Layout/Layout";
 import "../../telas/Usuario/VisualizarUsuarios.css";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import api from "../../Services/api.jsx";
 
@@ -111,89 +111,88 @@ function VisualizarUsuariosContent({ navigate }) {
   //   EDITAR E DELETAR
   // ==========================
   const handleEditar = (id) => {
-  console.log("Editando usuário com ID:", id);
-  navigate(`/usuario/editar/${id}`);
-};
+    console.log("Editando usuário com ID:", id);
+    navigate(`/usuario/editar/${id}`);
+  };
+  if (carregando) return <p>Carregando usuários...</p>;
 
+  // ------------------ //
+  // -- EXPORTAR CSV -- //
+  // ------------------ //
+  const exportarCSV = () => {
+    // Aplica os mesmos filtros usados na tabela
+    const filtrados = usuarios.filter((u) => {
+      const busca = filtroBusca.toLowerCase();
+      return (
+        (u.nome.toLowerCase().includes(busca) ||
+          u.email.toLowerCase().includes(busca)) &&
+        (filtroCargo ? u.cargo === filtroCargo : true) &&
+        (filtroSetor ? u.setor === filtroSetor : true)
+      );
+    });
 
+    // Cabeçalho CSV
+    const header = ["nome", "email", "cargo", "setor"];
 
-  const handleDeletar = async (id) => {
-    const usuario = usuarios.find((u) => u.id_usuario === id);
+    // Linhas CSV
+    const linhas = filtrados.map((u) => [u.nome, u.email, u.cargo, u.setor]);
 
-    if (!window.confirm(`Deseja excluir "${usuario.nome}"?`)) return;
+    // Monta o CSV
+    const csv = [
+      header.join(","), // Cabeçalho
+      ...linhas.map((l) => l.join(",")), // Linhas
+    ].join("\n");
+
+    // Correção de acentuação (UTF-8 com BOM)
+    const BOM = "\uFEFF";
+
+    const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "relatorio_usuarios.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const handleAlternarStatus = async (usuarios) => {
+    const novoStatus = usuarios.ativo ? 0 : 1;
+
+    if (
+      !window.confirm(
+        `Deseja realmente ${novoStatus ? "ATIVAR" : "INATIVAR"} o usuario "${
+          usuarios.nome
+        }"?`
+      )
+    )
+      return;
 
     try {
-      const resposta = await fetch(`${API_URL}/id/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      await api.put(`/usuario/${usuarios.id_usuario}/status`, {
+        ativo: novoStatus,
       });
 
-      if (!resposta.ok) throw new Error("Erro ao deletar.");
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.id_usuario === usuarios.id_usuario ? { ...u, ativo: novoStatus } : u
+        )
+      );
 
-      setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id));
-      setMensagemSucesso(`Usuário "${usuario.nome}" deletado.`);
+      setMensagemSucesso(
+        `Máquina "${usuarios.nome}" ${
+          novoStatus ? "ativada" : "inativada"
+        } com sucesso.`
+      );
       // eslint-disable-next-line no-unused-vars
-    } catch (e) {
-      setErro("Erro ao excluir usuário.");
+    } catch (error) {
+      setErro("Erro ao atualizar status da máquina.");
     }
   };
 
-  // ==========================
-  //      LOADING
-  // ==========================
-  if (carregando) return <p>Carregando usuários...</p>;
-
-  /* CLASSE CSS PRINT-AREA TUDO Q ESTIVER NO ESCOPO ENTRARÁ PARA O PRINT, MENOS O QUE TIVER A CLASSE NO-PRINT */
-  
-// ------------------ //
-// -- EXPORTAR CSV -- //
-// ------------------ //
-const exportarCSV = () => {
-  // Aplica os mesmos filtros usados na tabela
-  const filtrados = usuarios.filter((u) => {
-    const busca = filtroBusca.toLowerCase();
-    return (
-      (u.nome.toLowerCase().includes(busca) ||
-        u.email.toLowerCase().includes(busca)) &&
-      (filtroCargo ? u.cargo === filtroCargo : true) &&
-      (filtroSetor ? u.setor === filtroSetor : true)
-    );
-  });
-
-  // Cabeçalho CSV
-  const header = ["nome", "email", "cargo", "setor"];
-
-  // Linhas CSV
-  const linhas = filtrados.map((u) => [
-    u.nome,
-    u.email,
-    u.cargo,
-    u.setor,
-  ]);
-
-  // Monta o CSV
-  const csv = [
-    header.join(","),           // Cabeçalho
-    ...linhas.map((l) => l.join(",")) // Linhas
-  ].join("\n");
-
-  // Correção de acentuação (UTF-8 com BOM)
-  const BOM = "\uFEFF";
-
-  const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "relatorio_usuarios.csv";
-  a.click();
-
-  URL.revokeObjectURL(url);
-};
-  
   return (
     <div className="visualizar-usuarios-page" id="print-area">
-
       {/* ALERTAS */}
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
@@ -239,17 +238,15 @@ const exportarCSV = () => {
             ))}
           </select>
         </div>
-     
-      
+
         {/*-----------------------------------
          BOTÕES DE EXPORTAÇÃO (PDF + CSV) 
         -----------------------------------*/}
         <div className="export-group no-print">
           <button className="botao-csv" onClick={exportarCSV}>
-              🗒️ EXPORTAR CSV
+            🗒️ EXPORTAR CSV
           </button>
-
-          <button onClick={() => window.print()}className="botao-pdf">
+          <button onClick={() => window.print()} className="botao-pdf">
             📥 EXPORTAR PDF{" "}
           </button>{" "}
         </div>
@@ -297,10 +294,14 @@ const exportarCSV = () => {
                     </button>
 
                     <button
-                      className="btn-deletar"
-                      onClick={() => handleDeletar(u.id_usuario)}
+                      className={usuarios.ativo ? "btn-inativar" : "btn-ativar"}
+                      onClick={() => handleAlternarStatus(usuarios)}
                     >
-                      <FaTrash size={20} />
+                      {usuarios.ativo ? (
+                        <FaToggleOff size={22} />
+                      ) : (
+                        <FaToggleOn size={22} />
+                      )}
                     </button>
                   </td>
                 </tr>
