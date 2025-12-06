@@ -89,3 +89,33 @@
 .botao-pdf-relatorio:active {
   transform: scale(0.97); /* Feedback ao clicar */
 }
+
+@media (max-width: 768px) {
+  .relatorios-filtros-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+    gap: 15px;
+  }
+
+  .filtro-grupo {
+    width: 100%; /* garante alinhamento bonito */
+  }
+}
+@media (max-width: 400px) {
+  .relatorios-filtros-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    gap: 15px;
+  }
+
+  .filtro-grupo {
+    width: 100%; /* garante alinhamento bonito */
+  }
+}
+
+
+@media (max-width: 420px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(1, 1fr); 
+  }
+}

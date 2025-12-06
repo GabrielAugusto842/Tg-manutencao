@@ -186,57 +186,58 @@ function VisualizarOrdensContent({ user }) {
 
   return (
     <div className="visualizar-ordens-page" id="print-area">
-      <div className="filtros-linha no-print">
-        <div className="filtros-container">
-          <input
-            type="text"
-            placeholder="Buscar máquina..."
-            className="filtro-input"
-            value={filtroBuscaMaquina}
-            onChange={(e) => setFiltroBuscaMaquina(e.target.value)}
-          />
-          {!["Manutentor"].includes(cargoUsuario) && (
-            <select
-              className="filtro-select"
-              value={filtroStatusNovo}
-              onChange={(e) => setFiltroStatusNovo(e.target.value)}
-            >
-              <option value="">Status (Todos)</option>
-              <option value="Aberto">Aberto</option>
-              <option value="Em andamento">Em andamento</option>
-              <option value="Finalizado">Finalizado</option>
-            </select>
-          )}
-        </div>
-        <div className="filtro-periodo-container">
-          <label className="filtro-periodo-titulo">Buscar por período</label>
-          <div className="filtro-periodo-inputs">
+      <div className="opcoes-header">
+        <div className="mobile-filtros-coluna filtros-linha-ordem no-print">
+          <div className="filtro-ordem filtros-container ">
             <input
-              type="date"
-              className="filtro-data"
-              value={dataInicio}
-              onChange={(e) => setDataInicio(e.target.value)}
+              type="text"
+              placeholder="Buscar máquina..."
+              className="filtro-input"
+              value={filtroBuscaMaquina}
+              onChange={(e) => setFiltroBuscaMaquina(e.target.value)}
             />
-            <input
-              type="date"
-              className="filtro-data"
-              value={dataFim}
-              onChange={(e) => setDataFim(e.target.value)}
-            />
+            {!["Manutentor"].includes(cargoUsuario) && (
+              <select
+                className="filtro-select"
+                value={filtroStatusNovo}
+                onChange={(e) => setFiltroStatusNovo(e.target.value)}
+              >
+                <option value="">Status (Todos)</option>
+                <option value="Aberto">Aberto</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Finalizado">Finalizado</option>
+              </select>
+            )}
+          </div>
+          <div className="filtro-periodo-container">
+            <label className="filtro-periodo-titulo">Buscar por período</label>
+            <div className="filtro-periodo-inputs">
+              <input
+                type="date"
+                className="filtro-data"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
+              <input
+                type="date"
+                className="filtro-data"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+            </div>
           </div>
         </div>
+        <br/>
+        <div className="botao-pdf-wrapper no-print">
+          {" "}
+          <button
+            onClick={() => window.print()}
+            className="botao-pdf-ordens" /* Classe para o estilo ultra-compacto */
+          > 
+            📥 EXPORTAR PDF{" "}
+          </button>{" "}
+        </div>
       </div>
-
-      <div className="botao-pdf-wrapper no-print">
-        {" "}
-        <button
-          onClick={() => window.print()}
-          className="botao-pdf-ordens" /* Classe para o estilo ultra-compacto */
-        >
-          📥 EXPORTAR PDF{" "}
-        </button>{" "}
-      </div>
-
       {erro && <div className="alerta-erro">{erro}</div>}
       {mensagemSucesso && (
         <div className="alerta-sucesso">{mensagemSucesso}</div>

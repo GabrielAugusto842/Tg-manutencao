@@ -115,7 +115,7 @@ function VisualizarOrdensContent({ user }) {
     <div className="visualizar-minhas-ordens-page">
       {/* FILTROS */}
       <div className="filtros-linha">
-        <div className="filtros-container">
+        <div className="filtros-linha mobile-filtros-coluna filtros-wrap">
           {/* BUSCAR POR MÁQUINA */}
           <input
             type="text"

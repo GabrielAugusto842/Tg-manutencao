@@ -357,7 +357,7 @@ body,
   outline: none;
 }
 
-.filtros-linha {
+.filtros-linha-ordem {
   width: 100%;
   display: flex;
   gap: 20px;
@@ -488,4 +488,37 @@ body,
 /* Regra para garantir que os emojis (📥 PDF) não fiquem muito grandes */
 .botao-pdf-ordens span {
   font-size: 0.7rem !important;
+}
+
+
+
+@media (max-width: 768px) {
+  .filtros-linha-ordem {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .filtro-ordem{
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .filtros-linha-ordem { 
+    display: grid !important; 
+    grid-template-columns: 1fr !important;
+    gap: 12px !important; 
+  }
+  .filtros-container { 
+    grid-column: 1 !important; 
+    grid-row: 1 !important; 
+    width: 100% !important; 
+  }
+  .filtro-periodo-container { 
+    grid-column: 1 !important; 
+    grid-row: 2 !important; 
+    width: 100% !important; 
+  }
 }

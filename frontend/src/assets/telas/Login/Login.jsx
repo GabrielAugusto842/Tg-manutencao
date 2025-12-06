@@ -72,9 +72,10 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="coluna-direita">
+        <div className="coluna-direita">          
           <div className="blocoLogin">
             <div className="container">
+              <img src="src/assets/logo-company1.png" alt="Logo mobile" className="logo-mobile" />
               <form onSubmit={handleSubmit}>
                 <h1>Acesse o sistema</h1>
                 <div className="input-field">
