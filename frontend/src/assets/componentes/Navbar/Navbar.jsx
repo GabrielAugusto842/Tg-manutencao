@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
-import { 
-  FaUserCircle, 
-  FaChevronDown, 
-  FaArrowRight, 
+import {
+  FaUserCircle,
+  FaChevronDown,
+  FaArrowRight,
   FaAlignJustify,
   FaHome,
   FaChartLine,
@@ -12,9 +12,11 @@ import {
   FaTools,
   FaFileAlt,
   FaAngleDown,
-  FaAngleUp
+  FaAngleUp,
+  FaClipboardList,
 } from "react-icons/fa";
 import { IoRefreshCircleOutline } from "react-icons/io5";
+import Log from "../../../Log";
 
 const Navbar = ({ title, user }) => {
   const navigate = useNavigate();
@@ -25,10 +27,10 @@ const Navbar = ({ title, user }) => {
   const menuRef = useRef();
 
   // Estado para dados do usuário
-  const [userData, setUserData] = useState({ 
-    name: "Usuário", 
+  const [userData, setUserData] = useState({
+    name: "Usuário",
     email: "email@exemplo.com",
-    cargo: ""
+    cargo: "",
   });
 
   // Carrega dados do usuário
@@ -39,7 +41,7 @@ const Navbar = ({ title, user }) => {
         setUserData({
           name: user.nome,
           email: user.email || "email@exemplo.com",
-          cargo: user.cargo || ""
+          cargo: user.cargo || "",
         });
       } else {
         // Fallback para localStorage
@@ -50,7 +52,7 @@ const Navbar = ({ title, user }) => {
             setUserData({
               name: parsedUser.nome,
               email: parsedUser.email || "email@exemplo.com",
-              cargo: parsedUser.cargo || ""
+              cargo: parsedUser.cargo || "",
             });
           }
         }
@@ -70,12 +72,13 @@ const Navbar = ({ title, user }) => {
 
   const podeCadastrarOrdem = cargoUsuario === "Operador";
 
-  const podeVerTodasOrdens = 
+  const podeVerTodasOrdens =
     cargoUsuario === "Gerente de Manutenção" ||
     cargoUsuario === "Operador" ||
     cargoUsuario === "Manutentor";
 
   const podeVerRelatorios = cargoUsuario === "Gerente de Manutenção";
+  const podeVerLog = cargoUsuario === "Gerente de Manutenção";
 
   const podeVerMinhasOrdens = cargoUsuario === "Manutentor";
 
@@ -118,7 +121,7 @@ const Navbar = ({ title, user }) => {
         setOpenProfile(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -143,38 +146,50 @@ const Navbar = ({ title, user }) => {
       {openMenu && (
         <div className="hamburger-menu" ref={menuRef}>
           {/* Home */}
-          <button 
-            className="hamburger-item" 
+          <button
+            className="hamburger-item"
             onClick={() => navigateAndClose("/home")}
           >
             <FaHome style={{ marginRight: "8px" }} /> Home
           </button>
 
           {/* Ordens de Serviço */}
-          {(podeVerTodasOrdens || podeVerMinhasOrdens || podeCadastrarOrdem) && (
+          {(podeVerTodasOrdens ||
+            podeVerMinhasOrdens ||
+            podeCadastrarOrdem) && (
             <>
-              <button 
+              <button
                 className="hamburger-item has-submenu"
                 onClick={() => toggleSubmenu("ordens")}
               >
                 <FaChartLine style={{ marginRight: "8px" }} /> Ordens de Serviço
-                {openSubmenu === "ordens" ? <FaAngleUp style={{ marginLeft: "auto" }} /> : <FaAngleDown style={{ marginLeft: "auto" }} />}
+                {openSubmenu === "ordens" ? (
+                  <FaAngleUp style={{ marginLeft: "auto" }} />
+                ) : (
+                  <FaAngleDown style={{ marginLeft: "auto" }} />
+                )}
               </button>
-              
+
               {openSubmenu === "ordens" && (
                 <div className="hamburger-submenu">
                   {podeCadastrarOrdem && (
-                    <button onClick={() => navigateAndClose("/ordens/cadastrar")}>
+                    <button
+                      onClick={() => navigateAndClose("/ordens/cadastrar")}
+                    >
                       Cadastrar
                     </button>
                   )}
                   {podeVerTodasOrdens && (
-                    <button onClick={() => navigateAndClose("/ordens/visualizar")}>
+                    <button
+                      onClick={() => navigateAndClose("/ordens/visualizar")}
+                    >
                       Visualizar
                     </button>
                   )}
                   {podeVerMinhasOrdens && (
-                    <button onClick={() => navigateAndClose("/ordens/minhasos")}>
+                    <button
+                      onClick={() => navigateAndClose("/ordens/minhasos")}
+                    >
                       Minhas Ordens
                     </button>
                   )}
@@ -186,20 +201,28 @@ const Navbar = ({ title, user }) => {
           {/* Usuários */}
           {podeGerenciarUsuarios && (
             <>
-              <button 
+              <button
                 className="hamburger-item has-submenu"
                 onClick={() => toggleSubmenu("usuarios")}
               >
                 <FaUsers style={{ marginRight: "8px" }} /> Usuários
-                {openSubmenu === "usuarios" ? <FaAngleUp style={{ marginLeft: "auto" }} /> : <FaAngleDown style={{ marginLeft: "auto" }} />}
+                {openSubmenu === "usuarios" ? (
+                  <FaAngleUp style={{ marginLeft: "auto" }} />
+                ) : (
+                  <FaAngleDown style={{ marginLeft: "auto" }} />
+                )}
               </button>
-              
+
               {openSubmenu === "usuarios" && (
                 <div className="hamburger-submenu">
-                  <button onClick={() => navigateAndClose("/usuario/visualizar")}>
+                  <button
+                    onClick={() => navigateAndClose("/usuario/visualizar")}
+                  >
                     Visualizar
                   </button>
-                  <button onClick={() => navigateAndClose("/usuario/cadastrar")}>
+                  <button
+                    onClick={() => navigateAndClose("/usuario/cadastrar")}
+                  >
                     Cadastrar
                   </button>
                 </div>
@@ -210,20 +233,28 @@ const Navbar = ({ title, user }) => {
           {/* Equipamentos */}
           {podeGerenciarEquipamentos && (
             <>
-              <button 
+              <button
                 className="hamburger-item has-submenu"
                 onClick={() => toggleSubmenu("equipamentos")}
               >
                 <FaTools style={{ marginRight: "8px" }} /> Equipamentos
-                {openSubmenu === "equipamentos" ? <FaAngleUp style={{ marginLeft: "auto" }} /> : <FaAngleDown style={{ marginLeft: "auto" }} />}
+                {openSubmenu === "equipamentos" ? (
+                  <FaAngleUp style={{ marginLeft: "auto" }} />
+                ) : (
+                  <FaAngleDown style={{ marginLeft: "auto" }} />
+                )}
               </button>
-              
+
               {openSubmenu === "equipamentos" && (
                 <div className="hamburger-submenu">
-                  <button onClick={() => navigateAndClose("/equipamentos/visualizar")}>
+                  <button
+                    onClick={() => navigateAndClose("/equipamentos/visualizar")}
+                  >
                     Visualizar
                   </button>
-                  <button onClick={() => navigateAndClose("/equipamentos/cadastrar")}>
+                  <button
+                    onClick={() => navigateAndClose("/equipamentos/cadastrar")}
+                  >
                     Cadastrar
                   </button>
                 </div>
@@ -234,20 +265,28 @@ const Navbar = ({ title, user }) => {
           {/* Setores */}
           {podeCadastrarSetor && (
             <>
-              <button 
+              <button
                 className="hamburger-item has-submenu"
                 onClick={() => toggleSubmenu("setores")}
               >
                 <FaTools style={{ marginRight: "8px" }} /> Setor
-                {openSubmenu === "setores" ? <FaAngleUp style={{ marginLeft: "auto" }} /> : <FaAngleDown style={{ marginLeft: "auto" }} />}
+                {openSubmenu === "setores" ? (
+                  <FaAngleUp style={{ marginLeft: "auto" }} />
+                ) : (
+                  <FaAngleDown style={{ marginLeft: "auto" }} />
+                )}
               </button>
-              
+
               {openSubmenu === "setores" && (
                 <div className="hamburger-submenu">
-                  <button onClick={() => navigateAndClose("/setores/visualizar")}>
+                  <button
+                    onClick={() => navigateAndClose("/setores/visualizar")}
+                  >
                     Visualizar
                   </button>
-                  <button onClick={() => navigateAndClose("/setores/cadastrar")}>
+                  <button
+                    onClick={() => navigateAndClose("/setores/cadastrar")}
+                  >
                     Cadastrar
                   </button>
                 </div>
@@ -257,12 +296,22 @@ const Navbar = ({ title, user }) => {
 
           {/* Relatórios */}
           {podeVerRelatorios && (
-            <button 
-              className="hamburger-item" 
+            <button
+              className="hamburger-item"
               onClick={() => navigateAndClose("/relatorios")}
             >
               <FaFileAlt style={{ marginRight: "8px" }} /> Relatórios
             </button>
+          )}
+
+          {podeVerLog && (
+            <div
+              className="hamburger-item"
+              onClick={() => navigateAndClose("/logs")}
+            >
+              <FaClipboardList className="icon" />
+              <span>Log do Sistema</span>
+            </div>
           )}
         </div>
       )}
@@ -272,7 +321,9 @@ const Navbar = ({ title, user }) => {
       <div className="profile-wrapper" ref={profileRef}>
         <div className="profile-icon-group" onClick={toggleProfileMenu}>
           <FaUserCircle className="profile-icon" />
-          <FaChevronDown className={`dropdown-arrow-icon ${openProfile ? "open" : ""}`} />
+          <FaChevronDown
+            className={`dropdown-arrow-icon ${openProfile ? "open" : ""}`}
+          />
         </div>
 
         {openProfile && (
@@ -285,12 +336,18 @@ const Navbar = ({ title, user }) => {
               </div>
             </div>
 
-            <button className="menu-option botao-trocar-senha" onClick={handleTrocarSenha}>
+            <button
+              className="menu-option botao-trocar-senha"
+              onClick={handleTrocarSenha}
+            >
               <IoRefreshCircleOutline className="option-icon" /> Trocar senha
             </button>
 
-            <button className="menu-option botao-sair" onClick={handleLogout}>
-              <FaArrowRight className="option-icon" /> Sair do sistema
+            <button
+              className="menu-option logout-button"
+              onClick={handleLogout}
+            >
+              <FaArrowRight className="option-icon" /> Sair
             </button>
           </div>
         )}

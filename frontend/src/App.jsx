@@ -21,6 +21,7 @@ import EditarEquipamento from "./assets/telas/Equipamento/EditarEquipamento";
 import PreencherOS from "./assets/telas/Ordens/PreencherOS";
 import Ordem from "./assets/telas/Ordens/Ordem";
 import EditarOS from "./assets/telas/Ordens/EditarOS";
+import Log from "./Log";
 
 function App() {
   useTokenExpiration();
@@ -46,7 +47,6 @@ function App() {
         <Route path="/usuario/visualizar" element={<VisualizarUsuarios />} />
         <Route path="/usuario/editar/:id" element={<EditarUsuario />} />
 
-
         {/* Equipamentos */}
         <Route
           path="/equipamentos/cadastrar"
@@ -67,6 +67,8 @@ function App() {
         <Route path="/setores/cadastrar" element={<CadastrarSetor />} />
         <Route path="/setores/visualizar" element={<VisualizarSetores />} />
         <Route path="/setores/editar/:id" element={<EditarSetor />} />
+
+        <Route path="/logs" element={<Log />} />
       </Routes>
     </BrowserRouter>
   );

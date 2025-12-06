@@ -29,11 +29,12 @@ function Sidebar({ user }) {
   const podeCadastrarSetor = cargoUsuario === "Administrador";
 
   const podeCadastrarOrdem = cargoUsuario === "Operador";
+  const podeVerLog = cargoUsuario === "Gerente de Manutenção";
 
-const podeVerTodasOrdens =
-  cargoUsuario === "Gerente de Manutenção" ||
-  cargoUsuario === "Operador" ||
-  cargoUsuario === "Manutentor";
+  const podeVerTodasOrdens =
+    cargoUsuario === "Gerente de Manutenção" ||
+    cargoUsuario === "Operador" ||
+    cargoUsuario === "Manutentor";
 
   const podeVerRelatorios = cargoUsuario === "Gerente de Manutenção";
 
@@ -175,6 +176,12 @@ const podeVerTodasOrdens =
           </div>
         )}
       </div>
+      {podeVerLog && (
+        <div className="menu-item" onClick={() => navigate("/logs")}>
+          <FaClipboardList className="icon" />
+          <span>Log do Sistema</span>
+        </div>
+      )}
       <div className="logo">
         <img src={logo} alt="Logo" />
       </div>
