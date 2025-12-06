@@ -1,10 +1,11 @@
 export function exportToCSV(filename, rows) {
-  if (!rows || !rows.length) return;
 
-  // Pega as chaves do primeiro objeto como cabeçalho
-  const headers = Object.keys(rows[0]);
 
-  const csvContent = [headers.join(",")] // cabeçalho
+  if (!rows || !rows.length) return; //verifica se tem dados
+
+  const headers = Object.keys(rows[0]); // Pega as chaves do primeiro objeto do array e torna como cabeçalho
+
+  const csvContent = [headers.join(",")] // cria a primeira linha do csv unindo por virgulas
     .concat(
       rows.map((row) =>
         headers

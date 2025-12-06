@@ -12,6 +12,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
+
       // Adiciona o cabeçalho Authorization com o token no formato Bearer
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -34,10 +35,10 @@ api.interceptors.response.use(
     if (isAuthError && !isLoginRoute) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      window.location.href = "/login"; //caso tenha erro de autenicação, força logout
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error); //envia os erros ao código que fez a requisição
   }
 );
 

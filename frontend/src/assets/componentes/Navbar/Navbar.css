@@ -19,12 +19,6 @@
   color: #fff;
 }
 
-.navbar-actions-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .profile-wrapper {
   position: relative;
   cursor: pointer;
@@ -80,8 +74,8 @@
 /* MENU DO HAMBURGUER (segue o mesmo padrão do profile-menu) */
 .hamburger-menu {
   position: absolute;
-  top: 60px;      /* ajuste como quiser */
-  left: 10px;    /* igual ao menu do perfil */
+  top: 60px; /* ajuste como quiser */
+  left: 10px; /* igual ao menu do perfil */
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -130,9 +124,6 @@
 .hamburger-item:hover {
   background: #89c0f8;
 }
-/* ^^^^^^ Conteúdo do menu ^^^^^^*/
-
-
 
 .user-info {
   display: flex;
@@ -189,7 +180,7 @@
 }
 
 /* Estilo do botão Trocar Senha */
-.menu-option{
+.menu-option {
   font-size: 18px;
   padding: 14px 18px;
   border-radius: 5px;
@@ -197,7 +188,7 @@
   font-weight: 500;
   transition: background 0.3s ease, transform 0.2s ease;
 }
-  
+
 .botao-trocar-senha {
   background-color: #6ca3ddb7;
 }
@@ -218,7 +209,6 @@
 .botao-sair {
   background-color: #f8d7da;
   color: #ca2132;
-
 }
 
 .botao-sair:hover {
@@ -236,54 +226,46 @@
 
 /* Responsividade Navbar */
 
-
-
 @media (max-width: 1024px) {
-  .navbar-title{
+  .navbar-title {
     font-size: 48px;
     text-align: center;
   }
   .layout-sidebar {
     display: none;
-  --sidebar-width: 0;
-}
-  .menu-icon {
-    display: block;
-    cursor: pointer;
-    font-size: 24px;
+    --sidebar-width: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .navbar-title{
+  .navbar-title {
     font-size: 36px;
   }
-
 }
 
 @media (max-width: 580px) {
-  .navbar-title{
+  .navbar-title {
     font-size: 20px;
   }
-  .navbar{
+  .navbar {
     padding: 0 30px;
-  }  
+  }
 }
 
 /* Só mostra quando a tela for maior que 1024px */
 @media (min-width: 1025px) {
-  .navbar-title{
+  .navbar-title {
     font-size: 48px;
   }
 
   .sidebar {
-  display: flex;
-}
-#menu-wrap{
-  display: none;
-  width: 0;
-  height: 0;
-}
+    display: flex;
+  }
+  #menu-wrap {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 /* SUBMENU DO HAMBURG */

@@ -1,4 +1,3 @@
-// --- CONSTANTES DE METAS ---
 export const MTTR_META_HORAS = 4.0;
 export const MTBF_META_HORAS = 200.0;
 
@@ -20,14 +19,17 @@ export function formatHoras(hours) {
   return `${h}h ${m.toString().padStart(2, "0")}min`; // Retorna no formato "Xh YYmin"
 }
 
+
 // Formata um número para percentual com 2 casas decimais.
 export function formatPercentual(value) {
   // Verifica se o valor é inválido ou NaN
   if (value === null || typeof value === "undefined" || isNaN(value))
     return "0.00%";
-
   return `${parseFloat(value).toFixed(2)}%`; // Formata o valor com 2 casas decimais e adiciona o símbolo de porcentagem
 }
+
+
+//   --- PARA OS RELATÓRIOS -----
 
 /**
  Define a cor para o MTTR com base no valor atual em comparação com a meta.
@@ -51,6 +53,8 @@ export function getMttrColor(mttrValue, meta = MTTR_META_HORAS) {
   return "#cc1818ff";
 }
 
+
+
 /**
  * Define a cor para o MTBF com base no valor atual em comparação com a meta.
  * MTBF deve ser alto, então valores acima ou iguais à meta são VERDES.*/
@@ -62,14 +66,12 @@ export function getMtbfColor(mtbfValue, meta = MTBF_META_HORAS) {
     typeof mtbfValue === "undefined" ||
     isNaN(mtbfValue)
   )
-    return "#6c757d"; // Retorna cinza padrão se o valor for inválido
+    return "#6c757d"; 
 
-  // Se o valor do MTBF é maior ou igual à meta, a cor será verde (sucesso)
   if (mtbfValue >= meta) {
     return "#0ebc0eff";
   }
 
-  // Se o valor do MTBF for menor que a meta, a cor será vermelha (alerta)
   return "#cc1818ff";
 }
 
