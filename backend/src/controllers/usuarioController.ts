@@ -82,6 +82,25 @@ export class UsuarioController {
       return;
     }
 
+    // 🚀 NOVO PASSO: 1. Checar se o usuário já existe pelo email
+    try {
+      const usuarioExistente = await this.repository.findByEmail(email);
+
+      if (usuarioExistente) {
+        res.status(409).json({
+          // 409 Conflict: Recurso já existe
+          message: "O e-mail fornecido já está em uso.",
+        });
+        return;
+      }
+    } catch (error) {
+      // Se a busca falhar (erro no DB), tratamos antes de continuar
+      console.error("Erro ao verificar email existente:", error);
+      res.status(500).json({ message: "Erro interno ao cadastrar usuário." });
+      return;
+    }
+
+    // 2. Se não existe, hasheia a senha
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const novoUsuario: Partial<Usuario> = {
@@ -92,6 +111,7 @@ export class UsuarioController {
       id_setor,
     };
 
+    // 3. Cria o usuário
     await this.repository.createUsuario(novoUsuario);
 
     res.status(201).json({

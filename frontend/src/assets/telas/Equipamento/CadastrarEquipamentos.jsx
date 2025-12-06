@@ -83,15 +83,12 @@ function CadastrarEquipamentos() {
       setNumeroSerie("");
       setProducaoPorHora("");
     } catch (error) {
-      console.error(
-        "Erro no cadastro:",
-        error.response ? error.response.data : error.message
-      );
-      setMensagem(
-        `Erro ao cadastrar: ${
-          error.response?.data?.message || "Erro desconhecido"
-        }`
-      );
+      const mensagemErro =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Erro ao cadastrar (desconhecido).";
+
+      setMensagem(`Erro ao cadastrar: ${mensagemErro}`);
     }
   };
 
@@ -99,9 +96,8 @@ function CadastrarEquipamentos() {
     <Layout title="Cadastro de Máquinas">
       <div className="form-container-equipamentos">
         <form onSubmit={handleSubmit}>
-          {/* LINHA 1: Nome e Marca (Duas Colunas) */}
+          {/* LINHA 1: Nome e Marca */}
           <div className="form-row-equipamentos">
-            {/* Campo Nome */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="nome">
                 Nome: <span className="required">*</span>
@@ -116,7 +112,6 @@ function CadastrarEquipamentos() {
               />
             </div>
 
-            {/* Campo Marca */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="marca">
                 Marca:<span className="required">*</span>
@@ -132,9 +127,8 @@ function CadastrarEquipamentos() {
             </div>
           </div>
 
-          {/* LINHA 2: Modelo e Setor (Duas Colunas) */}
+          {/* LINHA 2: Modelo e Setor */}
           <div className="form-row-equipamentos">
-            {/* Campo Modelo */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="modelo">
                 Modelo: <span className="required">*</span>
@@ -149,7 +143,6 @@ function CadastrarEquipamentos() {
               />
             </div>
 
-            {/* Campo Setor */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="setor">
                 Setor:<span className="required">*</span>
@@ -164,7 +157,6 @@ function CadastrarEquipamentos() {
                   Selecione um setor...
                 </option>
 
-                {/* Renderiza as opções do setor */}
                 {opcoesSetor.map((opcao) => (
                   <option key={opcao.id} value={opcao.nome}>
                     {opcao.nome}
@@ -174,9 +166,8 @@ function CadastrarEquipamentos() {
             </div>
           </div>
 
-          {/* LINHA 3: Número de Série e TAG (Duas Colunas) */}
+          {/* LINHA 3: Nº Série e TAG */}
           <div className="form-row-equipamentos">
-            {/* Campo Número de Série */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="numero_serie">
                 Nº de Série: <span className="required">*</span>
@@ -191,7 +182,6 @@ function CadastrarEquipamentos() {
               />
             </div>
 
-            {/* Campo TAG */}
             <div className="form-group-equipamentos half-width-equipamentos">
               <label htmlFor="tag">
                 TAG/ID Interno: <span className="required">*</span>
@@ -206,15 +196,11 @@ function CadastrarEquipamentos() {
               />
             </div>
           </div>
+
+          {/* Produção por Hora */}
           <div className="form-group-equipamentos half-width-equipamentos">
             <label htmlFor="producaoPorHora">
               Produção Por Hora (Opcional)
-              <span
-                className="tooltip-icon"
-                data-tooltip="Quantidade que a máquina produz por hora de operação."
-              >
-                i
-              </span>
             </label>
 
             <input
@@ -226,15 +212,10 @@ function CadastrarEquipamentos() {
             />
           </div>
 
+          {/* Disponibilidade */}
           <div className="form-group-equipamentos half-width-equipamentos">
             <label htmlFor="disponibilidadeMes">
               Disponibilidade no Mês (horas)
-              <span
-                className="tooltip-icon"
-                data-tooltip="Total de horas disponíveis para uso no mês. Normalmente 160 para turno de 8h / 5 dias."
-              >
-                i
-              </span>
             </label>
 
             <input
@@ -247,7 +228,7 @@ function CadastrarEquipamentos() {
             />
           </div>
 
-          {/* Botão de Submissão */}
+          {/* Botão */}
           <div
             className="form-group-equipamentos full-width-equipamentos"
             style={{ marginTop: "30px" }}
@@ -261,7 +242,7 @@ function CadastrarEquipamentos() {
           </div>
         </form>
 
-        {/* Exibir mensagem de feedback */}
+        {/* MENSAGEM FINAL COM ESTILIZAÇÃO */}
         {mensagem && (
           <p
             className={`message-feedback ${

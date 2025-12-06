@@ -20,6 +20,17 @@ export class MaquinaRepository {
     return row ? new MaquinaDetalhada(row) : null;
   }
 
+  async findByNumeroSerie(
+    numeroSerie: string
+  ): Promise<MaquinaDetalhada | null> {
+    const [rows] = await db.execute(
+      "SELECT m.id_maquina, m.nome, m.marca, m.modelo, m.numero_serie, m.tag, m.producao_hora, m.disponibilidade_mes, s.id_setor, s.setor, s.descricao FROM maquina AS m INNER JOIN setor AS s ON m.id_setor = s.id_setor WHERE m.numero_serie = ?",
+      [numeroSerie]
+    );
+    const row = (rows as any[])[0];
+    return row ? new MaquinaDetalhada(row) : null;
+  }
+
   async createMaquina(
     nome: string,
     marca: string,

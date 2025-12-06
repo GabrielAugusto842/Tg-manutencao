@@ -46,6 +46,19 @@ export class MaquinaController {
           .json({ error: "Campo obrigatório não preenchido!" });
       }
 
+      // 🚀 NOVO PASSO: Validar unicidade do Número de Série
+      const maquinaExistente = await this.maquinaRepo.findByNumeroSerie(
+        numeroSerie
+      );
+
+      if (maquinaExistente) {
+        // Se encontrar, retorna 409 Conflict
+        return res.status(409).json({
+          error: `Já existe uma máquina cadastrada com o Número de Série: ${numeroSerie}`,
+        });
+      }
+      // ----------------------------------------------------
+
       const novaMaquina = await this.maquinaRepo.createMaquina(
         nome,
         marca,
