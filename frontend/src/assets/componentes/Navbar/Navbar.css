@@ -207,21 +207,21 @@
 
 /* Estilo do botão Sair */
 .botao-sair {
-  background-color: #f8d7da;
-  color: #ca2132;
+  background-color: #f8d7da !important;
+  color: #ca2132!important;
 }
 
 .botao-sair:hover {
-  background-color: #ff949e;
+  background-color: #ff949e!important;
   transform: scale(1.05);
 }
 
 .botao-sair.selected {
-  background-color: #e02b3a;
+  background-color: #e02b3a !important;
 }
 
 .botao-sair:focus {
-  outline: 2px solid #e2a1a6;
+  outline: 2px solid #e2a1a6 !important;
 }
 
 /* Responsividade Navbar */

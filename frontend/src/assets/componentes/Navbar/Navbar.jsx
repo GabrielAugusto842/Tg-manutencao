@@ -343,10 +343,7 @@ const Navbar = ({ title, user }) => {
               <IoRefreshCircleOutline className="option-icon" /> Trocar senha
             </button>
 
-            <button
-              className="menu-option logout-button"
-              onClick={handleLogout}
-            >
+            <button className="menu-option botao-sair" onClick={handleLogout}>
               <FaArrowRight className="option-icon" /> Sair
             </button>
           </div>
