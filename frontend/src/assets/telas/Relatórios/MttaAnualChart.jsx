@@ -133,9 +133,7 @@ export default function MttaAnualChart({ idSetor }) {
       </ResponsiveContainer>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        O MTTA é calculado como o Tempo Total de Reconhecimento dividido pelo
-        Número de Falhas no mês. Valores pequenos agora aparecem corretamente em
-        minutos.
+        O MTTA é o tempo médio entre a abertura da Ordem até que ela seja aceita e iniciado a manutenção
       </p>
     </div>
   );

@@ -149,8 +149,7 @@ export default function MtbfAnualChart({ idSetor }) {
       </ResponsiveContainer>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        O MTBF é calculado como (Total de Horas Disponíveis - Tempo de
-        Inatividade) / Número de Falhas no mês.
+        O MTBF é o tempo médio entre as falhas
       </p>
     </div>
   );
